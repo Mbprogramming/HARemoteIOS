@@ -9,7 +9,7 @@ import Foundation
 
 struct RemoteItem : Decodable, Identifiable {
     let id: String?
-    //template    RemoteTemplate[...]
+    let template: RemoteTemplate?
     let description: String?
     let children: [RemoteItem]?
     let device: String?

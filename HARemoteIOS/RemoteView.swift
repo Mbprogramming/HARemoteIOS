@@ -12,10 +12,16 @@ struct RemoteView: View {
     
     var body: some View {
         let currentRemoteTitle = remoteViewModel.currentRemote?.description ?? "Unknown"
-        Text(currentRemoteTitle)
-            .task {
-                remoteViewModel.load()
-            }
+        let currentRemoteItem = remoteViewModel.currentRemote?.remote
+        let template = currentRemoteItem?.template?.rawValue ?? "Unknown"
+        VStack {
+            Text(template)
+            Text(currentRemoteTitle)
+        }
+        .padding()
+        .task {
+            remoteViewModel.load()
+        }
     }
 }
 
