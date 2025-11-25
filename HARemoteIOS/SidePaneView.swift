@@ -8,29 +8,58 @@
 import SwiftUI
 
 struct HeaderView: View {
-    private var textContent: String = "Unknown"
+    private var zoneContent: Zone?
     
-    init(text: String) {
-        textContent = text
+    init(zone: Zone?) {
+        zoneContent = zone
     }
     
     var body: some View {
-        HStack {
-            Text(textContent)
+        if zoneContent == nil {
+            Text("Unknown zone")
+        } else {
+            HStack {
+                if zoneContent?.icon != nil {
+                    let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + (zoneContent?.icon ?? "")
+                    
+                    AsyncImage(url: URL(string: iconUrl))
+                        .frame(width: 40, height: 40)
+                }
+                Text(zoneContent?.description ?? "Unknown zone")
+            }
         }
     }
 }
 
 struct ItemView: View {
-    private var textContent: String = "Unknown"
+    @Environment(\.dismiss) var dismiss
+    private var remoteContent: Remote?
     
-    init(text: String) {
-        textContent = text
+    init(remote: Remote?) {
+        remoteContent = remote
     }
     
     var body: some View {
-        HStack {
-            Text(textContent)
+        if remoteContent == nil {
+            Text("Unknown remote")
+        } else {
+            HStack {
+                if remoteContent?.icon != nil {
+                    let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + (remoteContent?.icon ?? "")
+                    
+                    AsyncImage(url: URL(string: iconUrl))
+                        .frame(width: 40, height: 40)
+                }
+                Text(remoteContent?.description ?? "Unknown zone")
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+            .gesture(TapGesture(count: 1).onEnded({ _ in
+                if remoteContent != nil {
+                    HomeRemoteAPI.shared.currentRemote = remoteContent
+                }
+                dismiss()
+            }))
         }
     }
 }
@@ -42,12 +71,12 @@ struct SidePaneView: View {
         List {
             ForEach(zoneViewModel.zones) { zone in
                 if zone.isVisible ?? false {
-                    Section(header: HeaderView(text: zone.description)) {
+                    Section(header: HeaderView(zone: zone)) {
                         if let remoteIds = zone.remoteIds {
                             ForEach(remoteIds, id: \.self){ remote in
-                                let remoteDesc = zoneViewModel.remotes.first(where: { $0.id == remote })?.description
-                                if remoteDesc != nil {
-                                    ItemView(text: remoteDesc ?? "Unknown")
+                                let remote = zoneViewModel.remotes.first(where: { $0.id == remote })
+                                if remote != nil {
+                                    ItemView(remote: remote)
                                 }
                             }
                         }
