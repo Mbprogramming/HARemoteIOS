@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Zone: Codable, Identifiable {
+struct Zone: Decodable, Identifiable {
     let description: String
     let icon: String?
     let background: String?

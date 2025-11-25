@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RemoteView: View {
-    @StateObject public var remoteViewModel = RemoteViewModel()
+    @State public var remoteViewModel = RemoteViewModel()
     
     var body: some View {
         let currentRemoteTitle = remoteViewModel.currentRemote?.description ?? "Unknown"

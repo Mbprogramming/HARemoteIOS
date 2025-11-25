@@ -82,3 +82,10 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+
+#Preview {
+    NavigationStack {
+        ContentView()
+    }
+}

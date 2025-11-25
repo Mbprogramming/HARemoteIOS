@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 @MainActor
-final class ZoneViewModel: ObservableObject {
-    @Published var zones: [Zone] = []
-    @Published var remotes: [Remote] = []
+@Observable final class ZoneViewModel: ObservableObject {
+    var zones: [Zone] = []
+    var remotes: [Remote] = []
         
     func loadZones() async {
         do {

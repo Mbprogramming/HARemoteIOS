@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 @MainActor
-final class RemoteViewModel: ObservableObject {
-    @Published var currentRemote: RemoteItem?
+@Observable final class RemoteViewModel {
+    var currentRemote: RemoteItem?
     
     func load() {
         currentRemote = HomeRemoteAPI.shared.currentRemote

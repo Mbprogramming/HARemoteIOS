@@ -7,38 +7,53 @@
 
 import SwiftUI
 
-struct SidePaneView: View {
-    @StateObject public var zoneViewModel = ZoneViewModel()
+struct HeaderView: View {
+    private var textContent: String = "Unknown"
+    
+    init(text: String) {
+        textContent = text
+    }
     
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 12) {
-                ForEach(zoneViewModel.zones) { zone in
-                    if (zone.isVisible ?? false) {
-                        VStack {
-                            Text(zone.description)
-                                .font(.headline)
-                                .padding()
-                            if let remoteIds = zone.remoteIds {
-                                LazyVStack(alignment: .leading, spacing: 8) {
-                                    ForEach(remoteIds, id: \.self) { remote in
-                                        let remoteDesc = zoneViewModel.remotes.first(where: { $0.id == remote })?.description
-                                        if remoteDesc != nil {
-                                            Text(remoteDesc ?? "Unknown")
-                                                .padding(.all)
-                                        }
-                                    }
+        HStack {
+            Text(textContent)
+        }
+    }
+}
+
+struct ItemView: View {
+    private var textContent: String = "Unknown"
+    
+    init(text: String) {
+        textContent = text
+    }
+    
+    var body: some View {
+        HStack {
+            Text(textContent)
+        }
+    }
+}
+
+struct SidePaneView: View {
+    @State public var zoneViewModel = ZoneViewModel()
+    
+    var body: some View {
+        List {
+            ForEach(zoneViewModel.zones) { zone in
+                if zone.isVisible ?? false {
+                    Section(header: HeaderView(text: zone.description)) {
+                        if let remoteIds = zone.remoteIds {
+                            ForEach(remoteIds, id: \.self){ remote in
+                                let remoteDesc = zoneViewModel.remotes.first(where: { $0.id == remote })?.description
+                                if remoteDesc != nil {
+                                    ItemView(text: remoteDesc ?? "Unknown")
                                 }
                             }
                         }
-                        .background(.thinMaterial)
-                        .cornerRadius(12)
-                        .shadow(radius: 2)
-                        .padding(.all)
                     }
                 }
             }
-            .padding(.horizontal)
         }
         .task {
             await zoneViewModel.loadRemotes()
@@ -46,6 +61,7 @@ struct SidePaneView: View {
         }
     }
 }
+
 
 #Preview {
     SidePaneView()
