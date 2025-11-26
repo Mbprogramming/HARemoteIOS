@@ -19,7 +19,6 @@ struct RemoteItemView: View {
     }
     
     var body: some View {
-        GeometryReader { geo in
             if remoteItemContent != nil {
                 switch remoteItemContent?.template {
                 case .Command:
@@ -93,14 +92,13 @@ struct RemoteItemView: View {
                     Text("Remote Item Template is TwoColumnList")
                 case .EmptyListItem:
                     let height = mainWindowSize.height * 0.5
-                    Text("Remote Item Template is Empty List")
+                    Spacer(minLength: height)
                 case nil:
                     Text("Remote Item Template is nil")
                 }
             } else {
                 Text("Remote Item is nil")
             }
-        }
     }
 }
 

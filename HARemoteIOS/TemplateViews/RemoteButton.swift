@@ -49,6 +49,7 @@ struct RemoteButton: View {
             .frame(maxWidth: .infinity, maxHeight: 150)
         }
         .buttonStyle(.glass)
+        .frame(height: 150)
     }
 }
 
