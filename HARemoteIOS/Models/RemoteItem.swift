@@ -39,6 +39,6 @@ struct RemoteItem : Decodable, Identifiable {
     //stateList    [...]
     //gridBackgroundOpacity    [...]
     //gridBackgroundColor    [...]
-    //backgroundImage    [...]
+    let backgroundImage: String?
     //buttonForm    ButtonFormEnum[...]
 }

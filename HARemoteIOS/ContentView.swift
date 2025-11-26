@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+private struct MainWindowSizeKey: EnvironmentKey {
+    static let defaultValue: CGSize = .zero
+}
+
+extension EnvironmentValues {
+    var mainWindowSize: CGSize {
+        get { self[MainWindowSizeKey.self] }
+        set { self[MainWindowSizeKey.self] = newValue }
+    }
+}
+
 struct ContentView: View {
     @State private var navigateToSettings: Bool = false
     @State private var navigateToHome: Bool = false
@@ -14,11 +25,10 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { geo in
-            ZStack {
                 NavigationStack {
                     TabView {
                         NavigationView {
-                            RemoteView()
+                            RemoteView().ignoresSafeArea()
                         }
                         .tabItem {
                             Label("Remote", systemImage: "av.remote")
@@ -28,18 +38,19 @@ struct ContentView: View {
                                 .hidden()
                         )
                         NavigationView {
-                            StateView()
+                            StateView().ignoresSafeArea()
                         }
                         .tabItem {
                             Label("States", systemImage: "flag")
                         }
                         NavigationView {
-                            HistoryView()
+                            HistoryView().ignoresSafeArea()
                         }
                         .tabItem {
                             Label("History", systemImage: "checklist")
                         }
                     }
+                    .ignoresSafeArea()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("Settings", systemImage: "gear") {
@@ -74,18 +85,11 @@ struct ContentView: View {
                         }
                     }
                 }
-            }
+                .environment(\.mainWindowSize, geo.size)
         }
     }
 }
 
 #Preview {
     ContentView()
-}
-
-
-#Preview {
-    NavigationStack {
-        ContentView()
-    }
 }
