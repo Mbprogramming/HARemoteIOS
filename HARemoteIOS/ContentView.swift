@@ -106,8 +106,16 @@ struct ContentView: View {
                             navigateToHome = true
                         }
                     }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Back", systemImage: "arrow.left") {
+                            if remoteItemStack.count > 0 {
+                                currentRemoteItem = remoteItemStack.popLast()
+                            }
+                        }
+                        .disabled(remoteItemStack.count <= 0)
+                    }
                     ToolbarItem(placement: .principal) {
-                        Text("Remote")
+                        Text(currentRemote?.description ?? "Remote")
                             .font(.headline)
                     }
                 }

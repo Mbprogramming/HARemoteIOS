@@ -22,6 +22,7 @@ struct ListView: View {
                         let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + (remoteItem?.backgroundImage ?? "")
                         
                         AsyncImage(url: URL(string: iconUrl))
+                          .aspectRatio(contentMode: .fit)
                     }
                     ScrollView {
                         VStack {

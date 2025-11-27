@@ -37,6 +37,7 @@ struct ItemView: View {
     
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
     
     var body: some View {
         HStack {
@@ -53,6 +54,7 @@ struct ItemView: View {
         .onTapGesture {
             currentRemote = remote
             currentRemoteItem = remote.remote
+            remoteItemStack.removeAll()
             dismiss()
         }
     }
@@ -84,7 +86,8 @@ struct SidePaneView: View {
                         ItemView(
                             remote: remote,
                             currentRemote: $currentRemote,
-                            currentRemoteItem: $currentRemoteItem
+                            currentRemoteItem: $currentRemoteItem,
+                            remoteItemStack: $remoteItemStack
                         )
                     }
                 }
