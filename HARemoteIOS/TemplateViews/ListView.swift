@@ -36,7 +36,7 @@ struct ListView: View {
                     }
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem)
+                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
             }
         }
     }

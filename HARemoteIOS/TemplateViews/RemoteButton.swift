@@ -7,45 +7,38 @@
 
 import SwiftUI
 
-struct CustomGlassButtonStyle: ButtonStyle {
-    var cornerRadius: CGFloat = 5
-    
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding()
-            .background(RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(.thinMaterial)
-            )
-            .scaleEffect((configuration.isPressed ? 0.95 : 1.0))
-    }
-}
-
 struct RemoteButton: View {
-    private var remoteItemContent: RemoteItem?
+    var remoteItem: RemoteItem?
     
-    init(remoteItem: RemoteItem? = nil) {
-        remoteItemContent = remoteItem
-    }
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
     
     var body: some View {
         Button(action: {
-            if remoteItemContent?.template == RemoteTemplate.List
-                || remoteItemContent?.template == RemoteTemplate.Wrap
-                || remoteItemContent?.template == RemoteTemplate.Grid3X4
-                || remoteItemContent?.template == RemoteTemplate.Grid4X5
-                || remoteItemContent?.template == RemoteTemplate.Grid5x3 {
-               
+            if remoteItem?.template == RemoteTemplate.List
+                || remoteItem?.template == RemoteTemplate.Wrap
+                || remoteItem?.template == RemoteTemplate.Grid3X4
+                || remoteItem?.template == RemoteTemplate.Grid4X5
+                || remoteItem?.template == RemoteTemplate.Grid5x3 {
+                guard let children = remoteItem?.children else { return }
+                if children.count > 0 {
+                    // Do not shadow the binding; unwrap into a different name
+                    guard let current = currentRemoteItem else { return }
+                    remoteItemStack.append(current)
+                    guard let next = remoteItem else { return }
+                    currentRemoteItem = next
+                }
             }
             }){
             HStack {
-                Text(remoteItemContent?.description ?? "Unknown")
+                Text(remoteItem?.description ?? "Unknown")
                     .padding()
                     .font(.title)
-                if remoteItemContent?.template == RemoteTemplate.List
-                    || remoteItemContent?.template == RemoteTemplate.Wrap
-                    || remoteItemContent?.template == RemoteTemplate.Grid3X4
-                    || remoteItemContent?.template == RemoteTemplate.Grid4X5
-                    || remoteItemContent?.template == RemoteTemplate.Grid5x3 {
+                if remoteItem?.template == RemoteTemplate.List
+                    || remoteItem?.template == RemoteTemplate.Wrap
+                    || remoteItem?.template == RemoteTemplate.Grid3X4
+                    || remoteItem?.template == RemoteTemplate.Grid4X5
+                    || remoteItem?.template == RemoteTemplate.Grid5x3 {
                     Spacer()
                     Image(systemName: "ellipsis")
                         .font(.footnote)
@@ -60,5 +53,10 @@ struct RemoteButton: View {
 }
 
 #Preview {
-    RemoteButton()
+    @Previewable @State var remoteItemStack: [RemoteItem] = []
+    @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    var remoteItem: RemoteItem? = nil
+    
+    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
 }
+
