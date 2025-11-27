@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import Observation
 
-struct RemoteItem : Decodable, Identifiable {
+@Observable class RemoteItem : Decodable, Identifiable {
     let id: String?
     let template: RemoteTemplate?
     let description: String?

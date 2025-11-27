@@ -8,29 +8,30 @@
 import SwiftUI
 
 struct RemoteItemView: View {
-    private var remoteItemContent: RemoteItem?
-    private var levelIntern: Int = 0
-    @Environment(\.mainWindowSize) var mainWindowSize
-
+    var remoteItem: RemoteItem?
+    var level: Int = 0
     
-    init(remoteItem: RemoteItem? = nil, level: Int = 0) {
-        remoteItemContent = remoteItem
-        levelIntern = level
-    }
+    @Environment(\.mainWindowSize) var mainWindowSize
+    
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
     
     var body: some View {
-            if remoteItemContent != nil {
-                switch remoteItemContent?.template {
+            if remoteItem != nil {
+                switch remoteItem?.template {
                 case .Command:
                     Text("Remote Item Template is Command")
                 case .OnOff:
                     Text("Remote Item Template is OnOff")
                 case .Headline:
-                    Text("Remote Item Template is Headline")
+                    Text(remoteItem?.description ?? "Unknown")
+                        .padding()
+                        .font(.title)
                 case .State:
                     Text("Remote Item Template is State")
                 case .List:
-                    ListView(remoteItem: remoteItemContent, level: levelIntern)
+                    ListView(remoteItem: remoteItem, level: level,
+                             currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
                         .padding()
                 case .Wrap:
                     Text("Remote Item Template is Wrap")
@@ -103,5 +104,9 @@ struct RemoteItemView: View {
 }
 
 #Preview {
-    RemoteItemView()
+    @Previewable @State var remoteItemStack: [RemoteItem] = []
+    @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    var remoteItem: RemoteItem? = nil
+    
+    RemoteItemView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
 }

@@ -29,8 +29,14 @@ struct RemoteButton: View {
     
     var body: some View {
         Button(action: {
-            print("Click")
-        }){
+            if remoteItemContent?.template == RemoteTemplate.List
+                || remoteItemContent?.template == RemoteTemplate.Wrap
+                || remoteItemContent?.template == RemoteTemplate.Grid3X4
+                || remoteItemContent?.template == RemoteTemplate.Grid4X5
+                || remoteItemContent?.template == RemoteTemplate.Grid5x3 {
+               
+            }
+            }){
             HStack {
                 Text(remoteItemContent?.description ?? "Unknown")
                     .padding()

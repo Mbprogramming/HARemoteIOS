@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import Observation
 
-struct Remote: Decodable, Identifiable {
+@Observable class Remote: Decodable, Identifiable {
     let id: String
     let device: String?
     let zone: Zone?

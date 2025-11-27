@@ -17,8 +17,6 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     private var zones: [Zone] = []
     private var remotes: [Remote] = []
-    
-    var currentRemote: Remote?
         
     private init() {
     }

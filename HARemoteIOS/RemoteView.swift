@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct RemoteView: View {
-    @State public var remoteViewModel = RemoteViewModel()
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
     
     var body: some View {
-        let currentRemoteItem = remoteViewModel.currentRemote?.remote
-
-        RemoteItemView(remoteItem: currentRemoteItem)
-            .task {
-                remoteViewModel.load()
-            }
+        RemoteItemView(remoteItem: currentRemoteItem,
+        currentRemoteItem: $currentRemoteItem,
+        remoteItemStack: $remoteItemStack)
     }
 }
 
 #Preview {
-    RemoteView()
+    @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    @Previewable @State var remoteItemStack: [RemoteItem] = []
+    
+    RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
 }
