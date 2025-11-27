@@ -32,11 +32,11 @@ struct RemoteItemView: View {
                 case .List:
                     ListView(remoteItem: remoteItem, level: level,
                              currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
-                        .padding()
                 case .Wrap:
                     Text("Remote Item Template is Wrap")
                 case .Grid3X4:
-                    Text("Remote Item Template is Grid3X4")
+                    Grid3x4(remoteItem: remoteItem, level: level,
+                             currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
                 case .Grid3x4Inline:
                     Text("Remote Item Template is Grid3x4Inline")
                 case .Grid4X5:

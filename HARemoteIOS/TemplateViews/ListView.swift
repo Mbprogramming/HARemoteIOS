@@ -18,12 +18,7 @@ struct ListView: View {
         if remoteItem != nil {
             if level == 0 {
                 ZStack {
-                    if remoteItem?.backgroundImage != nil {
-                        let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + (remoteItem?.backgroundImage ?? "")
-                        
-                        AsyncImage(url: URL(string: iconUrl))
-                          .aspectRatio(contentMode: .fit)
-                    }
+                    BackgroundImage(remoteItem: remoteItem)
                     ScrollView {
                         VStack {
                             let children = remoteItem?.children ?? []

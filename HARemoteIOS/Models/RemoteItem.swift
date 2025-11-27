@@ -21,8 +21,8 @@ import Observation
     let clientIcon: String?
     let showStateAndIcon: Bool?
     //stateColor    [...]
-    //posX    [...]
-    //posY    [...]
+    let posX: Int?
+    let posY: Int?
     //rowSpan    [...]
     //colSpan    [...]
     let icon: String?

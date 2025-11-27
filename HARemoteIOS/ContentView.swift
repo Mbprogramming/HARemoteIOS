@@ -38,6 +38,7 @@ struct ContentView: View {
     @State private var navigateToSettings: Bool = false
     @State private var navigateToHome: Bool = false
     @State private var showSmallPopup: Bool = false
+    @State private var isLoading: Bool = false
 
     @State private var zones: [Zone] = []
     @State private var remotes : [Remote] = []
@@ -48,6 +49,9 @@ struct ContentView: View {
 
     var body: some View {
         GeometryReader { geo in
+            if isLoading {
+                ProgressView()
+            }
             NavigationStack {
                 TabView {
                     NavigationView {
@@ -121,12 +125,14 @@ struct ContentView: View {
                 }
             }
             .task {
+                isLoading = true
                 do {
                     zones = try await HomeRemoteAPI.shared.getZonesComplete()
                     remotes = try await HomeRemoteAPI.shared.getRemotes()
                 } catch {
                     
                 }
+                isLoading = false;
             }
             // Provide window size via environment
             .environment(\.mainWindowSize, geo.size)
