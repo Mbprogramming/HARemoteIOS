@@ -10,11 +10,15 @@ import SwiftUI
 struct BackgroundImage: View {
     var remoteItem: RemoteItem?
     
+    func getBackgroundUrl() -> String {
+        guard let remoteItem else { return "" }
+        guard let backgroundImage = remoteItem.backgroundImage else { return "" }
+        return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + backgroundImage
+    }
+    
     var body: some View {
         if remoteItem?.backgroundImage != nil {
-            let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + (remoteItem?.backgroundImage ?? "")
-            
-            AsyncImage(url: URL(string: iconUrl)){ phase in
+            AsyncImage(url: URL(string: getBackgroundUrl())){ phase in
                 switch phase {
                 case .empty:
                     ProgressView()
@@ -28,7 +32,6 @@ struct BackgroundImage: View {
                 }
             }
             .aspectRatio(contentMode: .fit)
-              
         }
     }
 }

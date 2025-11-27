@@ -10,6 +10,7 @@ import SwiftUI
 struct ListView: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
+    var height: CGFloat = 150
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -24,7 +25,7 @@ struct ListView: View {
                             let children = remoteItem?.children ?? []
                             ForEach(children) { item in
                                 RemoteItemView(remoteItem: item, level: level + 1,
-                                               currentRemoteItem: $currentRemoteItem,
+                                               height: height, currentRemoteItem: $currentRemoteItem,
                                                remoteItemStack: $remoteItemStack)
                                     .padding()
                             }

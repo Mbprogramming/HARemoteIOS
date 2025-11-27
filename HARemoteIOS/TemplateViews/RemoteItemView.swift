@@ -10,6 +10,7 @@ import SwiftUI
 struct RemoteItemView: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
+    var height: CGFloat = 150
     
     @Environment(\.mainWindowSize) var mainWindowSize
     
@@ -31,12 +32,12 @@ struct RemoteItemView: View {
                     Text("Remote Item Template is State")
                 case .List:
                     ListView(remoteItem: remoteItem, level: level,
-                             currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                             height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
                 case .Wrap:
                     Text("Remote Item Template is Wrap")
                 case .Grid3X4:
                     Grid3x4(remoteItem: remoteItem, level: level,
-                             currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                            height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
                 case .Grid3x4Inline:
                     Text("Remote Item Template is Grid3x4Inline")
                 case .Grid4X5:

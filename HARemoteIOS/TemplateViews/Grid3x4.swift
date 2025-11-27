@@ -10,9 +10,12 @@ import SwiftUI
 struct Grid3x4: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
+    var height: CGFloat = 50
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
+    
+    @Environment(\.mainWindowSize) var mainWindowSize
     
     func buildItems() -> [[RemoteItem?]]{
         var result: [[RemoteItem?]] = []
@@ -44,9 +47,8 @@ struct Grid3x4: View {
                                 ForEach (0..<3) { x in
                                     if let item = temp[y][x] {
                                         RemoteItemView(remoteItem: item, level: level + 1,
-                                                       currentRemoteItem: $currentRemoteItem,
+                                                       height: mainWindowSize.height / 4 - 5, currentRemoteItem: $currentRemoteItem,
                                                        remoteItemStack: $remoteItemStack)
-                                            .padding()
                                     } else {
                                         EmptyView()
                                     }
@@ -54,7 +56,7 @@ struct Grid3x4: View {
                             }
                         }
                     }
-                }
+                }.safeAreaPadding()
             } else {
                 RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
             }
