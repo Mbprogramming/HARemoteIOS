@@ -14,6 +14,8 @@ struct RemoteButton: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     
+    @Environment(\.commandIds) var commandIds
+    
     var body: some View {
         Button(action: {
             if remoteItem?.template == RemoteTemplate.List
@@ -31,12 +33,12 @@ struct RemoteButton: View {
                 }
             }
             if remoteItem?.template == RemoteTemplate.Command {
-                print("Click " + (remoteItem?.device ?? "")  + " : " + (remoteItem?.command ?? ""))
+                let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
+                commandIds.append(id)
             }
             }){
             HStack {
                 Text(remoteItem?.description ?? "Unknown")
-                    .padding()
                     .truncationMode(.middle)
                     .allowsTightening(true)
                     .minimumScaleFactor(0.3)
@@ -51,11 +53,10 @@ struct RemoteButton: View {
                         .font(.footnote)
                 }
             }
-            .padding()
             .frame(maxWidth: .infinity, maxHeight: height)
         }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.roundedRectangle(radius: 10))
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.roundedRectangle(radius: 10))
         //.buttonStyle(.glass)
         //.frame(height: 150)
     }

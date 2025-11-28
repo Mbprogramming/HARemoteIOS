@@ -40,19 +40,27 @@ struct HAGrid: View {
     var body: some View {
         if remoteItem != nil {
             if level == 0 {
+                // Precompute outside of the ViewBuilder
+                let temp = buildItems()
+                let rowCount = 0...rows - 1
+                let colCount = 0...columns - 1
+                let rowCountArray = Array(rowCount)
+                let colCountArray = Array(colCount)
                 ZStack {
                     BackgroundImage(remoteItem: remoteItem)
-                    let temp = buildItems()
-                    let rowCount = 0...rows - 1
-                    let colCount = 0...columns - 1
                     Grid {
-                        for y in rowCount {
+                        ForEach(rowCountArray, id: \.self) { y in
                             GridRow {
-                                for x in colCount {
+                                ForEach(colCountArray, id: \.self) { x in
+                                   
                                     if let item = temp[y][x] {
-                                        RemoteItemView(remoteItem: item, level: level + 1,
-                                                       height: mainWindowSize.height / 4, currentRemoteItem: $currentRemoteItem,
-                                                       remoteItemStack: $remoteItemStack)
+                                        RemoteItemView(
+                                            remoteItem: item,
+                                            level: level + 1,
+                                            height: mainWindowSize.height / 4,
+                                            currentRemoteItem: $currentRemoteItem,
+                                            remoteItemStack: $remoteItemStack
+                                        )
                                     } else {
                                         EmptyView()
                                     }

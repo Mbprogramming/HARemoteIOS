@@ -40,4 +40,14 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         }
         return remotes
     }
+    
+    func sendCommand(device: String, command: String) -> String {
+        let uuid = UUID().uuidString
+        let url = URL(string: "http://192.168.5.106:5000/api/HomeAutomation?id=" + uuid + "&device=" + device + "&command=" + command)!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let _ = URLSession.shared.dataTask(with: request)
+            .resume()
+        return uuid
+    }
 }

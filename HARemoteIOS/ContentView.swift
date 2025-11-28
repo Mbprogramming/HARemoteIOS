@@ -19,6 +19,10 @@ private struct RemotesCollection: EnvironmentKey {
     static let defaultValue: [Remote] = []
 }
 
+private struct CommandIdCollection: EnvironmentKey {
+    static let defaultValue: [String] = []
+}
+
 extension EnvironmentValues {
     var mainWindowSize: CGSize {
         get { self[MainWindowSizeKey.self] }
@@ -32,6 +36,10 @@ extension EnvironmentValues {
         get { self[RemotesCollection.self] }
         set { self[RemotesCollection.self] = newValue }
     }
+    var commandIds: [String] {
+        get { self[CommandIdCollection.self] }
+        set { self[CommandIdCollection.self] = newValue }
+    }
 }
 
 struct ContentView: View {
@@ -42,6 +50,7 @@ struct ContentView: View {
 
     @State private var zones: [Zone] = []
     @State private var remotes : [Remote] = []
+    $State private var commandIds: [String] = []
 
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
@@ -142,6 +151,7 @@ struct ContentView: View {
             .environment(\.mainWindowSize, geo.size)
             .environment(\.zones, zones)
             .environment(\.remotes, remotes)
+            .environment(\.commandIds, commandIds)
         }
     }
 }
