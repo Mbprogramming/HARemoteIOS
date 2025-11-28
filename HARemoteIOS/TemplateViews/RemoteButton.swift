@@ -30,6 +30,9 @@ struct RemoteButton: View {
                     currentRemoteItem = next
                 }
             }
+            if remoteItem?.template == RemoteTemplate.Command {
+                print("Click " + (remoteItem?.device ?? "")  + " : " + (remoteItem?.command ?? ""))
+            }
             }){
             HStack {
                 Text(remoteItem?.description ?? "Unknown")

@@ -43,10 +43,12 @@ struct HAGrid: View {
                 ZStack {
                     BackgroundImage(remoteItem: remoteItem)
                     let temp = buildItems()
+                    let rowCount = 0...rows - 1
+                    let colCount = 0...columns - 1
                     Grid {
-                        ForEach (0..<rows) { y in
+                        for y in rowCount {
                             GridRow {
-                                ForEach (0..<columns) { x in
+                                for x in colCount {
                                     if let item = temp[y][x] {
                                         RemoteItemView(remoteItem: item, level: level + 1,
                                                        height: mainWindowSize.height / 4, currentRemoteItem: $currentRemoteItem,
