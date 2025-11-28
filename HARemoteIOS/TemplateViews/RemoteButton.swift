@@ -34,6 +34,9 @@ struct RemoteButton: View {
             HStack {
                 Text(remoteItem?.description ?? "Unknown")
                     .padding()
+                    .truncationMode(.middle)
+                    .allowsTightening(true)
+                    .minimumScaleFactor(0.3)
                     .font(.title)
                 if remoteItem?.template == RemoteTemplate.List
                     || remoteItem?.template == RemoteTemplate.Wrap

@@ -47,7 +47,7 @@ struct Grid3x4: View {
                                 ForEach (0..<3) { x in
                                     if let item = temp[y][x] {
                                         RemoteItemView(remoteItem: item, level: level + 1,
-                                                       height: mainWindowSize.height / 4 - 5, currentRemoteItem: $currentRemoteItem,
+                                                       height: mainWindowSize.height / 4, currentRemoteItem: $currentRemoteItem,
                                                        remoteItemStack: $remoteItemStack)
                                     } else {
                                         EmptyView()
@@ -56,7 +56,7 @@ struct Grid3x4: View {
                             }
                         }
                     }
-                }.safeAreaPadding()
+                }
             } else {
                 RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
             }

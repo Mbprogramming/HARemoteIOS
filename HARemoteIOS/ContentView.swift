@@ -46,7 +46,7 @@ struct ContentView: View {
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
     @State private var remoteItemStack: [RemoteItem] = []
-
+    
     var body: some View {
         GeometryReader { geo in
             if isLoading {
@@ -55,8 +55,13 @@ struct ContentView: View {
             NavigationStack {
                 TabView {
                     NavigationView {
-                        RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
-                            .ignoresSafeArea()
+                        if currentRemoteItem?.template == RemoteTemplate.List ||
+                            currentRemoteItem?.template == RemoteTemplate.Wrap {
+                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                                .ignoresSafeArea()
+                        } else {
+                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                        }
                     }
                     .tabItem {
                         Label("Remote", systemImage: "av.remote")
@@ -83,7 +88,6 @@ struct ContentView: View {
                         Label("History", systemImage: "checklist")
                     }
                 }
-                .ignoresSafeArea()
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Settings", systemImage: "gear") {
@@ -122,7 +126,7 @@ struct ContentView: View {
                         Text(currentRemote?.description ?? "Remote")
                             .font(.headline)
                     }
-                }
+                }.ignoresSafeArea()
             }
             .task {
                 isLoading = true
