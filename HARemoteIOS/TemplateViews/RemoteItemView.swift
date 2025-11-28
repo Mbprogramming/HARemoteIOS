@@ -16,12 +16,13 @@ struct RemoteItemView: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
+    @Binding var commandIds: [String]
     
     var body: some View {
             if remoteItem != nil {
                 switch remoteItem?.template {
                 case .Command:
-                    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .OnOff:
                     Text("Remote Item Template is OnOff")
                 case .Headline:
@@ -32,15 +33,15 @@ struct RemoteItemView: View {
                     Text("Remote Item Template is State")
                 case .List:
                     ListView(remoteItem: remoteItem, level: level,
-                             height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                             height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Wrap:
                     Text("Remote Item Template is Wrap")
                 case .Grid3X4:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Grid3x4Inline:
                     Text("Remote Item Template is Grid3x4Inline")
                 case .Grid4X5:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Grid4x5Inline:
                     Text("Remote Item Template is Grid4x5Inline")
                 case .Slider:
@@ -82,11 +83,11 @@ struct RemoteItemView: View {
                 case .StateList:
                     Text("Remote Item Template is StateList")
                 case .Grid5x3:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Grid5x3Inline:
                     Text("Remote Item Template is Grid5x3Inline")
                 case .Grid6x4:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Grid6x4Inline:
                     Text("Remote Item Template is Grid6x4Inline")
                 case .TwoColumnList:
@@ -106,7 +107,9 @@ struct RemoteItemView: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    @Previewable @State var commandIds: [String] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteItemView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+    RemoteItemView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
 }
+

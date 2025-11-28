@@ -13,8 +13,7 @@ struct RemoteButton: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    
-    @Environment(\.commandIds) var commandIds
+    @Binding var commandIds: [String]
     
     var body: some View {
         Button(action: {
@@ -65,8 +64,9 @@ struct RemoteButton: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    @Previewable @State var commandIds: [String] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
 }
 

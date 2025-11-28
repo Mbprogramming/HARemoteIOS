@@ -50,7 +50,7 @@ struct ContentView: View {
 
     @State private var zones: [Zone] = []
     @State private var remotes : [Remote] = []
-    $State private var commandIds: [String] = []
+    @State private var commandIds: [String] = []
 
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
@@ -66,10 +66,10 @@ struct ContentView: View {
                     NavigationView {
                         if currentRemoteItem?.template == RemoteTemplate.List ||
                             currentRemoteItem?.template == RemoteTemplate.Wrap {
-                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                                 .ignoresSafeArea()
                         } else {
-                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                         }
                     }
                     .tabItem {
@@ -90,7 +90,7 @@ struct ContentView: View {
                     }
 
                     NavigationView {
-                        HistoryView()
+                        HistoryView(commandIds: $commandIds)
                             .ignoresSafeArea()
                     }
                     .tabItem {
@@ -159,3 +159,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+

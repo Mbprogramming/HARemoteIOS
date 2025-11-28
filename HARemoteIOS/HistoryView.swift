@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct HistoryView: View {
+    @Binding var commandIds: [String]
+    
     var body: some View {
-        Text("History")
+        ScrollView {
+            VStack {
+                ForEach(commandIds, id: \.self) { id in
+                    Text(id)
+                        .padding()
+                        .font(.title3)
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    HistoryView()
+    @Previewable @State var commandIds: [String] = []
+    HistoryView(commandIds: $commandIds)
 }

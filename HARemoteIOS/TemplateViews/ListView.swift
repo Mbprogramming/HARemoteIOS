@@ -16,6 +16,7 @@ struct ListView: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
+    @Binding var commandIds: [String]
         
     var body: some View {
         if remoteItem != nil {
@@ -30,7 +31,7 @@ struct ListView: View {
                             ForEach(children) { item in
                                 RemoteItemView(remoteItem: item, level: level + 1,
                                                height: height, currentRemoteItem: $currentRemoteItem,
-                                               remoteItemStack: $remoteItemStack)
+                                               remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                                     .padding()
                             }
                             Spacer(minLength: height)
@@ -38,7 +39,7 @@ struct ListView: View {
                     }
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
             }
         }
     }
@@ -47,7 +48,9 @@ struct ListView: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    @Previewable @State var commandIds: [String] = []
     var remoteItem: RemoteItem? = nil
     
-    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
 }
+
