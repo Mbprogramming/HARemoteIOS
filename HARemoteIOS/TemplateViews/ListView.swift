@@ -12,6 +12,8 @@ struct ListView: View {
     var level: Int = 0
     var height: CGFloat = 150
     
+    @Environment(\.mainWindowSize) var mainWindowSize
+    
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
         
@@ -22,6 +24,8 @@ struct ListView: View {
                     BackgroundImage(remoteItem: remoteItem)
                     ScrollView {
                         VStack {
+                            let height = mainWindowSize.height * 0.2
+                            Spacer(minLength: height)
                             let children = remoteItem?.children ?? []
                             ForEach(children) { item in
                                 RemoteItemView(remoteItem: item, level: level + 1,
@@ -29,6 +33,7 @@ struct ListView: View {
                                                remoteItemStack: $remoteItemStack)
                                     .padding()
                             }
+                            Spacer(minLength: height)
                         }
                     }
                 }

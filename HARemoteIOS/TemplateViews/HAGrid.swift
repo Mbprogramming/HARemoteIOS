@@ -7,10 +7,12 @@
 
 import SwiftUI
 
-struct Grid3x4: View {
+struct HAGrid: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
     var height: CGFloat = 50
+    var rows: Int = 4
+    var columns: Int = 3
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -20,9 +22,9 @@ struct Grid3x4: View {
     func buildItems() -> [[RemoteItem?]]{
         var result: [[RemoteItem?]] = []
         guard let children = remoteItem?.children else { return result }
-        for y in 0...3 {
+        for y in 0...rows - 1 {
             var row: [RemoteItem?] = []
-            for x in 0...2 {
+            for x in 0...columns - 1 {
                 let item = children.filter { $0.posX == x && $0.posY == y }.first
                 if item != nil {
                     row.append(item)
@@ -42,9 +44,9 @@ struct Grid3x4: View {
                     BackgroundImage(remoteItem: remoteItem)
                     let temp = buildItems()
                     Grid {
-                        ForEach (0..<4) { y in
+                        ForEach (0..<rows) { y in
                             GridRow {
-                                ForEach (0..<3) { x in
+                                ForEach (0..<columns) { x in
                                     if let item = temp[y][x] {
                                         RemoteItemView(remoteItem: item, level: level + 1,
                                                        height: mainWindowSize.height / 4, currentRemoteItem: $currentRemoteItem,
@@ -69,6 +71,8 @@ struct Grid3x4: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     var remoteItem: RemoteItem? = nil
     var level: Int = 0
+    var rows:Int = 4
+    var columns:Int = 3
     
-    Grid3x4(remoteItem: remoteItem, level: level, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
+    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack)
 }
