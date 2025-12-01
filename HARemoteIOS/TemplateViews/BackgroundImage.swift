@@ -9,11 +9,16 @@ import SwiftUI
 
 struct BackgroundImage: View {
     var remoteItem: RemoteItem?
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     func getBackgroundUrl() -> String {
         guard let remoteItem else { return "" }
         guard let backgroundImage = remoteItem.backgroundImage else { return "" }
-        return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + backgroundImage
+        if colorScheme == .light {
+            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + backgroundImage
+        } else {
+            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=400&height=400&id=" + backgroundImage
+        }
     }
     
     var body: some View {
@@ -34,8 +39,13 @@ struct BackgroundImage: View {
                 //                }
                 //            }
                     .aspectRatio(contentMode: .fit)
-                Rectangle()
-                    .fill(Color.white.opacity(0.5))
+                if colorScheme == .light {
+                    Rectangle()
+                        .fill(Color.white.opacity(0.5))
+                } else {
+                    Rectangle()
+                        .fill(Color.black.opacity(0.5))
+                }
             }
         }
     }

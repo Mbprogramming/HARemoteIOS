@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HeaderView: View {
     private var zoneContent: Zone?
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     init(zone: Zone?) {
         zoneContent = zone
@@ -20,9 +21,15 @@ struct HeaderView: View {
         } else {
             HStack {
                 if let iconId = zoneContent?.icon {
-                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
-                    AsyncImage(url: URL(string: iconUrl))
-                        .frame(width: 40, height: 40)
+                    if colorScheme == .light {
+                        let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
+                        AsyncImage(url: URL(string: iconUrl))
+                            .frame(width: 40, height: 40)
+                    } else {
+                        let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
+                        AsyncImage(url: URL(string: iconUrl))
+                            .frame(width: 40, height: 40)
+                    }
                 }
                 Text(zoneContent?.description ?? "Unknown zone")
             }
@@ -32,7 +39,8 @@ struct HeaderView: View {
 
 struct ItemView: View {
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+
     public var remote: Remote
     
     @Binding var currentRemote: Remote?
@@ -42,9 +50,15 @@ struct ItemView: View {
     var body: some View {
         HStack {
             if let iconId = remote.icon {
-                let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
-                AsyncImage(url: URL(string: iconUrl))
-                    .frame(width: 40, height: 40)
+                if colorScheme == .light {
+                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
+                    AsyncImage(url: URL(string: iconUrl))
+                        .frame(width: 40, height: 40)
+                } else {
+                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
+                    AsyncImage(url: URL(string: iconUrl))
+                        .frame(width: 40, height: 40)
+                }
             }
             Text(remote.description)
             Spacer()

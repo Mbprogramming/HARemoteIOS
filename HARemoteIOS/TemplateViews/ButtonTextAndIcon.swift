@@ -9,11 +9,16 @@ import SwiftUI
 
 struct ButtonTextAndIcon: View {
     var currentRemoteItem: RemoteItem?
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     func getBackgroundUrl() -> String {
         guard let currentRemoteItem else { return "" }
         guard let icon = currentRemoteItem.icon else { return "" }
-        return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + icon
+        if colorScheme == .light {
+            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + icon
+        } else {
+            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=40&height=40&id=" + icon
+        }
     }
     
     var body: some View {
