@@ -38,9 +38,19 @@ struct HAGrid: View {
         return result
     }
     
+    func calcRowHeight() -> CGFloat {
+        return (mainWindowSize.height - 100) / CGFloat(rows)
+    }
+    
+    func calcColumnWidth() -> CGFloat {
+        return mainWindowSize.width / CGFloat(columns)
+    }
+    
     var body: some View {
         if remoteItem != nil {
             if level == 0 {
+                let rowHeight = calcRowHeight()
+                let columnWidth = calcColumnWidth()
                 // Precompute outside of the ViewBuilder
                 let temp = buildItems()
                 let rowCount = 0...rows - 1
@@ -58,13 +68,16 @@ struct HAGrid: View {
                                         RemoteItemView(
                                             remoteItem: item,
                                             level: level + 1,
-                                            height: mainWindowSize.height / 4,
+                                            height: rowHeight,
                                             currentRemoteItem: $currentRemoteItem,
                                             remoteItemStack: $remoteItemStack,
                                             commandIds: $commandIds
                                         )
                                     } else {
-                                        EmptyView()
+                                        Rectangle()
+                                            .fill(.clear)
+                                            .frame(width: columnWidth, height: rowHeight)
+                                            .contentShape(Rectangle())
                                     }
                                 }
                             }
