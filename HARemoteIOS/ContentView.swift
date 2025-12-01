@@ -50,11 +50,14 @@ struct ContentView: View {
 
     @State private var zones: [Zone] = []
     @State private var remotes : [Remote] = []
+    @State private var mainCommands: [RemoteItem] = []
     @State private var commandIds: [String] = []
 
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
     @State private var remoteItemStack: [RemoteItem] = []
+    
+    @Environment(\.mainWindowSize) var mainWindowSize
     
     var body: some View {
         GeometryReader { geo in
@@ -102,20 +105,13 @@ struct ContentView: View {
                         Button("Settings", systemImage: "gear") {
                             showSmallPopup = true
                         }
-                        .popover(isPresented: $showSmallPopup, arrowEdge: .top) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Quick Settings")
-                                    .font(.headline)
-                                Button("Go to Settings") {
-                                    navigateToSettings = true
-                                    showSmallPopup = false
-                                }
-                                Button("Close") {
-                                    showSmallPopup = false
-                                }
-                            }
+                        .popover(isPresented: $showSmallPopup) {
+                            MainCommandsView(mainCommands: $mainCommands,
+                                             currentRemoteItem: $currentRemoteItem,
+                                             remoteItemStack: $remoteItemStack,
+                                             commandIds: $commandIds)
                             .padding()
-                            .frame(maxWidth: 280)
+                            .presentationCompactAdaptation(.popover)
                         }
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -142,6 +138,7 @@ struct ContentView: View {
                 do {
                     zones = try await HomeRemoteAPI.shared.getZonesComplete()
                     remotes = try await HomeRemoteAPI.shared.getRemotes()
+                    mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
                 } catch {
                     
                 }

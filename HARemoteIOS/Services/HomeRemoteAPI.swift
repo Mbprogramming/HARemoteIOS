@@ -17,6 +17,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     private var zones: [Zone] = []
     private var remotes: [Remote] = []
+    private var mainCommands: [RemoteItem] = []
         
     private init() {
     }
@@ -39,6 +40,16 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             remotes = try decoder.decode([Remote].self, from: data)
         }
         return remotes
+    }
+    
+    func getMainCommands() async throws -> [RemoteItem] {
+        if mainCommands.count <= 0 {
+            let url = URL(string: "http://192.168.5.106:5000/api/homeautomation/maincommands")!
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let decoder = JSONDecoder()
+            mainCommands = try decoder.decode([RemoteItem].self, from: data)
+        }
+        return mainCommands
     }
     
     func sendCommand(device: String, command: String) -> String {

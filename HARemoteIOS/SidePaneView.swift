@@ -26,7 +26,7 @@ struct HeaderView: View {
                         AsyncImage(url: URL(string: iconUrl))
                             .frame(width: 40, height: 40)
                     } else {
-                        let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
+                        let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=40&height=40&id=\(iconId)"
                         AsyncImage(url: URL(string: iconUrl))
                             .frame(width: 40, height: 40)
                     }
@@ -55,7 +55,7 @@ struct ItemView: View {
                     AsyncImage(url: URL(string: iconUrl))
                         .frame(width: 40, height: 40)
                 } else {
-                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(iconId)"
+                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=40&height=40&id=\(iconId)"
                     AsyncImage(url: URL(string: iconUrl))
                         .frame(width: 40, height: 40)
                 }
