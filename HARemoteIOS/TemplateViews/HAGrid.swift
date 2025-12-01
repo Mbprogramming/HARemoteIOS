@@ -50,9 +50,9 @@ struct HAGrid: View {
                 let item = children.filter { $0.posX == x && $0.posY == y }.first
                 if item != nil {
                     row.append(true)
-                    var colSpan = item?.colSpan ?? 1
+                    let colSpan = item?.colSpan ?? 1
                     if colSpan > 1 {
-                        var skipCounter = colSpan
+                        var skipCounter = 1
                         repeat {
                             row.append(false)
                             x = x + 1

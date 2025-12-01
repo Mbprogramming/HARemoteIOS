@@ -37,11 +37,7 @@ struct RemoteButton: View {
             }
             }){
             HStack {
-                Text(remoteItem?.description ?? "Unknown")
-                    .truncationMode(.middle)
-                    .allowsTightening(true)
-                    .minimumScaleFactor(0.3)
-                    .font(.title)
+                ButtonTextAndIcon(currentRemoteItem: remoteItem)
                 if remoteItem?.template == RemoteTemplate.List
                     || remoteItem?.template == RemoteTemplate.Wrap
                     || remoteItem?.template == RemoteTemplate.Grid3X4

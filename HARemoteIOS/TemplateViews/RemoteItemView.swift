@@ -32,7 +32,10 @@ struct RemoteItemView: View {
                     Text("Remote Item Template is OnOff")
                 case .Headline:
                     Text(remoteItem?.description ?? "Unknown")
-                        .padding()
+                        .frame(height: height)
+                        .truncationMode(.middle)
+                        .allowsTightening(true)
+                        .minimumScaleFactor(0.3)
                         .font(.title)
                 case .State:
                     Text("Remote Item Template is State")
