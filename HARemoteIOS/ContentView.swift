@@ -101,8 +101,13 @@ struct ContentView: View {
                     }
                 }
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing){
+                        Button("remoteHistory", systemImage: "list.bullet.badge.ellipsis"){
+                            Alert(title: Text("Remote Historie"))
+                        }
+                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Settings", systemImage: "gear") {
+                        Button("Settings", systemImage: "square.grid.3x3.square.badge.ellipsis") {
                             showSmallPopup = true
                         }
                         .popover(isPresented: $showSmallPopup) {
