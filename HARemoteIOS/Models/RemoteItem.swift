@@ -23,8 +23,8 @@ import Observation
     //stateColor    [...]
     let posX: Int?
     let posY: Int?
-    //rowSpan    [...]
-    //colSpan    [...]
+    let rowSpan: Int?
+    let colSpan: Int?
     let icon: String?
     //min    [...]
     //max    [...]
@@ -35,7 +35,7 @@ import Observation
     //moreParameter    {...}
     //nullable: true
     //defaultConverter    [...]
-    //gridHalfHeight    [...]
+    let gridHalfHeight: Bool?
     //commandMenuItems    [...]
     //stateList    [...]
     //gridBackgroundOpacity    [...]

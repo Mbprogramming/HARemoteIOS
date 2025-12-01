@@ -38,7 +38,38 @@ struct HAGrid: View {
         }
         return result
     }
-    
+
+    func buildSkipItems() -> [[Bool]] {
+        var result: [[Bool]] = []
+        guard let children = remoteItem?.children else { return result }
+        var y = 0
+        repeat {
+            var row: [Bool] = []
+            var x = 0
+            repeat {
+                let item = children.filter { $0.posX == x && $0.posY == y }.first
+                if item != nil {
+                    row.append(true)
+                    var colSpan = item?.colSpan ?? 1
+                    if colSpan > 1 {
+                        var skipCounter = colSpan
+                        repeat {
+                            row.append(false)
+                            x = x + 1
+                            skipCounter = skipCounter + 1
+                        } while skipCounter < colSpan
+                    }
+                } else {
+                    row.append(true)
+                }
+                x = x + 1
+            } while x < columns
+            result.append(row)
+            y = y + 1
+        } while y < rows
+        return result
+    }
+
     func calcRowHeight() -> CGFloat {
         if inline {
             return calcColumnWidth()
@@ -57,31 +88,46 @@ struct HAGrid: View {
                 let columnWidth = calcColumnWidth()
                 // Precompute outside of the ViewBuilder
                 let temp = buildItems()
+                let temp2 = buildSkipItems()
                 let rowCount = 0...rows - 1
                 let colCount = 0...columns - 1
                 let rowCountArray = Array(rowCount)
                 let colCountArray = Array(colCount)
+
                 ZStack {
                     BackgroundImage(remoteItem: remoteItem)
                     Grid {
                         ForEach(rowCountArray, id: \.self) { y in
                             GridRow {
                                 ForEach(colCountArray, id: \.self) { x in
-                                   
                                     if let item = temp[y][x] {
-                                        RemoteItemView(
-                                            remoteItem: item,
-                                            level: level + 1,
-                                            height: rowHeight,
-                                            currentRemoteItem: $currentRemoteItem,
-                                            remoteItemStack: $remoteItemStack,
-                                            commandIds: $commandIds
-                                        )
+                                        if item.colSpan != nil && item.colSpan! > 1 {
+                                            RemoteItemView(
+                                                remoteItem: item,
+                                                level: level + 1,
+                                                height: rowHeight,
+                                                currentRemoteItem: $currentRemoteItem,
+                                                remoteItemStack: $remoteItemStack,
+                                                commandIds: $commandIds
+                                            )
+                                            .gridCellColumns(item.colSpan!)
+                                        } else {
+                                            RemoteItemView(
+                                                remoteItem: item,
+                                                level: level + 1,
+                                                height: rowHeight,
+                                                currentRemoteItem: $currentRemoteItem,
+                                                remoteItemStack: $remoteItemStack,
+                                                commandIds: $commandIds
+                                            )
+                                        }
                                     } else {
-                                        Rectangle()
-                                            .fill(.clear)
-                                            .frame(width: columnWidth, height: rowHeight)
-                                            .contentShape(Rectangle())
+                                        if temp2[y][x] == true {
+                                            Rectangle()
+                                                .fill(.clear)
+                                                .frame(width: columnWidth, height: rowHeight)
+                                                .contentShape(Rectangle())
+                                        }
                                     }
                                 }
                             }
