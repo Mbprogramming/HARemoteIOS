@@ -51,6 +51,7 @@ struct RemoteButton: View {
             .frame(maxWidth: .infinity, maxHeight: height)
         }
         .buttonStyle(.bordered)
+        .tint(Color.primary)
         .buttonBorderShape(.roundedRectangle(radius: 10))
         //.buttonStyle(.glass)
         //.frame(height: 150)

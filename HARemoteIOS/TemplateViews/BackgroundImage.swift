@@ -18,20 +18,25 @@ struct BackgroundImage: View {
     
     var body: some View {
         if remoteItem?.backgroundImage != nil {
-            AsyncImage(url: URL(string: getBackgroundUrl())){ phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                case .success(let image):
-                    image
-                        .resizable()
-                case .failure:
-                    Image(systemName: "wifi.slash")
-                @unknown default:
-                    EmptyView()
-                }
+            ZStack {
+                AsyncImage(url: URL(string: getBackgroundUrl()))
+                //            { phase in
+                //                switch phase {
+                //                case .empty:
+                //                    ProgressView()
+                //                case .success(let image):
+                //                    image
+                //                        .resizable()
+                //                case .failure:
+                //                    Image(systemName: "wifi.slash")
+                //                @unknown default:
+                //                    EmptyView()
+                //                }
+                //            }
+                    .aspectRatio(contentMode: .fit)
+                Rectangle()
+                    .fill(Color.white.opacity(0.5))
             }
-            .aspectRatio(contentMode: .fit)
         }
     }
 }
