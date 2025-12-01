@@ -30,8 +30,9 @@ struct ListView: View {
                             let children = remoteItem?.children ?? []
                             ForEach(children) { item in
                                 RemoteItemView(remoteItem: item, level: level + 1,
-                                               height: height, currentRemoteItem: $currentRemoteItem,
+                                               height: 150, currentRemoteItem: $currentRemoteItem,
                                                remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                                    .frame(height: 150)
                                     .padding()
                             }
                             Spacer(minLength: height)
@@ -39,7 +40,7 @@ struct ListView: View {
                     }
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                RemoteButton(remoteItem: remoteItem, height: 150, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
             }
         }
     }
