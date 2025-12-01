@@ -10,9 +10,10 @@ import SwiftUI
 struct HAGrid: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
-    var height: CGFloat = 50
+    var height: CGFloat = 150
     var rows: Int = 4
     var columns: Int = 3
+    var inline: Bool = false
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -39,16 +40,19 @@ struct HAGrid: View {
     }
     
     func calcRowHeight() -> CGFloat {
-        return (mainWindowSize.height - 100) / CGFloat(rows)
+        if inline {
+            return calcColumnWidth()
+        }
+        return (mainWindowSize.height - 100) / CGFloat(rows) - 5
     }
     
     func calcColumnWidth() -> CGFloat {
-        return mainWindowSize.width / CGFloat(columns)
+        return mainWindowSize.width / CGFloat(columns) - 5
     }
     
     var body: some View {
         if remoteItem != nil {
-            if level == 0 {
+            if level == 0 || inline {
                 let rowHeight = calcRowHeight()
                 let columnWidth = calcColumnWidth()
                 // Precompute outside of the ViewBuilder
@@ -83,9 +87,11 @@ struct HAGrid: View {
                             }
                         }
                     }
+                    .padding()
                 }
             } else {
                 RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                    .frame(height: 150)
             }
         }
     }

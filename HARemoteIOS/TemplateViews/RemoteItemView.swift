@@ -18,11 +18,16 @@ struct RemoteItemView: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var commandIds: [String]
     
+    func calcInlineRowHeightWidth(columns: Int) -> CGFloat {
+        return mainWindowSize.width / CGFloat(columns)
+    }
+    
     var body: some View {
             if remoteItem != nil {
                 switch remoteItem?.template {
                 case .Command:
                     RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                        .frame(height: height)
                 case .OnOff:
                     Text("Remote Item Template is OnOff")
                 case .Headline:
@@ -39,11 +44,13 @@ struct RemoteItemView: View {
                 case .Grid3X4:
                     HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Grid3x4Inline:
-                    Text("Remote Item Template is Grid3x4Inline")
+                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                        .frame(height: calcInlineRowHeightWidth(columns: 3) * 4)
                 case .Grid4X5:
                     HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
                 case .Grid4x5Inline:
-                    Text("Remote Item Template is Grid4x5Inline")
+                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 5, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                        .frame(height: calcInlineRowHeightWidth(columns: 4) * 5)
                 case .Slider:
                     Text("Remote Item Template is Slider")
                 case .Combobox:
@@ -65,7 +72,14 @@ struct RemoteItemView: View {
                 case .Space:
                     Text("Remote Item Template is Space")
                 case .Divider:
-                    Text("Remote Item Template is Divider")
+                    VStack {
+                        Spacer(minLength: 3)
+                        Rectangle()
+                            .fill(.clear)
+                            .border(Color.black)
+                            .frame(height: 1)
+                        Spacer(minLength: 3)
+                    }
                 case .Touch:
                     Text("Remote Item Template is Touch")
                 case .SelectionList:

@@ -32,7 +32,7 @@ struct ListView: View {
                                 RemoteItemView(remoteItem: item, level: level + 1,
                                                height: 150, currentRemoteItem: $currentRemoteItem,
                                                remoteItemStack: $remoteItemStack, commandIds: $commandIds)
-                                    .frame(height: 150)
+                                    //.frame(height: 150)
                                     .padding()
                             }
                             Spacer(minLength: height)
@@ -41,6 +41,7 @@ struct ListView: View {
                 }
             } else {
                 RemoteButton(remoteItem: remoteItem, height: 150, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                    .frame(height: 150)
             }
         }
     }
