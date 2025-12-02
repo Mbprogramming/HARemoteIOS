@@ -28,8 +28,8 @@ struct RemoteStateItemView: View {
     
     var body: some View {
         let color = state.color != nil ? Color(uiColorFromHex(rgbValue: Int64(state.color!))).opacity(0.3) : Color.primary.opacity(0.3)
-        HStack {
-            if state.icon != nil && !(state.icon?.isEmpty ?? false) {
+        VStack {
+            if state.showImage == true {
                 if colorScheme == .light {
                     let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(state.icon!)"
                     AsyncImage(url: URL(string: iconUrl))
@@ -42,22 +42,24 @@ struct RemoteStateItemView: View {
                         .frame(width: 40, height: 40)
                 }
             }
+            if state.showText == true {
+                Text(state.completeValue)
+                    .truncationMode(.middle)
+                    .allowsTightening(true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.3)
+                    .font(.title)
+            }
             Spacer()
-            VStack {
-                HStack {
-                    Spacer()
-                    Text("\(state.device ?? "") \(state.id ?? "")")
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(1)
-                        .font(.footnote)
-                }
-                HStack{
-                    Spacer()
-                    Text(state.convertedValue ?? "")
-                        .bold()
-                }
+            HStack {
+                Text("\(state.device ?? "") \(state.id ?? "")")
+                    .font(.footnote)
+                    .lineLimit(1)
+                    .truncationMode(.head)
+                Spacer()
             }
         }
+        .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 10)

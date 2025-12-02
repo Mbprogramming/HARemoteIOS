@@ -23,4 +23,31 @@ import Observation
     //lastChange    [...]
     let isCombined: Bool?
     let additionalText: String?
+    
+    var completeValue : String {
+        get {
+            return self.convertedValue ?? self.value ?? "N/A"
+        }
+    }
+    
+    var showImage : Bool {
+        get {
+            if icon != nil && icon?.isEmpty == false {
+                return true
+            }
+            return false
+        }
+    }
+    
+    var showText : Bool {
+        get {
+            if showImage == false {
+                return true
+            }
+            if showValueAndIcon == true {
+                return true
+            }
+            return false
+        }
+    }
 }
