@@ -52,6 +52,13 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return mainCommands
     }
     
+    func getRemoteStates(remoteId: String) async throws -> [IState] {
+        let url = URL(string: "http://192.168.5.106:5000/api/homeautomation/allremotestates?remoteId=" + remoteId)!
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let decoder = JSONDecoder()
+        return try decoder.decode([IState].self, from: data)
+    }
+    
     func sendCommand(device: String, command: String) -> String {
         let uuid = UUID().uuidString
         let url = URL(string: "http://192.168.5.106:5000/api/HomeAutomation?id=" + uuid + "&device=" + device + "&command=" + command)!

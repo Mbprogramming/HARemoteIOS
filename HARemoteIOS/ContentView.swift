@@ -52,6 +52,7 @@ struct ContentView: View {
     @State private var remotes : [Remote] = []
     @State private var mainCommands: [RemoteItem] = []
     @State private var commandIds: [String] = []
+    @State private var remoteStates: [IState] = []
 
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
@@ -80,12 +81,12 @@ struct ContentView: View {
                     }
                     .background(
                         NavigationLink("", destination: SidePaneView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem,
-                            remoteItemStack: $remoteItemStack), isActive: $navigateToHome)
+                                                                     remoteItemStack: $remoteItemStack, remoteStates: $remoteStates), isActive: $navigateToHome)
                             .hidden()
                     )
 
                     NavigationView {
-                        StateView()
+                        StateView(remoteStates: $remoteStates)
                             .ignoresSafeArea()
                     }
                     .tabItem {

@@ -46,6 +46,7 @@ struct ItemView: View {
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
+    @Binding var remoteStates: [IState]
     
     var body: some View {
         HStack {
@@ -69,6 +70,10 @@ struct ItemView: View {
             currentRemote = remote
             currentRemoteItem = remote.remote
             remoteItemStack.removeAll()
+            Task {
+                remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+            }
+            
             dismiss()
         }
     }
@@ -81,6 +86,7 @@ struct SidePaneView: View {
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
+    @Binding var remoteStates: [IState]
 
     var body: some View {
         // Precompute visible zones to keep the builder simple
@@ -101,7 +107,8 @@ struct SidePaneView: View {
                             remote: remote,
                             currentRemote: $currentRemote,
                             currentRemoteItem: $currentRemoteItem,
-                            remoteItemStack: $remoteItemStack
+                            remoteItemStack: $remoteItemStack,
+                            remoteStates: $remoteStates
                         )
                     }
                 }
@@ -114,11 +121,13 @@ struct SidePaneView: View {
     @Previewable @State var currentRemote: Remote? = nil
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var remoteItemStack: [RemoteItem] = []
+    @Previewable @State var remoteStates: [IState] = []
     
     SidePaneView(
         currentRemote: $currentRemote,
         currentRemoteItem: $currentRemoteItem,
-        remoteItemStack: $remoteItemStack
+        remoteItemStack: $remoteItemStack,
+        remoteStates: $remoteStates
     )
 }
 
