@@ -39,7 +39,8 @@ struct RemoteItemView: View {
                         .minimumScaleFactor(0.3)
                         .font(.title)
                 case .State:
-                    Text("Remote Item Template is State")
+                    RemoteState(remoteItem: remoteItem, remoteStates: $remoteStates)
+                        .frame(height: height)
                 case .List:
                     ListView(remoteItem: remoteItem, level: level,
                              height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
