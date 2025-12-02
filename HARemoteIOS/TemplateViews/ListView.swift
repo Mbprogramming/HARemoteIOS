@@ -17,7 +17,8 @@ struct ListView: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var commandIds: [String]
-        
+    @Binding var remoteStates: [IState]
+    
     var body: some View {
         if remoteItem != nil {
             if level == 0 {
@@ -31,7 +32,7 @@ struct ListView: View {
                             ForEach(children) { item in
                                 RemoteItemView(remoteItem: item, level: level + 1,
                                                height: 150, currentRemoteItem: $currentRemoteItem,
-                                               remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                                               remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                                     //.frame(height: 150)
                                     .padding()
                             }
@@ -51,8 +52,9 @@ struct ListView: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var commandIds: [String] = []
+    @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
 }
 

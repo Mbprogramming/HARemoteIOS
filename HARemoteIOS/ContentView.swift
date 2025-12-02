@@ -70,10 +70,10 @@ struct ContentView: View {
                     NavigationView {
                         if currentRemoteItem?.template == RemoteTemplate.List ||
                             currentRemoteItem?.template == RemoteTemplate.Wrap {
-                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                                 .ignoresSafeArea()
                         } else {
-                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                         }
                     }
                     .tabItem {
