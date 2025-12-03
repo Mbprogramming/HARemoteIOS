@@ -45,7 +45,7 @@ import Observation
             if self.showImage == false {
                 return true
             }
-            if self.showValueAndIcon == true {
+            if self.showValueAndIcon == nil || self.showValueAndIcon == true {
                 return true
             }
             return false

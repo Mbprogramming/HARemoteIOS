@@ -57,13 +57,17 @@ struct StateItemView: View {
 
 struct StateView: View {
     @Binding var remoteStates: [IState]
+    @Environment(\.mainWindowSize) var mainWindowSize
     
     var body: some View {
         ScrollView {
             VStack{
+                let height = mainWindowSize.height * 0.2
+                Spacer(minLength: height)
                 ForEach(remoteStates){state in
                     StateItemView(state: state)
                 }
+                Spacer(minLength: height)
             }
             .padding()
         }
