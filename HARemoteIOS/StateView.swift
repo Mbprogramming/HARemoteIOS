@@ -10,22 +10,11 @@ import SwiftUI
 struct StateItemView: View {
     var state: IState
     
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-
     var body: some View {
         HStack {
             if state.showImage {
-                if colorScheme == .light {
-                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(state.icon!)"
-                    AsyncImage(url: URL(string: iconUrl))
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
-                } else {
-                    let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=40&height=40&id=\(state.icon!)"
-                    AsyncImage(url: URL(string: iconUrl))
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
-                }
+                AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: state.icon!)
+                    .frame(width: 40, height: 40)
             }
             Spacer()
             VStack {

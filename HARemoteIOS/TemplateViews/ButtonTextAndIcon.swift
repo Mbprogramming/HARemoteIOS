@@ -10,33 +10,19 @@ import SwiftUI
 struct ButtonTextAndIcon: View {
     var currentRemoteItem: RemoteItem?
     var currentState: IState?
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
-    func getBackgroundUrl() -> String {
-        guard let currentRemoteItem else { return "" }
-        guard let icon = currentRemoteItem.icon else { return "" }
-        if colorScheme == .light {
-            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + icon
-        } else {
-            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=40&height=40&id=" + icon
-        }
+    func getIcon() -> String? {
+        guard let currentRemoteItem else { return nil }
+        guard let icon = currentRemoteItem.icon else { return nil }
+        return icon
     }
     
     var body: some View {
         if currentState != nil {
             VStack {
                 if currentState?.showImage == true {
-                    if colorScheme == .light {
-                        let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=\(currentState!.icon!)"
-                        AsyncImage(url: URL(string: iconUrl))
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
-                    } else {
-                        let iconUrl = "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=40&height=40&id=\(currentState!.icon!)"
-                        AsyncImage(url: URL(string: iconUrl))
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
-                    }
+                    AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: currentState!.icon!)
+                        .frame(width: 40, height: 40)
                 }
                 if currentState?.showText == true {
                     Text(currentState?.completeValue ?? "")
@@ -58,8 +44,8 @@ struct ButtonTextAndIcon: View {
         } else {
             if currentRemoteItem?.icon != nil {
                 VStack{
-                    AsyncImage(url: URL(string: getBackgroundUrl()))
-                        .aspectRatio(contentMode: .fit)
+                    AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: getIcon())
+                        .frame(width: 40, height: 40)
                     Text(currentRemoteItem?.description ?? "Unknown")
                         .truncationMode(.middle)
                         .allowsTightening(true)

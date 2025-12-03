@@ -11,20 +11,18 @@ struct BackgroundImage: View {
     var remoteItem: RemoteItem?
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
-    func getBackgroundUrl() -> String {
-        guard let remoteItem else { return "" }
-        guard let backgroundImage = remoteItem.backgroundImage else { return "" }
-        if colorScheme == .light {
-            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=400&height=400&id=" + backgroundImage
-        } else {
-            return "http://192.168.5.106:5000/api/homeautomation/Bitmap?inverted=true&width=400&height=400&id=" + backgroundImage
-        }
+    func getBackground() -> String? {
+        guard let remoteItem else { return nil }
+        guard let backgroundImage = remoteItem.backgroundImage else { return nil }
+        return backgroundImage
     }
     
     var body: some View {
         if remoteItem?.backgroundImage != nil {
             ZStack {
-                AsyncImage(url: URL(string: getBackgroundUrl()))
+                AsyncServerImage(imageWidth: 400, imageHeight: 400, imageId: getBackground())
+                    .padding()
+                //AsyncImage(url: URL(string: getBackgroundUrl()))
                 //            { phase in
                 //                switch phase {
                 //                case .empty:
@@ -38,7 +36,7 @@ struct BackgroundImage: View {
                 //                    EmptyView()
                 //                }
                 //            }
-                    .aspectRatio(contentMode: .fit)
+                //   .aspectRatio(contentMode: .fit)
                 if colorScheme == .light {
                     Rectangle()
                         .fill(Color.white.opacity(0.5))
