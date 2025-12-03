@@ -27,7 +27,7 @@ struct RemoteItemView: View {
             if remoteItem != nil {
                 switch remoteItem?.template {
                 case .Command:
-                    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                         .frame(height: height)
                 case .OnOff:
                     Text("Remote Item Template is OnOff")

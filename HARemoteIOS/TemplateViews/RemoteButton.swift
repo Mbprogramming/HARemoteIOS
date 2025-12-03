@@ -14,6 +14,7 @@ struct RemoteButton: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var commandIds: [String]
+    @Binding var remoteStates: [IState]
     
     var body: some View {
         Button(action: {
@@ -37,7 +38,8 @@ struct RemoteButton: View {
             }
             }){
             HStack {
-                ButtonTextAndIcon(currentRemoteItem: remoteItem)
+                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
+                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
                 if remoteItem?.template == RemoteTemplate.List
                     || remoteItem?.template == RemoteTemplate.Wrap
                     || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -63,8 +65,9 @@ struct RemoteButton: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var commandIds: [String] = []
+    @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
 }
 

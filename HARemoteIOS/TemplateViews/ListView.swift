@@ -41,7 +41,7 @@ struct ListView: View {
                     }
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, height: 150, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+                RemoteButton(remoteItem: remoteItem, height: 150, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                     .frame(height: 150)
             }
         }

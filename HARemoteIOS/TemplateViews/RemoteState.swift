@@ -11,23 +11,8 @@ struct RemoteStateItemView: View {
     var state: IState
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
-
-    func uiColorFromHex(rgbValue: Int64) -> UIColor {
-        
-        // &  binary AND operator to zero out other color values
-        // >>  bitwise right shift operator
-        // Divide by 0xFF because UIColor takes CGFloats between 0.0 and 1.0
-        
-        let red =   CGFloat((rgbValue & 0xFF0000) >> 16) / 0xFF
-        let green = CGFloat((rgbValue & 0x00FF00) >> 8) / 0xFF
-        let blue =  CGFloat(rgbValue & 0x0000FF) / 0xFF
-        let alpha = CGFloat(1.0)
-        
-        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
-    }
     
     var body: some View {
-        let color = state.color != nil ? Color(uiColorFromHex(rgbValue: Int64(state.color!))).opacity(0.3) : Color.primary.opacity(0.3)
         VStack {
             if state.showImage == true {
                 if colorScheme == .light {
@@ -63,7 +48,7 @@ struct RemoteStateItemView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(color)
+                .fill(state.calculatedColor)
         )
     }
 }
