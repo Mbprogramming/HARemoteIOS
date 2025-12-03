@@ -178,36 +178,6 @@
             endingLineNumber = "26"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "7E857343-AA47-435B-9524-94D7E8C2D334 - fbf4fa1f8d9e5a48"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "HARemoteIOS.ButtonTextAndIcon.body.getter : some"
-                  moduleName = "HARemoteIOS.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mb/Sources/HARemoteIOS/HARemoteIOS/TemplateViews/ButtonTextAndIcon.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "26"
-                  endingLineNumber = "26">
-               </Location>
-               <Location
-                  uuid = "7E857343-AA47-435B-9524-94D7E8C2D334 - fbf4fa1f8d9e5a48"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "HARemoteIOS.ButtonTextAndIcon.body.getter : some"
-                  moduleName = "HARemoteIOS.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mb/Sources/HARemoteIOS/HARemoteIOS/TemplateViews/ButtonTextAndIcon.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "26"
-                  endingLineNumber = "26">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

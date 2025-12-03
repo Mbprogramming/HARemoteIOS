@@ -67,6 +67,7 @@ struct ItemView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
+            remoteStates = []
             currentRemote = remote
             currentRemoteItem = remote.remote
             remoteItemStack.removeAll()
