@@ -44,14 +44,44 @@ struct ItemView: View {
     @Binding var remoteStates: [IState]
     @Binding var isVisible: Bool
     
-    func delete(indexSet: IndexSet) {
+    private func deleteHistory(indexSet: IndexSet) {
         for i in indexSet {
             let remoteHistoryItem = remoteHistory[i]
             modelContext.delete(remoteHistoryItem)
         }
     }
     
+    private func isFavorite(remoteId: String) -> Bool {
+        let descriptor = FetchDescriptor<RemoteFavorite>(
+            predicate: #Predicate { $0.remoteId == remoteId }
+        )
+        do {
+            let favorites = try modelContext.fetch(descriptor)
+            return favorites.isEmpty == false
+        } catch {
+            return false
+        }
+    }
+    
+    private func toggleFavorite(remoteId: String) {
+        let descriptor = FetchDescriptor<RemoteFavorite>(
+            predicate: #Predicate { $0.remoteId == remoteId }
+        )
+        do {
+            let favorites = try modelContext.fetch(descriptor)
+            if let existing = favorites.first {
+                modelContext.delete(existing)
+            } else {
+                modelContext.insert(RemoteFavorite(remoteId: remoteId))
+            }
+        } catch {
+            // Swallow errors for now; you might add logging/UI later.
+        }
+    }
+    
     var body: some View {
+        let favorite = isFavorite(remoteId: remote.id)
+        
         HStack {
             if let iconId = remote.icon {
                 AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: iconId)
@@ -59,9 +89,19 @@ struct ItemView: View {
             }
             Text(remote.description)
             Spacer()
+            if favorite {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(.yellow)
+            }
             Image(systemName: "chevron.right")
         }
         .contentShape(Rectangle())
+        .swipeActions(edge: .leading) {
+            Button(favorite ? "Unfavorite" : "Favorite", systemImage: "star.fill") {
+                toggleFavorite(remoteId: remote.id)
+            }
+            .tint(favorite ? Color.gray : Color.yellow)
+        }
         .onTapGesture {
             remoteStates = []
             currentRemote = remote
@@ -75,7 +115,7 @@ struct ItemView: View {
             }
             if remoteHistory.count > 6 {
                 let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
-                delete(indexSet: indexSet)
+                deleteHistory(indexSet: indexSet)
             }
             remoteItemStack.removeAll()
             Task {
@@ -90,20 +130,45 @@ struct ItemView: View {
 struct SidePaneView: View {
     @Environment(\.remotes) var remotes
     @Environment(\.zones) var zones
-    
+    @Environment(\.modelContext) var modelContext
+
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var remoteStates: [IState]
     @Binding var isVisible: Bool
 
+    private func isFavorite(remoteId: String) -> Bool {
+        let descriptor = FetchDescriptor<RemoteFavorite>(
+            predicate: #Predicate { $0.remoteId == remoteId }
+        )
+        do {
+            let favorites = try modelContext.fetch(descriptor)
+            return favorites.isEmpty == false
+        } catch {
+            return false
+        }
+    }
+    
     var body: some View {
         // Precompute visible zones to keep the builder simple
         let visibleZones: [Zone] = zones.filter { $0.isVisible == true }
         NavigationView {
             TabView {
-                VStack{
-                    
+                    List {
+                        ForEach(remotes) { remote in
+                            let favorite = isFavorite(remoteId: remote.id)
+                            if favorite {
+                                ItemView(
+                                    remote: remote,
+                                    currentRemote: $currentRemote,
+                                    currentRemoteItem: $currentRemoteItem,
+                                    remoteItemStack: $remoteItemStack,
+                                    remoteStates: $remoteStates,
+                                    isVisible: $isVisible
+                                )
+                            }
+                        }
                 }.tabItem {
                     Label("Favorites", systemImage: "star.fill")
                 }
@@ -160,4 +225,3 @@ struct SidePaneView: View {
         isVisible: $isVisible
     )
 }
-
