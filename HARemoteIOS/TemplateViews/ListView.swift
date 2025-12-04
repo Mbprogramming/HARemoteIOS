@@ -30,19 +30,30 @@ struct ListView: View {
                             Spacer(minLength: height)
                             let children = remoteItem?.children ?? []
                             ForEach(children) { item in
-                                RemoteItemView(remoteItem: item, level: level + 1,
-                                               height: 150, currentRemoteItem: $currentRemoteItem,
-                                               remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
-                                    //.frame(height: 150)
+                                if item.template == RemoteTemplate.Grid3x4Inline ||
+                                    item.template == RemoteTemplate.Grid4x5Inline ||
+                                    item.template == RemoteTemplate.Grid5x3Inline ||
+                                    item.template == RemoteTemplate.Grid6x4Inline ||
+                                    item.template == RemoteTemplate.Divider ||
+                                    item.template == RemoteTemplate.Space {
+                                    RemoteItemView(remoteItem: item, level: level + 1,
+                                                   currentRemoteItem: $currentRemoteItem,
+                                                   remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                                        .padding()
+                                } else {
+                                    RemoteItemView(remoteItem: item, level: level + 1,
+                                                   currentRemoteItem: $currentRemoteItem,
+                                                   remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                                    .frame(height: 150)
                                     .padding()
+                                }
                             }
                             Spacer(minLength: height)
                         }
                     }
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, height: 150, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
-                    .frame(height: 150)
+                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
             }
         }
     }

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct RemoteButton: View {
     var remoteItem: RemoteItem?
-    var height: CGFloat = 150
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -50,7 +49,7 @@ struct RemoteButton: View {
                         .font(.footnote)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: height)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .buttonStyle(.bordered)
         .tint(Color.primary)

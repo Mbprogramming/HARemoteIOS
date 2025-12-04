@@ -10,7 +10,6 @@ import SwiftUI
 struct HAGrid: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
-    var height: CGFloat = 150
     var rows: Int = 4
     var columns: Int = 3
     var inline: Bool = false
@@ -75,7 +74,9 @@ struct HAGrid: View {
         if inline {
             return calcColumnWidth()
         }
-        return (mainWindowSize.height - 100) / CGFloat(rows) - 5
+        var result = (mainWindowSize.height - 100) / CGFloat(rows)
+        result = result - 10
+        return result
     }
     
     func calcColumnWidth() -> CGFloat {
@@ -97,50 +98,49 @@ struct HAGrid: View {
 
                 ZStack {
                     BackgroundImage(remoteItem: remoteItem)
-                    Grid {
-                        ForEach(rowCountArray, id: \.self) { y in
-                            GridRow {
-                                ForEach(colCountArray, id: \.self) { x in
-                                    if let item = temp[y][x] {
-                                        if item.colSpan != nil && item.colSpan! > 1 {
-                                            RemoteItemView(
-                                                remoteItem: item,
-                                                level: level + 1,
-                                                height: rowHeight,
-                                                currentRemoteItem: $currentRemoteItem,
-                                                remoteItemStack: $remoteItemStack,
-                                                commandIds: $commandIds,
-                                                remoteStates: $remoteStates
-                                            )
-                                            .gridCellColumns(item.colSpan!)
+                    Grid (alignment: .topLeading) {
+                            ForEach(rowCountArray, id: \.self) { y in
+                                GridRow {
+                                    ForEach(colCountArray, id: \.self) { x in
+                                        if let item = temp[y][x] {
+                                            if item.colSpan != nil && item.colSpan! > 1 {
+                                                RemoteItemView(
+                                                    remoteItem: item,
+                                                    level: level + 1,
+                                                    currentRemoteItem: $currentRemoteItem,
+                                                    remoteItemStack: $remoteItemStack,
+                                                    commandIds: $commandIds,
+                                                    remoteStates: $remoteStates
+                                                )
+                                                .frame(height: rowHeight)
+                                                .gridCellColumns(item.colSpan!)
+                                            } else {
+                                                RemoteItemView(
+                                                    remoteItem: item,
+                                                    level: level + 1,
+                                                    currentRemoteItem: $currentRemoteItem,
+                                                    remoteItemStack: $remoteItemStack,
+                                                    commandIds: $commandIds,
+                                                    remoteStates: $remoteStates
+                                                )
+                                                .frame(height: rowHeight)
+                                            }
                                         } else {
-                                            RemoteItemView(
-                                                remoteItem: item,
-                                                level: level + 1,
-                                                height: rowHeight,
-                                                currentRemoteItem: $currentRemoteItem,
-                                                remoteItemStack: $remoteItemStack,
-                                                commandIds: $commandIds,
-                                                remoteStates: $remoteStates
-                                            )
-                                        }
-                                    } else {
-                                        if temp2[y][x] == true {
-                                            Rectangle()
-                                                .fill(.clear)
-                                                .frame(width: columnWidth, height: rowHeight)
-                                                .contentShape(Rectangle())
+                                            if temp2[y][x] == true {
+                                                Rectangle()
+                                                    .fill(.clear)
+                                                    .frame(width: columnWidth, height: rowHeight)
+                                                    .contentShape(Rectangle())
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    .padding()
+                        .padding()
                 }
             } else {
                 RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
-                    .frame(height: 150)
             }
         }
     }

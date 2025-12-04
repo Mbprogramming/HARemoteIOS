@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct HARemoteIOSApp: App {
@@ -13,5 +14,6 @@ struct HARemoteIOSApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: RemoteHistoryEntry.self)
     }
 }

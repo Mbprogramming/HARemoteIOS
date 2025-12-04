@@ -28,33 +28,31 @@ struct RemoteItemView: View {
                 switch remoteItem?.template {
                 case .Command:
                     RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
-                        .frame(height: height)
                 case .OnOff:
                     Text("Remote Item Template is OnOff")
                 case .Headline:
                     Text(remoteItem?.description ?? "Unknown")
-                        .frame(height: height)
+                        .padding()
                         .truncationMode(.middle)
                         .allowsTightening(true)
                         .minimumScaleFactor(0.3)
                         .font(.title)
                 case .State:
                     RemoteState(remoteItem: remoteItem, remoteStates: $remoteStates)
-                        .frame(height: height)
                 case .List:
                     ListView(remoteItem: remoteItem, level: level,
                              height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Wrap:
                     Text("Remote Item Template is Wrap")
                 case .Grid3X4:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Grid3x4Inline:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                         .frame(height: calcInlineRowHeightWidth(columns: 3) * 4)
                 case .Grid4X5:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Grid4x5Inline:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 5, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                         .frame(height: calcInlineRowHeightWidth(columns: 4) * 5)
                 case .Slider:
                     Text("Remote Item Template is Slider")
@@ -102,11 +100,11 @@ struct RemoteItemView: View {
                 case .StateList:
                     Text("Remote Item Template is StateList")
                 case .Grid5x3:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Grid5x3Inline:
                     Text("Remote Item Template is Grid5x3Inline")
                 case .Grid6x4:
-                    HAGrid(remoteItem: remoteItem, level: level, height: height, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Grid6x4Inline:
                     Text("Remote Item Template is Grid6x4Inline")
                 case .TwoColumnList:
