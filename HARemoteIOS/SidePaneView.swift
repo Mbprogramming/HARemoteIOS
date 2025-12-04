@@ -34,12 +34,21 @@ struct ItemView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
     
+    @Query(sort: \RemoteHistoryEntry.lastUsed, order: .forward) var remoteHistory: [RemoteHistoryEntry]
+    
     public var remote: Remote
     
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var remoteStates: [IState]
+    
+    func delete(indexSet: IndexSet) {
+        for i in indexSet {
+            let remoteHistoryItem = remoteHistory[i]
+            modelContext.delete(remoteHistoryItem)
+        }
+    }
     
     var body: some View {
         HStack {
@@ -56,7 +65,17 @@ struct ItemView: View {
             remoteStates = []
             currentRemote = remote
             currentRemoteItem = remote.remote
-            modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
+            
+            let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
+            if itemToUpdate != nil {
+                itemToUpdate?.lastUsed = Date()
+            } else {
+                modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
+            }
+            if remoteHistory.count > 6 {
+                let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
+                delete(indexSet: indexSet)
+            }
             remoteItemStack.removeAll()
             Task {
                 remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
