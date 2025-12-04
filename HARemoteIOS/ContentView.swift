@@ -156,6 +156,22 @@ struct ContentView: View {
                     zones = try await HomeRemoteAPI.shared.getZonesComplete()
                     remotes = try await HomeRemoteAPI.shared.getRemotes()
                     mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
+                    if let lastRemote = remoteHistory.first {
+                        if let lastRemoteItem = remotes.first(where: {$0.id == lastRemote.remoteId}){
+                            remoteStates = []
+                            currentRemote = lastRemoteItem
+                            currentRemoteItem = lastRemoteItem.remote
+                            
+                            let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
+                            if itemToUpdate != nil {
+                                itemToUpdate?.lastUsed = Date()
+                            }
+                            remoteItemStack.removeAll()
+                            Task {
+                                remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                            }                            
+                        }
+                    }
                 } catch {
                     
                 }
