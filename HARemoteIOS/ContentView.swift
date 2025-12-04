@@ -112,13 +112,7 @@ struct ContentView: View {
                             showSmallPopup2 = true
                         }
                         .popover(isPresented: $showSmallPopup2) {
-                            VStack{
-                                ForEach(remoteHistory, id: \.remoteId) { remote in
-                                    Text("Id: \(remote.remoteId): \(remote.lastUsed)")
-                                        .padding()
-                                        .frame(width: 200)
-                                }
-                            }
+                            RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, remotes: remotes)
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }
