@@ -48,6 +48,7 @@ struct ContentView: View {
     @State private var navigateToHome: Bool = false
     @State private var showSmallPopup: Bool = false
     @State private var showSmallPopup2: Bool = false
+    @State private var showSidePane: Bool = false
     @State private var isLoading: Bool = false
 
     @State private var zones: [Zone] = []
@@ -84,11 +85,6 @@ struct ContentView: View {
                     .tabItem {
                         Label("Remote", systemImage: "av.remote")
                     }
-                    .background(
-                        NavigationLink("", destination: SidePaneView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem,
-                                                                     remoteItemStack: $remoteItemStack, remoteStates: $remoteStates), isActive: $navigateToHome)
-                            .hidden()
-                    )
 
                     NavigationView {
                         StateView(remoteStates: $remoteStates)
@@ -133,7 +129,10 @@ struct ContentView: View {
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Home", systemImage: "house") {
-                            navigateToHome = true
+                            showSidePane = true
+                        }
+                        .sheet(isPresented: $showSidePane) {
+                            SidePaneView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, remoteStates: $remoteStates, isVisible: $showSidePane)
                         }
                     }
                     ToolbarItem(placement: .navigationBarLeading) {

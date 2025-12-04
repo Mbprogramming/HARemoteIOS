@@ -42,6 +42,7 @@ struct ItemView: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var remoteStates: [IState]
+    @Binding var isVisible: Bool
     
     func delete(indexSet: IndexSet) {
         for i in indexSet {
@@ -81,7 +82,7 @@ struct ItemView: View {
                 remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
             }
             
-            dismiss()
+            isVisible = false
         }
     }
 }
@@ -94,31 +95,42 @@ struct SidePaneView: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var remoteStates: [IState]
+    @Binding var isVisible: Bool
 
     var body: some View {
         // Precompute visible zones to keep the builder simple
         let visibleZones: [Zone] = zones.filter { $0.isVisible == true }
-        
-        List {
-            ForEach(visibleZones) { zone in
-                // Map zone.remoteIds to concrete Remote models up front
-                let zoneRemotes: [Remote] = {
-                    guard let ids = zone.remoteIds else { return [] }
-                    let set = Set(ids)
-                    return remotes.filter { set.contains($0.id) }
-                }()
+        TabView {
+            VStack{
                 
-                Section(header: HeaderView(zone: zone)) {
-                    ForEach(zoneRemotes) { remote in
-                        ItemView(
-                            remote: remote,
-                            currentRemote: $currentRemote,
-                            currentRemoteItem: $currentRemoteItem,
-                            remoteItemStack: $remoteItemStack,
-                            remoteStates: $remoteStates
-                        )
+            }.tabItem {
+                Label("Favorites", systemImage: "av.remote")
+            }
+            List {
+                ForEach(visibleZones) { zone in
+                    // Map zone.remoteIds to concrete Remote models up front
+                    let zoneRemotes: [Remote] = {
+                        guard let ids = zone.remoteIds else { return [] }
+                        let set = Set(ids)
+                        return remotes.filter { set.contains($0.id) }
+                    }()
+                    
+                    Section(header: HeaderView(zone: zone)) {
+                        ForEach(zoneRemotes) { remote in
+                            ItemView(
+                                remote: remote,
+                                currentRemote: $currentRemote,
+                                currentRemoteItem: $currentRemoteItem,
+                                remoteItemStack: $remoteItemStack,
+                                remoteStates: $remoteStates,
+                                isVisible: $isVisible
+                            )
+                        }
                     }
                 }
+            }
+            .tabItem {
+                Label("Zones", systemImage: "av.remote")
             }
         }
     }
@@ -129,12 +141,14 @@ struct SidePaneView: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var isVisible: Bool = true
     
     SidePaneView(
         currentRemote: $currentRemote,
         currentRemoteItem: $currentRemoteItem,
         remoteItemStack: $remoteItemStack,
-        remoteStates: $remoteStates
+        remoteStates: $remoteStates,
+        isVisible: $isVisible
     )
 }
 
