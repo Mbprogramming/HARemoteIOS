@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 private struct MainWindowSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
@@ -46,6 +47,7 @@ struct ContentView: View {
     @State private var navigateToSettings: Bool = false
     @State private var navigateToHome: Bool = false
     @State private var showSmallPopup: Bool = false
+    @State private var showSmallPopup2: Bool = false
     @State private var isLoading: Bool = false
 
     @State private var zones: [Zone] = []
@@ -59,7 +61,10 @@ struct ContentView: View {
     @State private var remoteItemStack: [RemoteItem] = []
     
     @Environment(\.mainWindowSize) var mainWindowSize
+    @Environment(\.modelContext) var modelContext
     
+    @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
+
     var body: some View {
         GeometryReader { geo in
             if isLoading {
@@ -103,12 +108,23 @@ struct ContentView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing){
-                        Button("remoteHistory", systemImage: "list.bullet.badge.ellipsis"){
-                            Alert(title: Text("Remote Historie"))
+                        Button("Remote History", systemImage: "list.bullet.badge.ellipsis"){
+                            showSmallPopup2 = true
+                        }
+                        .popover(isPresented: $showSmallPopup2) {
+                            VStack{
+                                ForEach(remoteHistory, id: \.remoteId) { remote in
+                                    Text("Id: \(remote.remoteId): \(remote.lastUsed)")
+                                        .padding()
+                                        .frame(width: 200)
+                                }
+                            }
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Settings", systemImage: "square.grid.3x3.square.badge.ellipsis") {
+                        Button("Main Commands", systemImage: "square.grid.3x3.square.badge.ellipsis") {
                             showSmallPopup = true
                         }
                         .popover(isPresented: $showSmallPopup) {
@@ -162,4 +178,3 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
-

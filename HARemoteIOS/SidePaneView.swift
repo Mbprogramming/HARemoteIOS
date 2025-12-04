@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HeaderView: View {
     private var zoneContent: Zone?
@@ -31,6 +32,7 @@ struct HeaderView: View {
 
 struct ItemView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var modelContext
     
     public var remote: Remote
     
@@ -54,6 +56,7 @@ struct ItemView: View {
             remoteStates = []
             currentRemote = remote
             currentRemoteItem = remote.remote
+            modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
             remoteItemStack.removeAll()
             Task {
                 remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
