@@ -131,7 +131,7 @@ struct ContentView: View {
                         Button("Home", systemImage: "house") {
                             showSidePane = true
                         }
-                        .sheet(isPresented: $showSidePane) {
+                        .fullScreenCover(isPresented: $showSidePane) {
                             SidePaneView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, remoteStates: $remoteStates, isVisible: $showSidePane)
                         }
                     }

@@ -100,37 +100,46 @@ struct SidePaneView: View {
     var body: some View {
         // Precompute visible zones to keep the builder simple
         let visibleZones: [Zone] = zones.filter { $0.isVisible == true }
-        TabView {
-            VStack{
-                
-            }.tabItem {
-                Label("Favorites", systemImage: "av.remote")
-            }
-            List {
-                ForEach(visibleZones) { zone in
-                    // Map zone.remoteIds to concrete Remote models up front
-                    let zoneRemotes: [Remote] = {
-                        guard let ids = zone.remoteIds else { return [] }
-                        let set = Set(ids)
-                        return remotes.filter { set.contains($0.id) }
-                    }()
+        NavigationView {
+            TabView {
+                VStack{
                     
-                    Section(header: HeaderView(zone: zone)) {
-                        ForEach(zoneRemotes) { remote in
-                            ItemView(
-                                remote: remote,
-                                currentRemote: $currentRemote,
-                                currentRemoteItem: $currentRemoteItem,
-                                remoteItemStack: $remoteItemStack,
-                                remoteStates: $remoteStates,
-                                isVisible: $isVisible
-                            )
+                }.tabItem {
+                    Label("Favorites", systemImage: "star.fill")
+                }
+                List {
+                    ForEach(visibleZones) { zone in
+                        // Map zone.remoteIds to concrete Remote models up front
+                        let zoneRemotes: [Remote] = {
+                            guard let ids = zone.remoteIds else { return [] }
+                            let set = Set(ids)
+                            return remotes.filter { set.contains($0.id) }
+                        }()
+                        
+                        Section(header: HeaderView(zone: zone)) {
+                            ForEach(zoneRemotes) { remote in
+                                ItemView(
+                                    remote: remote,
+                                    currentRemote: $currentRemote,
+                                    currentRemoteItem: $currentRemoteItem,
+                                    remoteItemStack: $remoteItemStack,
+                                    remoteStates: $remoteStates,
+                                    isVisible: $isVisible
+                                )
+                            }
                         }
                     }
                 }
+                .tabItem {
+                    Label("Zones", systemImage: "square.split.bottomrightquarter.fill")
+                }
             }
-            .tabItem {
-                Label("Zones", systemImage: "av.remote")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing){
+                    Button("Back", systemImage: "arrow.down"){
+                        isVisible = false
+                    }
+                }
             }
         }
     }
