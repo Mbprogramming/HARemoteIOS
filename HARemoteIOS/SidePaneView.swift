@@ -74,6 +74,7 @@ struct ItemView: View {
             } else {
                 modelContext.insert(RemoteFavorite(remoteId: remoteId))
             }
+            try? modelContext.save()
         } catch {
             // Swallow errors for now; you might add logging/UI later.
         }
@@ -121,7 +122,7 @@ struct ItemView: View {
             Task {
                 remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
             }
-            
+            try? modelContext.save()
             isVisible = false
         }
     }

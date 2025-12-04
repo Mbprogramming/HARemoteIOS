@@ -33,6 +33,7 @@ struct RemoteHistoryViewLine: View {
                 if itemToUpdate != nil {
                     itemToUpdate?.lastUsed = Date()
                 }
+                try? modelContext.save()
                 remoteItemStack.removeAll()
                 Task {
                     remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
@@ -67,6 +68,7 @@ struct RemoteHistoryViewLine: View {
                 if itemToUpdate != nil {
                     itemToUpdate?.lastUsed = Date()
                 }
+                try? modelContext.save()
                 remoteItemStack.removeAll()
                 Task {
                     remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
