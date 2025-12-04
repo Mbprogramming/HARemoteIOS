@@ -14,6 +14,7 @@ struct RemoteButtonGlass: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var commandIds: [String]
+    @Binding var isVisible: Bool
     
     var body: some View {
         Button(action: {
@@ -35,6 +36,7 @@ struct RemoteButtonGlass: View {
                 let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
                 commandIds.append(id)
             }
+            isVisible = false
             }){
             HStack {
                 ButtonTextAndIcon(currentRemoteItem: remoteItem)
@@ -59,7 +61,8 @@ struct RemoteButtonGlass: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var commandIds: [String] = []
+    @Previewable @State var isVisible: Bool = true
     var remoteItem: RemoteItem? = nil
     
-    RemoteButtonGlass(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds)
+    RemoteButtonGlass(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, isVisible: $isVisible)
 }

@@ -112,7 +112,7 @@ struct ContentView: View {
                             showSmallPopup2 = true
                         }
                         .popover(isPresented: $showSmallPopup2) {
-                            RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, remotes: remotes)
+                            RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $showSmallPopup2, remotes: remotes)
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }
@@ -125,7 +125,8 @@ struct ContentView: View {
                             MainCommandsView(mainCommands: $mainCommands,
                                              currentRemoteItem: $currentRemoteItem,
                                              remoteItemStack: $remoteItemStack,
-                                             commandIds: $commandIds)
+                                             commandIds: $commandIds,
+                                             isVisible: $showSmallPopup)
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }

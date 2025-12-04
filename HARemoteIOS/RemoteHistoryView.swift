@@ -16,6 +16,7 @@ struct RemoteHistoryViewLine: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteStates: [IState]
     @Binding var remoteItemStack: [RemoteItem]
+    @Binding var isVisible: Bool
     
     @Environment(\.modelContext) var modelContext
     
@@ -49,6 +50,7 @@ struct RemoteHistoryViewLine: View {
                 Task {
                     remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
                 }
+                isVisible = false
             }){
                 VStack {
                     if remote1.icon != nil {
@@ -88,6 +90,7 @@ struct RemoteHistoryViewLine: View {
                 Task {
                     remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
                 }
+                isVisible = false
             }){
                 VStack {
                     if remote1.icon != nil {
@@ -117,6 +120,7 @@ struct RemoteHistoryView: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteStates: [IState]
     @Binding var remoteItemStack: [RemoteItem]
+    @Binding var isVisible: Bool
     
     var remotes : [Remote]
 
@@ -149,7 +153,7 @@ struct RemoteHistoryView: View {
                 ForEach(Array(stride(from: 0, to: remoteList.count, by: 2)), id: \.self) { i in
                     let remote1 = remoteList[i]
                     let remote2 = (i + 1 < remoteList.count) ? remoteList[i + 1] : nil
-                    RemoteHistoryViewLine(remote1: remote1, remote2: remote2, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack)
+                    RemoteHistoryViewLine(remote1: remote1, remote2: remote2, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible)
                 }
             }
         }
@@ -161,7 +165,8 @@ struct RemoteHistoryView: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var remoteStates: [IState] = []
     @Previewable @State var remoteItemStack: [RemoteItem] = []
+    @Previewable @State var isVisible: Bool = true
     
     var remotes : [Remote] = []
-    RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, remotes: remotes)
+    RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible, remotes: remotes)
 }
