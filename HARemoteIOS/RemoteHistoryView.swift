@@ -22,13 +22,6 @@ struct RemoteHistoryViewLine: View {
     
     @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
     
-    func delete(indexSet: IndexSet) {
-        for i in indexSet {
-            let remoteHistoryItem = remoteHistory[i]
-            modelContext.delete(remoteHistoryItem)
-        }
-    }
-    
     var body: some View {
         HStack {
             Button(action: {
@@ -39,12 +32,6 @@ struct RemoteHistoryViewLine: View {
                 let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
                 if itemToUpdate != nil {
                     itemToUpdate?.lastUsed = Date()
-                } else {
-                    modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
-                }
-                if remoteHistory.count > 6 {
-                    let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
-                    delete(indexSet: indexSet)
                 }
                 remoteItemStack.removeAll()
                 Task {
@@ -79,12 +66,6 @@ struct RemoteHistoryViewLine: View {
                 let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
                 if itemToUpdate != nil {
                     itemToUpdate?.lastUsed = Date()
-                } else {
-                    modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
-                }
-                if remoteHistory.count > 6 {
-                    let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
-                    delete(indexSet: indexSet)
                 }
                 remoteItemStack.removeAll()
                 Task {
