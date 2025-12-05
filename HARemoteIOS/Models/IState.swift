@@ -25,6 +25,23 @@ import Observation
     let isCombined: Bool?
     let additionalText: String?
     
+    init(id: String?, device: String?, value: String?, convertedValue: String?, color: Int64?, icon: String?, convertDescription: String?,
+         nativeType: String?, showValueAndIcon: Bool?, stateToIcon: String?, stateToColor: String?, isCombined: Bool?, additionalText: String?) {
+        self.id = id
+        self.device = device
+        self.value = value
+        self.convertedValue = convertedValue
+        self.color = color
+        self.icon = icon
+        self.convertDescription = convertDescription
+        self.nativeType = nativeType
+        self.showValueAndIcon = showValueAndIcon
+        self.stateToIcon = stateToIcon
+        self.stateToColor = stateToColor
+        self.isCombined = isCombined
+        self.additionalText = additionalText
+    }
+    
     var completeValue : String {
         get {
             return self.convertedValue ?? self.value ?? "N/A"

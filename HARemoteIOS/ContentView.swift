@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SwiftData
+import SignalRClient
+
 
 private struct MainWindowSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
@@ -66,6 +68,60 @@ struct ContentView: View {
     
     @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
 
+    @State private var connection: HubConnection?
+    
+    private func openUrl(id: String, device: String, command: String, url: String) async {
+        return
+    }
+    
+    private func stateChanged(device: String, state: String, value: String, convertedValue: String, icon: String, color: Int64?, lastChange: String) async {
+        // If no matching state exists, nothing to do quickly
+        guard remoteStates.contains(where: { $0.device == device && $0.id == state }) else { return }
+        
+        DispatchQueue.main.async {
+            // Rebuild the array by replacing only the matching item with a new IState instance
+            let updated: [IState] = remoteStates.map { s in
+                if s.device == device && s.id == state {
+                    return IState(
+                        id: s.id,
+                        device: s.device,
+                        value: value,
+                        convertedValue: convertedValue,
+                        color: color,
+                        icon: icon,
+                        convertDescription: s.convertDescription,
+                        nativeType: s.nativeType,
+                        showValueAndIcon: s.showValueAndIcon,
+                        stateToIcon: s.stateToIcon,
+                        stateToColor: s.stateToColor,
+                        isCombined: s.isCombined,
+                        additionalText: s.additionalText
+                    )
+                } else {
+                    return s
+                }
+            }
+            remoteStates = updated
+        }
+    }
+
+    private func setupConnection() async throws {
+        guard connection == nil else {
+            return
+        }
+        
+        connection = HubConnectionBuilder()
+            .withUrl(url: "http://192.168.5.106:5000/homeautomation")
+            .withAutomaticReconnect()
+            .withLogLevel(logLevel: LogLevel.debug)
+            .build()
+
+        await connection!.on("OpenUrl", handler:openUrl)
+        await connection!.on("StateChanged", handler:stateChanged)
+
+        try await connection!.start()
+    }
+    
     var body: some View {
         GeometryReader { geo in
             if isLoading {
@@ -171,6 +227,7 @@ struct ContentView: View {
                             }                            
                         }
                     }
+                    try await setupConnection()
                 } catch {
                     
                 }
