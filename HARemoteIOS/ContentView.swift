@@ -70,11 +70,90 @@ struct ContentView: View {
 
     @State private var connection: HubConnection?
     
-    private func openUrl(id: String, device: String, command: String, url: String) async {
+    @State private var macroQuestionId: String = ""
+    @State private var macroQuestion: String = ""
+    @State private var macroYesOption: String = ""
+    @State private var macroNoOption: String = ""
+    @State private var macroOptions: [String] = []
+    @State private var macroDefaultOption: Int = 0
+    @State private var showMacroSelectionList: Bool = false
+    @State private var showMacroQuestion: Bool = false
+    
+    
+    private func openUrl(id: String?, device: String?, command: String?, url: String?) async {
+        NSLog("openUrl(\(id), \(device), \(command), \(url))")
         return
     }
     
-    private func stateChanged(device: String, state: String, value: String, convertedValue: String, icon: String, color: Int64?, lastChange: String) async {
+    private func openWebsite(id: String, device: String, command: String, url: String) async {
+        NSLog("openWebsite(\(id), \(device), \(command), \(url))")
+        return
+    }
+    
+    private func commandReceived(id: String, device: String, command: String, message: String) async {
+        NSLog("commandReceived(\(id), \(device), \(command), \(message))")
+        return
+    }
+
+    private func commandExecuted(id: String, device: String, command: String, message: String) async {
+        NSLog("commandExecuted(\(id), \(device), \(command), \(message))")
+        return
+    }
+
+    private func openRemote(id: String, zone: String?, remote: String, page: String) async {
+        NSLog("openRemote(\(id), \(zone), \(remote), \(page))")
+        return
+    }
+    
+    private func macroSelectionTimeout(id: String) async {
+        DispatchQueue.main.async {
+            closeMacroSheets()
+        }
+    }
+    
+    private func macroQuestion(id: String?, question: String?, yesOption: String?, noOption: String?, defaultOption: Int, timeout: Int) async {
+        macroQuestionId = id ?? ""
+        macroQuestion = question ?? ""
+        macroYesOption = yesOption ?? ""
+        macroNoOption = noOption ?? ""
+        macroDefaultOption = defaultOption
+        DispatchQueue.main.async {
+            showMacroQuestion = true
+        }
+    }
+    
+    private func macroSelectionList(id: String?, question: String, options: [String]?, defaultOption: Int, timeout: Int) async {
+        macroQuestionId = id ?? ""
+        macroQuestion = question
+        macroOptions = options ?? []
+        macroDefaultOption = defaultOption
+        DispatchQueue.main.async {
+            showMacroSelectionList  = true
+        }
+    }
+    
+    private func closeMacroSheets() {
+        macroQuestionId = ""
+        macroQuestion = ""
+        macroYesOption = ""
+        macroNoOption = ""
+        macroOptions = []
+        macroDefaultOption = 0
+        showMacroSelectionList = false
+        showMacroQuestion = false
+    }
+    
+    private func continueMacro(index: Int) {
+        let param = ContinueMacroParameter(currentTaskId: macroQuestionId, currentAnswer: index)
+        let parameter = try? JSONEncoder().encode(param)
+        let jsonString = String(data: parameter!, encoding: .utf8)
+        let id = HomeRemoteAPI.shared.sendCommandParameter(device: "macro", command: "ContinueMacro", parameter: jsonString!)
+        DispatchQueue.main.async {
+            closeMacroSheets()
+        }
+    }
+
+    private func stateChanged(device: String, state: String, value: String, convertedValue: String, icon: String?, color: String?, lastChange: String) async {
         // If no matching state exists, nothing to do quickly
         guard remoteStates.contains(where: { $0.device == device && $0.id == state }) else { return }
         
@@ -82,12 +161,16 @@ struct ContentView: View {
             // Rebuild the array by replacing only the matching item with a new IState instance
             let updated: [IState] = remoteStates.map { s in
                 if s.device == device && s.id == state {
+                    var colorIn: Int64? = nil
+                    if color != nil {
+                        colorIn = Int64(color!)
+                    }
                     return IState(
                         id: s.id,
                         device: s.device,
                         value: value,
                         convertedValue: convertedValue,
-                        color: color,
+                        color: colorIn,
                         icon: icon,
                         convertDescription: s.convertDescription,
                         nativeType: s.nativeType,
@@ -113,11 +196,18 @@ struct ContentView: View {
         connection = HubConnectionBuilder()
             .withUrl(url: "http://192.168.5.106:5000/homeautomation")
             .withAutomaticReconnect()
-            .withLogLevel(logLevel: LogLevel.debug)
+            .withLogLevel(logLevel: LogLevel.warning)
             .build()
 
-        await connection!.on("OpenUrl", handler:openUrl)
-        await connection!.on("StateChanged", handler:stateChanged)
+        await connection!.on("StateChanged", handler: stateChanged)
+        await connection!.on("CommandReceived", handler: commandReceived)
+        await connection!.on("CommandExecuted", handler: commandExecuted)
+        await connection!.on("OpenWebsite", handler: openWebsite)
+        await connection!.on("OpenRemote", handler: openRemote)
+        await connection!.on("OpenUrl", handler: openUrl)
+        await connection!.on("MacroSelectionTimeout", handler: macroSelectionTimeout)
+        await connection!.on("MacroQuestion", handler: macroQuestion)
+        await connection!.on("MacroSelectionList", handler: macroSelectionList)
 
         try await connection!.start()
     }
@@ -157,6 +247,35 @@ struct ContentView: View {
                     .tabItem {
                         Label("History", systemImage: "checklist")
                     }
+                }
+                .sheet(isPresented: $showMacroSelectionList) {
+                        ScrollView{
+                            VStack {
+                                Text(macroQuestion)
+                                    .font(.title)
+                                Divider()
+                                ForEach(macroOptions, id: \.self) { option in
+                                    let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
+                                    if isDefault {
+                                        Button(option) {
+                                            continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
+                                            return
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .buttonStyle(.glass)
+                                        .tint(Color.orange)
+                                    } else {
+                                        Button(option) {
+                                            continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
+                                            return
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .buttonStyle(.glass)
+                                        
+                                    }
+                                }
+                            }
+                        }
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing){
