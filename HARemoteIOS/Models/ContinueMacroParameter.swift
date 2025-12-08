@@ -8,11 +8,11 @@
 import Foundation
 
 class ContinueMacroParameter: Decodable, Encodable, Identifiable {
-    let currentTaskId: String
-    let currentAnswer: Int
+    let CurrentTaskId: String
+    let CurrentAnswer: Int
     
     init(currentTaskId: String = "", currentAnswer: Int = -1) {
-        self.currentTaskId = currentTaskId
-        self.currentAnswer = currentAnswer
+        CurrentTaskId = currentTaskId
+        CurrentAnswer = currentAnswer
     }
 }

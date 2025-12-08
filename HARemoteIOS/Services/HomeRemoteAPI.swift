@@ -78,12 +78,16 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     func sendCommandParameter(device: String, command: String, parameter: String) -> String {
         let uuid = UUID().uuidString
         let myParameter = escapingUrl(url: parameter)
-        let urlString = "http://192.168.5.106:5000/api/HomeAutomation/CommandParameter?id=\(uuid)&device=\(device)&command=\(command)&parameter\(myParameter ?? "")"
+        let urlString = "http://192.168.5.106:5000/api/HomeAutomation/CommandParameter?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter ?? "")"
         let url = URL(string: urlString)!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error as? URLError {
+                NSLog(error.failingURL?.absoluteString ?? "")
+            }
+        }
+        .resume()
         return uuid
     }
 }

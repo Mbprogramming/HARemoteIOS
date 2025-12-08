@@ -196,7 +196,7 @@ struct ContentView: View {
         connection = HubConnectionBuilder()
             .withUrl(url: "http://192.168.5.106:5000/homeautomation")
             .withAutomaticReconnect()
-            .withLogLevel(logLevel: LogLevel.warning)
+            .withLogLevel(logLevel: LogLevel.debug)
             .build()
 
         await connection!.on("StateChanged", handler: stateChanged)
@@ -249,33 +249,42 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $showMacroSelectionList) {
-                        ScrollView{
-                            VStack {
-                                Text(macroQuestion)
-                                    .font(.title)
-                                Divider()
-                                ForEach(macroOptions, id: \.self) { option in
-                                    let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
-                                    if isDefault {
-                                        Button(option) {
-                                            continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
-                                            return
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .buttonStyle(.glass)
-                                        .tint(Color.orange)
-                                    } else {
-                                        Button(option) {
-                                            continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
-                                            return
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .buttonStyle(.glass)
-                                        
+                    ScrollView{
+                        VStack {
+                            Text(macroQuestion)
+                                .font(.title)
+                            Divider()
+                            ForEach(macroOptions, id: \.self) { option in
+                                let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
+                                if isDefault {
+                                    Button(option) {
+                                        continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
+                                        return
                                     }
+                                    .frame(maxWidth: .infinity)
+                                    .buttonStyle(.glass)
+                                    .tint(Color.orange)
+                                } else {
+                                    Button(option) {
+                                        continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
+                                        return
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .buttonStyle(.glass)
+                                    
                                 }
                             }
                         }
+                    }
+                }
+                .sheet(isPresented: $showMacroQuestion) {
+                    ScrollView{
+                        VStack {
+                            Text(macroQuestion)
+                                .font(.title)
+                            Divider()
+                        }
+                    }
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing){
