@@ -79,6 +79,12 @@ struct ContentView: View {
     @State private var showMacroSelectionList: Bool = false
     @State private var showMacroQuestion: Bool = false
     
+    private func deleteHistory(indexSet: IndexSet) {
+        for i in indexSet {
+            let remoteHistoryItem = remoteHistory[i]
+            modelContext.delete(remoteHistoryItem)
+        }
+    }
     
     private func openUrl(id: String?, device: String?, command: String?, url: String?) async {
         NSLog("openUrl(\(id), \(device), \(command), \(url))")
@@ -101,7 +107,28 @@ struct ContentView: View {
     }
 
     private func openRemote(id: String, zone: String?, remote: String, page: String) async {
-        NSLog("openRemote(\(id), \(zone), \(remote), \(page))")
+        DispatchQueue.main.async {
+            if let newRemote = remotes.first(where: {$0.id == remote}) {
+                remoteStates = []
+                currentRemote = newRemote
+                currentRemoteItem = newRemote.remote
+                
+                let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
+                if itemToUpdate != nil {
+                    itemToUpdate?.lastUsed = Date()
+                } else {
+                    modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
+                }
+                if remoteHistory.count > 6 {
+                    let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
+                    deleteHistory(indexSet: indexSet)
+                }
+                remoteItemStack.removeAll()
+                Task {
+                    remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                }
+            }
+        }
         return
     }
     

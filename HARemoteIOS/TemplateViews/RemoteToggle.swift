@@ -21,7 +21,7 @@ struct RemoteToggle: View {
     var body: some View {
         if let state = remoteStates.first(where: { $0.device == remoteItem?.stateDevice && $0.id == remoteItem?.state }) {
             VStack {
-                if state.value == "True" {
+                if state.value == "True" || state.value == "ON" {
                     Toggle("", isOn: $isEnabled2)
                         .labelsHidden()
                         .onChange(of: isEnabled2) {

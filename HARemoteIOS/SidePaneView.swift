@@ -98,7 +98,7 @@ struct ItemView: View {
         }
         .contentShape(Rectangle())
         .swipeActions(edge: .leading) {
-            Button(favorite ? "Unfavorite" : "Favorite", systemImage: "star.fill") {
+            Button("Favorite", systemImage: favorite ? "star" : "star.fill") {
                 toggleFavorite(remoteId: remote.id)
             }
             .tint(favorite ? Color.gray : Color.yellow)
