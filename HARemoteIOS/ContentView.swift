@@ -196,7 +196,7 @@ struct ContentView: View {
         connection = HubConnectionBuilder()
             .withUrl(url: "http://192.168.5.106:5000/homeautomation")
             .withAutomaticReconnect()
-            .withLogLevel(logLevel: LogLevel.debug)
+            .withLogLevel(logLevel: LogLevel.warning)
             .build()
 
         await connection!.on("StateChanged", handler: stateChanged)
@@ -231,7 +231,7 @@ struct ContentView: View {
                     .tabItem {
                         Label("Remote", systemImage: "av.remote")
                     }
-
+                    
                     NavigationView {
                         StateView(remoteStates: $remoteStates)
                             .ignoresSafeArea()
@@ -239,7 +239,7 @@ struct ContentView: View {
                     .tabItem {
                         Label("States", systemImage: "flag")
                     }
-
+                    
                     NavigationView {
                         HistoryView(commandIds: $commandIds)
                             .ignoresSafeArea()
@@ -249,7 +249,7 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $showMacroSelectionList) {
-                    ScrollView{
+                    ScrollView {
                         VStack {
                             Text(macroQuestion)
                                 .font(.title)
@@ -257,35 +257,103 @@ struct ContentView: View {
                             ForEach(macroOptions, id: \.self) { option in
                                 let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
                                 if isDefault {
-                                    Button(option) {
+                                    Button(action: {
                                         continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
                                         return
+                                    }){
+                                        Text(option)
+                                            .bold()
+                                            .font(.title3)
+                                            .frame(maxWidth: .infinity)
                                     }
-                                    .frame(maxWidth: .infinity)
                                     .buttonStyle(.glass)
                                     .tint(Color.orange)
+                                    .padding()
                                 } else {
-                                    Button(option) {
+                                    Button(action: {
                                         continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
                                         return
+                                    }){
+                                        Text(option)
+                                            .font(.title3)
+                                            .frame(maxWidth: .infinity)
                                     }
-                                    .frame(maxWidth: .infinity)
                                     .buttonStyle(.glass)
-                                    
+                                    .padding()
                                 }
+                            }
+                        }
+                        .padding()
+                    }
+                    .presentationDetents([.medium])
+                }
+                .sheet(isPresented: $showMacroQuestion) {
+                    ScrollView {
+                        VStack {
+                    Text(macroQuestion)
+                        .font(.title)
+                    Divider()
+                    HStack {
+                        if macroYesOption.isEmpty == false {
+                            if macroDefaultOption == 0 {
+                                Button(action: {
+                                    continueMacro(index: 0)
+                                    return
+                                }){
+                                    Text(macroYesOption)
+                                        .font(.title3)
+                                        .bold()
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.glass)
+                                .tint(Color.orange)
+                                .padding()
+                            } else {
+                                Button(action: {
+                                    continueMacro(index: 0)
+                                    return
+                                }){
+                                    Text(macroYesOption)
+                                        .font(.title3)
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.glass)
+                                .padding()
+                            }
+                        }
+                        if macroNoOption.isEmpty == false {
+                            if macroDefaultOption == 1 {
+                                Button(action: {
+                                    continueMacro(index: 1)
+                                    return
+                                }){
+                                    Text(macroNoOption)
+                                        .bold()
+                                        .font(.title3)
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.glass)
+                                .tint(Color.orange)
+                                .padding()
+                            } else {
+                                Button(action: {
+                                    continueMacro(index: 1)
+                                    return
+                                }){
+                                    Text(macroNoOption)
+                                        .font(.title3)
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.glass)
+                                .padding()
                             }
                         }
                     }
                 }
-                .sheet(isPresented: $showMacroQuestion) {
-                    ScrollView{
-                        VStack {
-                            Text(macroQuestion)
-                                .font(.title)
-                            Divider()
-                        }
-                    }
-                }
+                .padding()
+            }
+            .presentationDetents([.medium])
+        }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing){
                         Button("Remote History", systemImage: "list.bullet.badge.ellipsis"){

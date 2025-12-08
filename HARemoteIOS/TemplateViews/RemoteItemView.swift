@@ -116,7 +116,7 @@ struct RemoteItemView: View {
                     Text("Remote Item Template is nil")
                 }
             } else {
-                Text("Remote Item is nil")
+                ProgressView()
             }
     }
 }
