@@ -251,8 +251,10 @@ struct ContentView: View {
                 .sheet(isPresented: $showMacroSelectionList) {
                     ScrollView {
                         VStack {
-                            Text(macroQuestion)
-                                .font(.title)
+                                Label("Continue Macro", systemImage: "list.triangle")
+                                    .font(.title2)
+                                Text(macroQuestion)
+                                    .font(.title)
                             Divider()
                             ForEach(macroOptions, id: \.self) { option in
                                 let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
@@ -289,9 +291,11 @@ struct ContentView: View {
                 }
                 .sheet(isPresented: $showMacroQuestion) {
                     ScrollView {
-                        VStack {
-                    Text(macroQuestion)
-                        .font(.title)
+                        VStack{
+                            Label("Continue Macro", systemImage: "questionmark")
+                                .font(.title2)
+                            Text(macroQuestion)
+                                .font(.title)
                     Divider()
                     HStack {
                         if macroYesOption.isEmpty == false {

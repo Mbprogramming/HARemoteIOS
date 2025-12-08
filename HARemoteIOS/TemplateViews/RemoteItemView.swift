@@ -29,7 +29,7 @@ struct RemoteItemView: View {
                 case .Command:
                     RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .OnOff:
-                    Text("Remote Item Template is OnOff")
+                    RemoteToggle(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Headline:
                     Text(remoteItem?.description ?? "Unknown")
                         .padding()
