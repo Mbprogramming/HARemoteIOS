@@ -13,6 +13,7 @@ struct AsyncServerImage: View {
     var imageWidth: Int = 40
     var imageHeight: Int = 40
     var imageId: String?
+    var background: Bool = false
         
     func getBackgroundUrl(currentScheme: ColorScheme) -> String? {
         guard let icon = imageId else { return nil }
@@ -33,9 +34,17 @@ struct AsyncServerImage: View {
                     case .empty:
                         ProgressView()
                     case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
+                        if background {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .brightness(colorScheme == .light ? 0.35 : -0.35)
+                                .padding()
+                        } else {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
                     case .failure:
                         EmptyView()
                     @unknown default:

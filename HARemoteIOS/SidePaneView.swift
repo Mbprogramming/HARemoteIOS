@@ -202,7 +202,7 @@ struct SidePaneView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing){
-                    Button("Back", systemImage: "arrow.down"){
+                    Button("Back", systemImage: "chevron.down"){
                         isVisible = false
                     }
                 }
