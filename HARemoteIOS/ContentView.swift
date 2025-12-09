@@ -281,7 +281,7 @@ struct ContentView: View {
                         Label("History", systemImage: "checklist")
                     }
                 }
-                .sheet(isPresented: $showMacroSelectionList) {
+                .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     ScrollView {
                         VStack {
                                 Label("Continue Macro", systemImage: "list.triangle")
@@ -322,7 +322,7 @@ struct ContentView: View {
                     }
                     .presentationDetents([.medium])
                 }
-                .sheet(isPresented: $showMacroQuestion) {
+                .sheet(isPresented: $showMacroQuestion) { [macroQuestion, macroYesOption, macroNoOption, macroDefaultOption] in
                     ScrollView {
                         VStack{
                             Label("Continue Macro", systemImage: "questionmark")
@@ -391,7 +391,7 @@ struct ContentView: View {
             }
             .presentationDetents([.medium])
         }
-                .sheet(isPresented: $showWebView) {
+                .sheet(isPresented: $showWebView) { [url] in
                         if let url = url {
                             WebView(url: url)
                     }
