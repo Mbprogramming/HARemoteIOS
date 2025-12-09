@@ -94,7 +94,7 @@ struct RemoteItemView: View {
                 case .SelectionListBri:
                     Text("Remote Item Template is SelectionListBri")
                 case .CommandList:
-                    Text("Remote Item Template is CommandList")
+                    RemoteButtonCommandList(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SelectionListParameter:
                     Text("Remote Item Template is SelectionListParameter")
                 case .StateList:

@@ -16,19 +16,26 @@ struct RemoteButtonCommandList: View {
     @Binding var remoteStates: [IState]
     
     var body: some View {
-        Button(action: {}){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
+        Menu {
+            if let items = remoteItem?.commandMenuItems {
+                ForEach(items, id:\.self.description) { item in
+                    Button(item.description ?? "", action: {
+                        let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
+                        commandIds.append(id)
+                    })
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .buttonStyle(.bordered)
+               } label: {
+                   HStack {
+                       let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
+                       ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
+                   }
+                   .frame(maxWidth: .infinity, maxHeight: .infinity)
+               }
+               .buttonStyle(.bordered)
         .tint(Color.primary)
         .buttonBorderShape(.roundedRectangle(radius: 10))
         .shadow(radius: 5)
-        //.buttonStyle(.glass)
-        //.frame(height: 150)
     }
 }
 
