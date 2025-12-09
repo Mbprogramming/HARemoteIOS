@@ -9,7 +9,11 @@ import SwiftUI
 import Foundation
 import Observation
 
-@Observable class IState: Decodable, Identifiable {
+@Observable class IState: Decodable, Identifiable, Equatable {
+    static func == (lhs: IState, rhs: IState) -> Bool {
+        return lhs.device == rhs.device && lhs.id == rhs.id && lhs.value == rhs.value
+    }
+    
     let id: String?
     let device: String?
     let value: String?

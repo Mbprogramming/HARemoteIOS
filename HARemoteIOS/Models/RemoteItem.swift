@@ -30,13 +30,13 @@ import Observation
     //max    [...]
     //step    [...]
     //greatStep    [...]
-    //steps    [...]
+    let steps: [StringStringTuple]?
     //lastChange    [...]
     //moreParameter    {...}
     //nullable: true
     //defaultConverter    [...]
     let gridHalfHeight: Bool?
-    //commandMenuItems    [...]
+    let commandMenuItems: [RemoteItem]?
     //stateList    [...]
     //gridBackgroundOpacity    [...]
     //gridBackgroundColor    [...]
