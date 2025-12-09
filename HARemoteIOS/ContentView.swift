@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 import SignalRClient
-
+import WebKit
 
 private struct MainWindowSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
@@ -78,6 +78,8 @@ struct ContentView: View {
     @State private var macroDefaultOption: Int = 0
     @State private var showMacroSelectionList: Bool = false
     @State private var showMacroQuestion: Bool = false
+    @State private var showWebView: Bool = false
+    @State private var url: URL? = URL(string: "https://www.createwithswift.com")
     
     private func deleteHistory(indexSet: IndexSet) {
         for i in indexSet {
@@ -87,13 +89,17 @@ struct ContentView: View {
     }
     
     private func openUrl(id: String?, device: String?, command: String?, url: String?) async {
-        NSLog("openUrl(\(id), \(device), \(command), \(url))")
         return
     }
     
-    private func openWebsite(id: String, device: String, command: String, url: String) async {
-        NSLog("openWebsite(\(id), \(device), \(command), \(url))")
-        return
+    private func showChart(id: String?, device: String?, command: String?, url: String?) async {
+        if let url {
+            let newUrl = url.removingPercentEncoding ?? ""
+            self.url = URL(string: newUrl)
+            DispatchQueue.main.async {
+                showWebView = true
+            }
+        }
     }
     
     private func commandReceived(id: String, device: String, command: String, message: String) async {
@@ -229,7 +235,7 @@ struct ContentView: View {
         await connection!.on("StateChanged", handler: stateChanged)
         await connection!.on("CommandReceived", handler: commandReceived)
         await connection!.on("CommandExecuted", handler: commandExecuted)
-        await connection!.on("OpenWebsite", handler: openWebsite)
+        await connection!.on("ShowChart", handler: showChart)
         await connection!.on("OpenRemote", handler: openRemote)
         await connection!.on("OpenUrl", handler: openUrl)
         await connection!.on("MacroSelectionTimeout", handler: macroSelectionTimeout)
@@ -385,6 +391,11 @@ struct ContentView: View {
             }
             .presentationDetents([.medium])
         }
+                .sheet(isPresented: $showWebView) {
+                        if let url = url {
+                            WebView(url: url)
+                    }
+                }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing){
                         Button("Remote History", systemImage: "list.bullet.badge.ellipsis"){

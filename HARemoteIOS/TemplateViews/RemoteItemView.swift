@@ -76,12 +76,7 @@ struct RemoteItemView: View {
                     Text("Remote Item Template is Space")
                 case .Divider:
                     VStack {
-                        Spacer(minLength: 3)
-                        Rectangle()
-                            .fill(.clear)
-                            .border(Color.black)
-                            .frame(height: 1)
-                        Spacer(minLength: 3)
+                        Divider()
                     }
                 case .Touch:
                     Text("Remote Item Template is Touch")
@@ -102,11 +97,13 @@ struct RemoteItemView: View {
                 case .Grid5x3:
                     HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Grid5x3Inline:
-                    Text("Remote Item Template is Grid5x3Inline")
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                        .frame(height: calcInlineRowHeightWidth(columns: 5) * 5)
                 case .Grid6x4:
                     HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Grid6x4Inline:
-                    Text("Remote Item Template is Grid6x4Inline")
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                        .frame(height: calcInlineRowHeightWidth(columns: 6) * 5)
                 case .TwoColumnList:
                     Text("Remote Item Template is TwoColumnList")
                 case .EmptyListItem:
