@@ -5,6 +5,7 @@
 //  Created by Markus Bach on 24.11.25.
 //
 
+import SwiftUI
 import Foundation
 
 protocol HomeRemoteAPIProtocol {
@@ -13,6 +14,10 @@ protocol HomeRemoteAPIProtocol {
 }
 
 final class HomeRemoteAPI: HomeRemoteAPIProtocol {
+    @AppStorage("server") var server: String = "http://192.168.5.106:5000"
+    @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
+    @AppStorage("application") var application: String = "HARemoteIOS"
+    
     static let shared = HomeRemoteAPI()
     
     private var zones: [Zone] = []
@@ -24,8 +29,14 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     func getZonesComplete() async throws -> [Zone] {
         if zones.count <= 0 {
-            let url = URL(string: "http://192.168.5.106:5000/api/homeautomation/zonescomplete")!
-            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let url = URL(string: "\(server)/api/homeautomation/zonescomplete") else { return [] }
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("\(username)", forHTTPHeaderField: "X-User")
+            request.setValue("\(application)", forHTTPHeaderField: "X-App")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
             let decoder = JSONDecoder()
             zones = try decoder.decode([Zone].self, from: data)
         }
@@ -34,8 +45,13 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     func getRemotes() async throws -> [Remote] {
         if remotes.count <= 0 {
-            let url = URL(string: "http://192.168.5.106:5000/api/homeautomation/remotes")!
-            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let url = URL(string: "\(server)/api/homeautomation/remotes") else { return [] }
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("\(username)", forHTTPHeaderField: "X-User")
+            request.setValue("\(application)", forHTTPHeaderField: "X-App")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
             let decoder = JSONDecoder()
             remotes = try decoder.decode([Remote].self, from: data)
         }
@@ -44,8 +60,13 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     func getMainCommands() async throws -> [RemoteItem] {
         if mainCommands.count <= 0 {
-            let url = URL(string: "http://192.168.5.106:5000/api/homeautomation/maincommands")!
-            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let url = URL(string: "\(server)/api/homeautomation/maincommands") else { return [] }
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("\(username)", forHTTPHeaderField: "X-User")
+            request.setValue("\(application)", forHTTPHeaderField: "X-App")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
             let decoder = JSONDecoder()
             mainCommands = try decoder.decode([RemoteItem].self, from: data)
         }
@@ -53,17 +74,25 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     }
     
     func getRemoteStates(remoteId: String) async throws -> [IState] {
-        let url = URL(string: "http://192.168.5.106:5000/api/homeautomation/allremotestates?remoteId=" + remoteId)!
-        let (data, _) = try await URLSession.shared.data(from: url)
+        guard let url = URL(string: "\(server)/api/homeautomation/allremotestates?remoteId=" + remoteId) else { return [] }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
         let decoder = JSONDecoder()
         return try decoder.decode([IState].self, from: data)
     }
     
     func sendCommand(device: String, command: String) -> String {
         let uuid = UUID().uuidString
-        let url = URL(string: "http://192.168.5.106:5000/api/HomeAutomation?id=" + uuid + "&device=" + device + "&command=" + command)!
+        guard let url = URL(string: "\(server)/api/HomeAutomation?id=" + uuid + "&device=" + device + "&command=" + command) else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+
         let _ = URLSession.shared.dataTask(with: request)
             .resume()
         return uuid
@@ -78,10 +107,13 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     func sendCommandParameter(device: String, command: String, parameter: String) -> String {
         let uuid = UUID().uuidString
         let myParameter = escapingUrl(url: parameter)
-        let urlString = "http://192.168.5.106:5000/api/HomeAutomation/CommandParameter?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter ?? "")"
-        let url = URL(string: urlString)!
+        let urlString = "\(server)/api/HomeAutomation/CommandParameter?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter ?? "")"
+        guard let url = URL(string: urlString) else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+        
         let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error as? URLError {
                 NSLog(error.failingURL?.absoluteString ?? "")

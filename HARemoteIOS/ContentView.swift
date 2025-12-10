@@ -81,6 +81,10 @@ struct ContentView: View {
     @State private var showWebView: Bool = false
     @State private var url: URL? = URL(string: "https://www.createwithswift.com")
     
+    @AppStorage("server") var server: String = "http://192.168.5.106:5000"
+    @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
+    @AppStorage("application") var application: String = "HARemoteIOS"
+    
     private func deleteHistory(indexSet: IndexSet) {
         for i in indexSet {
             let remoteHistoryItem = remoteHistory[i]
@@ -227,7 +231,7 @@ struct ContentView: View {
         }
         
         connection = HubConnectionBuilder()
-            .withUrl(url: "http://192.168.5.106:5000/homeautomation")
+            .withUrl(url: "\(server)/homeautomation")
             .withAutomaticReconnect()
             .withLogLevel(logLevel: LogLevel.warning)
             .build()

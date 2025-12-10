@@ -199,6 +199,10 @@ struct SidePaneView: View {
                 .tabItem {
                     Label("Zones", systemImage: "square.split.bottomrightquarter.fill")
                 }
+                UserSettings()
+                    .tabItem{
+                        Label("Settings", systemImage: "gear")
+                    }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing){

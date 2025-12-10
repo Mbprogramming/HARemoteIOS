@@ -14,8 +14,8 @@
             filePath = "HARemoteIOS/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "macroQuestion(id:question:yesOption:noOption:defaultOption:timeout:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,9 +30,25 @@
             filePath = "HARemoteIOS/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
             landmarkName = "showChart(id:device:command:url:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2CA01C70-CFF1-46CE-9BB4-373F462B103B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HARemoteIOS/Services/HomeRemoteAPI.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "getZonesComplete()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
