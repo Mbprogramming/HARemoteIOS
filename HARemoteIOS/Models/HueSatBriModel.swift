@@ -13,52 +13,113 @@ import Observation
     var saturation: Int = 0
     var brightness: Int = 0
     
+    var hueMin: Int = 0
+    var hueMax: Int = 255
+    var saturationMin: Int = 0
+    var saturationMax: Int = 255
+    var brightnessMin: Int = 0
+    var brightnessMax: Int = 255
+
+    public func setRanges(min: String, max: String) {
+        let partsMin = min.components(separatedBy: ";")
+        for part in partsMin {
+            let inner = part.components(separatedBy: ":")
+            if inner.count == 2 {
+                if inner[0] == "Hue" {
+                    hueMin = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "Saturation" {
+                    saturationMin = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "Brightness" {
+                    brightnessMin = Int(inner[1]) ?? 0
+                }
+            }
+        }
+        let partsMax = max.components(separatedBy: ";")
+        for part in partsMax {
+            let inner = part.components(separatedBy: ":")
+            if inner.count == 2 {
+                if inner[0] == "Hue" {
+                    hueMax = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "Saturation" {
+                    saturationMax = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "Brightness" {
+                    brightnessMax = Int(inner[1]) ?? 0
+                }
+            }
+        }
+        hue = hueMin
+        saturation = saturationMin
+        brightness = brightnessMin
+    }
+    
+    public func setState(state: IState) {
+        let partsValue = state.value?.components(separatedBy: ";") ?? []
+        for part in partsValue {
+            let inner = part.components(separatedBy: ":")
+            if inner.count == 2 {
+                if inner[0] == "Hue" {
+                    hue = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "Saturation" {
+                    saturation = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "Brightness" {
+                    brightness = Int(inner[1]) ?? 0
+                }
+            }
+        }
+    }
+    
     let hueRange: ClosedRange<Double> = 0...1
     let saturationRange: ClosedRange<Double> = 0...1
     let brightnessRange: ClosedRange<Double> = 0...1
     
     var hueDouble: Double {
         get {
-            return Double(self.hue) / 255.0
+            return Double(hue - hueMin) / Double(hueMax - hueMin)
         }
         set {
-            self.hue = Int(newValue * 255.0)
+            hue = Int(newValue * Double(hueMax - hueMin)) + hueMin
         }
     }
     
     var hueString: String {
         get {
-            return "\((Double(self.hue) * 360.0 / 255).rounded())°"
+            return "\((Double(hue - hueMin) * 360.0 / Double(hueMax - hueMin)).rounded())°"
         }
     }
     
     var saturationDouble: Double {
         get {
-            return Double(self.saturation) / 255.0
+            return Double(saturation - saturationMin) / Double(saturationMax - saturationMin)
         }
         set {
-            self.saturation = Int(newValue * 255.0)
+            saturation = Int(newValue * Double(saturationMax - saturationMin)) + saturationMin
         }
     }
     
     var saturationString: String {
         get {
-            return "\((Double(self.saturation) * 100.0 / 254).rounded())%"
+            return "\((Double(saturation - saturationMin) * 100.0 / Double(saturationMax - saturationMin)).rounded())%"
         }
     }
     
     var brightnessDouble: Double {
         get {
-            return Double(self.brightness) / 255.0
+            return Double(brightness - brightnessMin) / Double(brightnessMax - brightnessMin)
         }
         set {
-            self.brightness = Int(newValue * 255.0)
+            brightness = Int(newValue * Double(brightnessMax - brightnessMin)) + brightnessMin
         }
     }
     
     var brightnessString: String {
         get {
-            return "\((Double(self.brightness) * 100.0 / 254).rounded())%"
+            return "\((Double(brightness - brightnessMin) * 100.0 / Double(brightnessMax - brightnessMin)).rounded())%"
         }
     }
 }

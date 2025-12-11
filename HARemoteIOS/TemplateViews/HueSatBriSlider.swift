@@ -23,6 +23,11 @@ struct HueSatBriSlider: View {
     
     var body: some View {
         Button(action: {
+            hueSatBriModel.setRanges(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
+            if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
+                hueSatBriModel.setState(state: state)
+            }
+            
             sliderVisible.toggle()
         }){
             HStack {

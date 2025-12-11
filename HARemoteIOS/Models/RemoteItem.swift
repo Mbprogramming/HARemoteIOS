@@ -26,10 +26,10 @@ import Observation
     let rowSpan: Int?
     let colSpan: Int?
     let icon: String?
-    //min    [...]
-    //max    [...]
-    //step    [...]
-    //greatStep    [...]
+    let min: String?
+    let max: String?
+    let step: String?
+    let greatStep: String?
     let steps: [StringStringTuple]?
     //lastChange    [...]
     //moreParameter    {...}
