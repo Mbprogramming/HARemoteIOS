@@ -22,7 +22,7 @@ import Observation
     var brightnessMax: Int = 255
     var temperatureMin: Int = 0
     var temperatureMax: Int = 255
-
+    
     public func setRanges(min: String, max: String) {
         let partsMin = min.components(separatedBy: ";")
         for part in partsMin {
@@ -91,7 +91,7 @@ import Observation
     let saturationRange: ClosedRange<Double> = 0...1
     let brightnessRange: ClosedRange<Double> = 0...1
     let temperatureRange: ClosedRange<Double> = 0...1
-
+    
     var hueDouble: Double {
         get {
             return Double(hue - hueMin) / Double(hueMax - hueMin)
@@ -106,22 +106,22 @@ import Observation
             return "\((Double(hue - hueMin) * 360.0 / Double(hueMax - hueMin)).rounded())°"
         }
     }
-
+    
     var temperatureDouble: Double {
         get {
             return Double(temperature - temperatureMin) / Double(temperatureMax - temperatureMin)
         }
         set {
-            hue = Int(newValue * Double(temperatureMax - temperatureMin)) + temperatureMin
+            temperature = Int(newValue * Double(temperatureMax - temperatureMin)) + temperatureMin
         }
     }
     
     var temperatureString: String {
         get {
-            return "\((Double(temperature - temperatureMin) / Double(temperatureMax - temperatureMin)).rounded())K"
+            return "\((1000000 / Double(temperature)).rounded())K"
         }
     }
-
+    
     
     var saturationDouble: Double {
         get {
@@ -156,6 +156,12 @@ import Observation
     var hueSatBriComplete: String {
         get {
             return "Hue:\(hue);Saturation:\(saturation);Brightness:\(brightness);"
+        }
+    }
+    
+    var tempBriComplete: String {
+        get {
+            return "ColorTemperature:\(temperature);Brightness:\(brightness);"
         }
     }
 }
