@@ -61,7 +61,7 @@ struct RemoteItemView: View {
                 case .SliderHue:
                     Text("Remote Item Template is SliderHue")
                 case .SliderHueSatBri:
-                    Text("Remote Item Template is SliderHueSatBri")
+                    HueSatBriSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SliderTempBri:
                     Text("Remote Item Template is SliderTempBri")
                 case .SliderHueHue:
