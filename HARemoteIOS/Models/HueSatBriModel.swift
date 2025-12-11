@@ -122,4 +122,10 @@ import Observation
             return "\((Double(brightness - brightnessMin) * 100.0 / Double(brightnessMax - brightnessMin)).rounded())%"
         }
     }
+    
+    var hueSatBriComplete: String {
+        get {
+            return "Hue:\(hue);Saturation:\(saturation);Brightness:\(brightness);"
+        }
+    }
 }

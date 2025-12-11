@@ -85,6 +85,14 @@ struct HueSatBriSlider: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                 }
+                HStack {
+                    Spacer()
+                    Button("Ok"){
+                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.hueSatBriComplete)
+                        commandIds.append(id)
+                        sliderVisible.toggle()
+                    }
+                }
             }
             .padding()
             .presentationDetents([.medium])
