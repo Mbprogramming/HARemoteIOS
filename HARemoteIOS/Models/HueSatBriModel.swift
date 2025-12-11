@@ -12,6 +12,7 @@ import Observation
     var hue: Int = 0
     var saturation: Int = 0
     var brightness: Int = 0
+    var temperature: Int = 0
     
     var hueMin: Int = 0
     var hueMax: Int = 255
@@ -19,6 +20,8 @@ import Observation
     var saturationMax: Int = 255
     var brightnessMin: Int = 0
     var brightnessMax: Int = 255
+    var temperatureMin: Int = 0
+    var temperatureMax: Int = 255
 
     public func setRanges(min: String, max: String) {
         let partsMin = min.components(separatedBy: ";")
@@ -33,6 +36,9 @@ import Observation
                 }
                 if inner[0] == "Brightness" {
                     brightnessMin = Int(inner[1]) ?? 0
+                }
+                if inner[0] == "ColorTemperature" {
+                    temperatureMin = Int(inner[1]) ?? 0
                 }
             }
         }
@@ -49,11 +55,15 @@ import Observation
                 if inner[0] == "Brightness" {
                     brightnessMax = Int(inner[1]) ?? 0
                 }
+                if inner[0] == "ColorTemperature" {
+                    temperatureMax = Int(inner[1]) ?? 0
+                }
             }
         }
         hue = hueMin
         saturation = saturationMin
         brightness = brightnessMin
+        temperature = temperatureMin
     }
     
     public func setState(state: IState) {
@@ -70,6 +80,9 @@ import Observation
                 if inner[0] == "Brightness" {
                     brightness = Int(inner[1]) ?? 0
                 }
+                if inner[0] == "ColorTemperature" {
+                    temperature = Int(inner[1]) ?? 0
+                }
             }
         }
     }
@@ -77,7 +90,8 @@ import Observation
     let hueRange: ClosedRange<Double> = 0...1
     let saturationRange: ClosedRange<Double> = 0...1
     let brightnessRange: ClosedRange<Double> = 0...1
-    
+    let temperatureRange: ClosedRange<Double> = 0...1
+
     var hueDouble: Double {
         get {
             return Double(hue - hueMin) / Double(hueMax - hueMin)
@@ -92,6 +106,22 @@ import Observation
             return "\((Double(hue - hueMin) * 360.0 / Double(hueMax - hueMin)).rounded())°"
         }
     }
+
+    var temperatureDouble: Double {
+        get {
+            return Double(temperature - temperatureMin) / Double(temperatureMax - temperatureMin)
+        }
+        set {
+            hue = Int(newValue * Double(temperatureMax - temperatureMin)) + temperatureMin
+        }
+    }
+    
+    var temperatureString: String {
+        get {
+            return "\((Double(temperature - temperatureMin) / Double(temperatureMax - temperatureMin)).rounded())K"
+        }
+    }
+
     
     var saturationDouble: Double {
         get {
