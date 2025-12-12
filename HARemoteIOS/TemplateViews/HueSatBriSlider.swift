@@ -86,12 +86,17 @@ struct HueSatBriSlider: View {
                         .padding()
                 }
                 HStack {
+                    Button("Cancel", systemImage: "xmark.circle") {
+                        sliderVisible.toggle()
+                    }
+                    .padding()
                     Spacer()
-                    Button("Ok"){
+                    Button("OK", systemImage: "checkmark.circle") {
                         let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.hueSatBriComplete)
                         commandIds.append(id)
                         sliderVisible.toggle()
                     }
+                    .padding()
                 }
             }
             .padding()

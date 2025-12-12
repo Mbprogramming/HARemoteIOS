@@ -82,12 +82,18 @@ struct TempBriSlider: View {
                 startPoint: .leading,
                 endPoint: .trailing
             )
-            //let colorFrom = colorTemperatureToRGB(hueSatBriModel.temperatureDouble)
-            //let colorTo = colorTemperatureToRGB(hueSatBriModel.temperatureDouble)
-            let brightnessGradient = LinearGradient(gradient: Gradient(colors: (0...255).map {
-                Color(hue: hueSatBriModel.hueDouble, saturation: 1.0, brightness: Double($0) / 255.0)
-            }), startPoint: .leading, endPoint: .trailing)
-
+            
+            let brightnessGradient = LinearGradient(
+                        gradient: Gradient(stops: [
+                            // Startpunkt (0% Helligkeit = Schwarz, da brightness 0.0 ist)
+                            Gradient.Stop(color: Color(hue: 0.0, saturation: 0.0, brightness: 0.0), location: 0.0),
+                            // Endpunkt (100% Helligkeit der Basisfarbe)
+                            Gradient.Stop(color: colorTemperatureToRGB((1000000 / Double(hueSatBriModel.temperature))), location: 1.0)
+                        ]),
+                        startPoint: .leading, // Beginnt links
+                        endPoint: .trailing   // Endet rechts
+                    )
+            
             VStack {
                 Text("Temperature")
                     .font(.caption)
@@ -113,12 +119,17 @@ struct TempBriSlider: View {
                 }
                 Spacer()
                 HStack {
+                    Button("Cancel", systemImage: "xmark.circle") {
+                        sliderVisible.toggle()
+                    }
+                    .padding()
                     Spacer()
-                    Button("Ok"){
+                    Button("OK", systemImage: "checkmark.circle") {
                         let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.tempBriComplete)
                         commandIds.append(id)
                         sliderVisible.toggle()
                     }
+                    .padding()
                 }
             }
             .padding()
