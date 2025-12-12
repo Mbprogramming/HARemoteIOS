@@ -17,7 +17,7 @@ struct HueSatBriSlider: View {
     
     @State private var sliderVisible: Bool = false
     
-    @State private var hueSatBriModel: HueSatBriModel = HueSatBriModel()
+    @State private var hueSatBriModel: HueSatBriTempModel = HueSatBriTempModel()
     
     @Environment(\.mainWindowSize) var mainWindowSize
     

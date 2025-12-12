@@ -8,7 +8,7 @@
 import Foundation
 import Observation
 
-@Observable final class HueSatBriModel {
+@Observable final class HueSatBriTempModel {
     var hue: Int = 0
     var saturation: Int = 0
     var brightness: Int = 0
@@ -121,7 +121,6 @@ import Observation
             return "\((1000000 / Double(temperature)).rounded())K"
         }
     }
-    
     
     var saturationDouble: Double {
         get {
