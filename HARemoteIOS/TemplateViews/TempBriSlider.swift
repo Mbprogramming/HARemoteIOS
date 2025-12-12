@@ -7,6 +7,71 @@
 
 import SwiftUI
 
+struct TempMenu: View {
+    @Binding var hueSatBriModel: HueSatBriTempModel
+    var body: some View {
+        HStack{
+            Menu {
+                Button("2000K") {
+                    hueSatBriModel.temperature = 500
+                }
+                Button("2700K") {
+                    hueSatBriModel.temperature = 370
+                }
+                Button("3000K") {
+                    hueSatBriModel.temperature = 333
+                }
+                Button("4500K") {
+                    hueSatBriModel.temperature = 222
+                }
+            } label: {
+                HStack {
+                    Text("\(hueSatBriModel.temperatureString)")
+                        .font(.caption)
+                    Image(systemName: "chevron.down")
+                }
+            }
+            .frame(width: 75)
+        }
+    }
+}
+
+struct BriMenu: View {
+    @Binding var hueSatBriModel: HueSatBriTempModel
+    var body: some View {
+        HStack{
+            Menu {
+                Button("10%") {
+                    let temp: Double = (Double(hueSatBriModel.brightnessMax) - Double(hueSatBriModel.brightnessMin)) * 0.1 + Double(hueSatBriModel.brightnessMin)
+                    hueSatBriModel.brightness = Int(temp)
+                }
+                Button("25%") {
+                    let temp: Double = (Double(hueSatBriModel.brightnessMax) - Double(hueSatBriModel.brightnessMin)) * 0.25 + Double(hueSatBriModel.brightnessMin)
+                    hueSatBriModel.brightness = Int(temp)
+                }
+                Button("50%") {
+                    let temp: Double = (Double(hueSatBriModel.brightnessMax) - Double(hueSatBriModel.brightnessMin)) * 0.5 + Double(hueSatBriModel.brightnessMin)
+                    hueSatBriModel.brightness = Int(temp)
+                }
+                Button("75%") {
+                    let temp: Double = (Double(hueSatBriModel.brightnessMax) - Double(hueSatBriModel.brightnessMin)) * 0.75 + Double(hueSatBriModel.brightnessMin)
+                    hueSatBriModel.brightness = Int(temp)
+                }
+                Button("100%") {
+                    hueSatBriModel.brightness = hueSatBriModel.brightnessMax
+                }
+            } label: {
+                HStack {
+                    Text("\(hueSatBriModel.brightnessString)")
+                        .font(.caption)
+                    Image(systemName: "chevron.down")
+                }
+            }
+            .frame(width: 75)
+        }
+    }
+}
+
 struct TempBriSlider: View {
     var remoteItem: RemoteItem?
     
@@ -98,7 +163,7 @@ struct TempBriSlider: View {
                 Text("Temperature")
                     .font(.caption)
                 HStack{
-                    Text("\(hueSatBriModel.temperatureString)")
+                    TempMenu(hueSatBriModel: $hueSatBriModel)
                         .frame(width: 75)
                     Slider(value: $hueSatBriModel.temperatureDouble, in: hueSatBriModel.temperatureRange)
                         .tint(.clear)
@@ -109,7 +174,7 @@ struct TempBriSlider: View {
                 Text("Brightness")
                     .font(.caption)
                 HStack{
-                    Text("\(hueSatBriModel.brightnessString)")
+                    BriMenu(hueSatBriModel: $hueSatBriModel)
                         .frame(width: 75)
                     Slider(value: $hueSatBriModel.brightnessDouble, in: hueSatBriModel.brightnessRange)
                         .tint(.clear)

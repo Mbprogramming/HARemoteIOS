@@ -7,6 +7,100 @@
 
 import SwiftUI
 
+struct SatMenu: View {
+    @Binding var hueSatBriModel: HueSatBriTempModel
+    var body: some View {
+        HStack{
+            Menu {
+                Button("0%") {
+                    hueSatBriModel.saturation = hueSatBriModel.saturationMin
+                }
+                Button("25%") {
+                    let temp: Double = (Double(hueSatBriModel.saturationMax) - Double(hueSatBriModel.saturationMin)) * 0.25 + Double(hueSatBriModel.saturationMin)
+                    hueSatBriModel.saturation = Int(temp)
+                }
+                Button("50%") {
+                    let temp: Double = (Double(hueSatBriModel.saturationMax) - Double(hueSatBriModel.saturationMin)) * 0.5 + Double(hueSatBriModel.saturationMin)
+                    hueSatBriModel.saturation = Int(temp)
+                }
+                Button("75%") {
+                    let temp: Double = (Double(hueSatBriModel.saturationMax) - Double(hueSatBriModel.saturationMin)) * 0.75 + Double(hueSatBriModel.saturationMin)
+                    hueSatBriModel.saturation = Int(temp)
+                }
+                Button("100%") {
+                    hueSatBriModel.saturation = hueSatBriModel.saturationMax
+                }
+            } label: {
+                HStack {
+                    Text("\(hueSatBriModel.saturationString)")
+                        .font(.caption)
+                    Image(systemName: "chevron.down")
+                }
+            }
+            .frame(width: 75)
+        }
+    }
+}
+
+struct HueMenu: View {
+    @Binding var hueSatBriModel: HueSatBriTempModel
+    var body: some View {
+        HStack{
+            Menu {
+                Button(action: {
+                    hueSatBriModel.hue = hueSatBriModel.hueMin
+                }){
+                    Label("0°", systemImage: "square.fill")
+                }
+                .tint(Color.red)
+                Button(action: {
+                    let temp: Double = (Double(hueSatBriModel.hueMax) - Double(hueSatBriModel.hueMin)) / 6 + Double(hueSatBriModel.hueMin)
+                    hueSatBriModel.hue = Int(temp)
+                }) {
+                    Label("60°", systemImage: "square.fill")
+                }
+                .tint(Color.yellow)
+                Button(action: {
+                    let temp: Double = (Double(hueSatBriModel.hueMax) - Double(hueSatBriModel.hueMin)) / 6 * 2 + Double(hueSatBriModel.hueMin)
+                    hueSatBriModel.hue = Int(temp)
+                }){
+                    Label("120°", systemImage: "square.fill")
+                }
+                .tint(Color.green)
+                Button(action: {
+                    let temp: Double = (Double(hueSatBriModel.hueMax) - Double(hueSatBriModel.hueMin)) * 0.5 + Double(hueSatBriModel.hueMin)
+                    hueSatBriModel.hue = Int(temp)
+                }){
+                    Label("180°", systemImage: "square.fill")
+                }
+                .tint(Color.cyan)
+                Button(action: {
+                    let temp: Double = (Double(hueSatBriModel.hueMax) - Double(hueSatBriModel.hueMin)) / 6 * 4 + Double(hueSatBriModel.hueMin)
+                    hueSatBriModel.hue = Int(temp)
+                }){
+                    Label("240°", systemImage: "square.fill")
+                }
+                .tint(Color.blue)
+                Button(action: {
+                    let temp: Double = (Double(hueSatBriModel.hueMax) - Double(hueSatBriModel.hueMin)) / 6 * 5 + Double(hueSatBriModel.hueMin)
+                    hueSatBriModel.hue = Int(temp)
+                }) {
+                    Label("300°", systemImage: "square.fill")
+                }
+                .tint(Color(red: 1.0, green: 0.0, blue: 1.0))
+            } label: {
+                HStack {
+                    Text("\(hueSatBriModel.hueString)")
+                        .font(.caption)
+                    Image(systemName: "chevron.down")
+                }
+            }
+            .frame(width: 75)
+        }
+    }
+}
+
+
 struct HueSatBriSlider: View {
     var remoteItem: RemoteItem?
     
@@ -53,7 +147,7 @@ struct HueSatBriSlider: View {
                 Text("Hue")
                     .font(.caption)
                 HStack{
-                    Text("\(hueSatBriModel.hueString)")
+                    HueMenu(hueSatBriModel: $hueSatBriModel)
                         .frame(width: 75)
                     Slider(value: $hueSatBriModel.hueDouble, in: hueSatBriModel.hueRange)
                         .tint(.clear)
@@ -65,7 +159,7 @@ struct HueSatBriSlider: View {
                 Text("Saturation")
                     .font(.caption)
                 HStack{
-                    Text("\(hueSatBriModel.saturationString)")
+                    SatMenu(hueSatBriModel: $hueSatBriModel)
                         .frame(width: 75)
                     Slider(value: $hueSatBriModel.saturationDouble, in: hueSatBriModel.saturationRange)
                         .tint(.clear)
@@ -77,7 +171,7 @@ struct HueSatBriSlider: View {
                 Text("Brightness")
                     .font(.caption)
                 HStack{
-                    Text("\(hueSatBriModel.brightnessString)")
+                    BriMenu(hueSatBriModel: $hueSatBriModel)
                         .frame(width: 75)
                     Slider(value: $hueSatBriModel.brightnessDouble, in: hueSatBriModel.brightnessRange)
                         .tint(.clear)
