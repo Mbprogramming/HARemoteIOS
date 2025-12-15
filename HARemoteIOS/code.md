@@ -55,3 +55,28 @@ if (currentTheme == AppTheme.Dark)
 else
     temp += "?forceDark=false";
 ```
+
+```
+struct SingleFingerRotation: View {
+    @State private var rotation: Angle = .zero
+    
+    var body: some View {
+        Circle()
+            .fill(Color.blue)
+            .frame(width: 200, height: 200)
+            .rotationEffect(rotation)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        // Vektor vom Zentrum (100, 100) zur Fingerposition
+                        let deltaX = value.location.x - 100
+                        let deltaY = value.location.y - 100
+                        
+                        // Aktuellen Winkel berechnen
+                        let radians = atan2(deltaY, deltaX)
+                        rotation = Angle(radians: Double(radians))
+                    }
+            )
+    }
+}
+```
