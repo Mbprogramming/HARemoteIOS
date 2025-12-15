@@ -83,7 +83,7 @@ struct RemoteItemView: View {
                 case .SelectionList:
                     HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SelectionListTempBri:
-                    Text("Remote Item Template is SelectionListTempBri")
+                    TempBriMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SelectionListHueSatBri:
                     HueSatBriMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SelectionListBri:
