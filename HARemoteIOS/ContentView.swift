@@ -402,8 +402,22 @@ struct ContentView: View {
             .presentationDetents([.medium])
         }
                 .sheet(isPresented: $showWebView) { [url] in
-                        if let url = url {
+                    if let url = url {
+                        ZStack (alignment: .bottom){
                             WebView(url: url)
+                            GlassEffectContainer {
+                                HStack{
+                                    ShareLink(item: url)
+                                        .padding()
+                                        .glassEffect()
+                                    Button("Close", systemImage: "chevron.down"){
+                                        showWebView = false
+                                    }
+                                    .padding()
+                                    .glassEffect()
+                                }
+                            }.padding()
+                        }
                     }
                 }
                 .toolbar {
