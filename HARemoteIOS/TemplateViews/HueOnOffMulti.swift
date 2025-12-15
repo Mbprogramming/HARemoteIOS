@@ -31,7 +31,6 @@ struct HueOnOffMulti: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .sheet(isPresented: $listVisible) {
-            
             if let items = remoteItem?.steps {
                 List(items, id: \.self, selection: $selection) {
                     Text($0.item2 ?? "")
@@ -45,7 +44,7 @@ struct HueOnOffMulti: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        var commandParameter = CommandParameterForMultipleValues()
+                        let commandParameter = CommandParameterForMultipleValues()
                         // Collect selected ids and descriptions
                         selection.forEach { tuple in
                             if let id = tuple.item1 {
@@ -55,18 +54,23 @@ struct HueOnOffMulti: View {
                                 commandParameter.Descriptions.append(desc)
                             }
                         }
+                        
                         // Encode to JSON string because API expects String parameter
                         let jsonData = try? JSONEncoder().encode(commandParameter)
                         let jsonString = jsonData.flatMap { String(data: $0, encoding: .utf8) } ?? ""
                         let encoded = jsonString.data(using: .utf8)?.base64EncodedString() ?? ""
                         let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded)
                         commandIds.append(id)
+                         
                         listVisible.toggle()
                     }
                     .padding()
                 }
+                .presentationDetents([.medium])
+
             }
         }
+        
         .buttonStyle(.bordered)
         .tint(Color.primary)
         .buttonBorderShape(.roundedRectangle(radius: 10))
