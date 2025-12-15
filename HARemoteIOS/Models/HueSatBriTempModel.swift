@@ -66,6 +66,30 @@ import Observation
         temperature = temperatureMin
     }
     
+    public func setRangesHue(min: String, max: String) {
+        hueMin = Int(min) ?? 0
+        hueMax = Int(max) ?? 0
+        hue = hueMin
+    }
+    
+    public func setRangesSat(min: String, max: String) {
+        saturationMin = Int(min) ?? 0
+        saturationMax = Int(max) ?? 0
+        saturation = saturationMin
+    }
+    
+    public func setRangesBri(min: String, max: String) {
+        brightnessMin = Int(min) ?? 0
+        brightnessMax = Int(max) ?? 0
+        brightness = brightnessMin
+    }
+    
+    public func setRangesTemperature(min: String, max: String) {
+        temperatureMin = Int(min) ?? 0
+        temperatureMax = Int(max) ?? 0
+        temperature = temperatureMin
+    }
+    
     public func setState(state: IState) {
         let partsValue = state.value?.components(separatedBy: ";") ?? []
         for part in partsValue {
@@ -87,6 +111,22 @@ import Observation
         }
     }
     
+    public func setStateHue(state: IState) {
+        hue = Int(state.value ?? "0") ?? 0
+    }
+
+    public func setStateSat(state: IState) {
+        saturation = Int(state.value ?? "0") ?? 0
+    }
+
+    public func setStateBri(state: IState) {
+        brightness = Int(state.value ?? "0") ?? 0
+    }
+
+    public func setStateTemp(state: IState) {
+        temperature = Int(state.value ?? "0") ?? 0
+    }
+
     let hueRange: ClosedRange<Double> = 0...1
     let saturationRange: ClosedRange<Double> = 0...1
     let brightnessRange: ClosedRange<Double> = 0...1
@@ -161,6 +201,30 @@ import Observation
     var tempBriComplete: String {
         get {
             return "ColorTemperature:\(temperature);Brightness:\(brightness);"
+        }
+    }
+    
+    var briComplete: String {
+        get {
+            return "\(brightness)"
+        }
+    }
+    
+    var tempComplete: String {
+        get {
+            return "\(temperature)"
+        }
+    }
+    
+    var hueComplete: String {
+        get {
+            return "\(hue)"
+        }
+    }
+    
+    var satComplete: String {
+        get {
+            return "\(saturation)"
         }
     }
 }

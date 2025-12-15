@@ -60,9 +60,9 @@ struct TempSlider: View {
     
     var body: some View {
         Button(action: {
-            hueSatBriModel.setRanges(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
+            hueSatBriModel.setRangesTemperature(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
-                hueSatBriModel.setState(state: state)
+                hueSatBriModel.setStateTemp(state: state)
             }
             
             sliderVisible.toggle()
@@ -105,7 +105,7 @@ struct TempSlider: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.tempBriComplete)
+                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.tempComplete)
                         commandIds.append(id)
                         sliderVisible.toggle()
                     }

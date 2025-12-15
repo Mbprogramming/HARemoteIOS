@@ -23,9 +23,9 @@ struct BriSlider: View {
     
     var body: some View {
         Button(action: {
-            hueSatBriModel.setRanges(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
+            hueSatBriModel.setRangesBri(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
-                hueSatBriModel.setState(state: state)
+                hueSatBriModel.setStateBri(state: state)
             }
             
             sliderVisible.toggle()
@@ -63,7 +63,7 @@ struct BriSlider: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.hueSatBriComplete)
+                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.briComplete)
                         commandIds.append(id)
                         sliderVisible.toggle()
                     }
