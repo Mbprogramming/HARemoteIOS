@@ -81,7 +81,7 @@ struct RemoteItemView: View {
                 case .Touch:
                     Text("Remote Item Template is Touch")
                 case .SelectionList:
-                    Text("Remote Item Template is SelectionList")
+                    HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SelectionListTempBri:
                     Text("Remote Item Template is SelectionListTempBri")
                 case .SelectionListHueSatBri:
