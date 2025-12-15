@@ -75,6 +75,7 @@ struct HueSatBriMulti: View {
             }
         }
         .sheet(isPresented: $sliderVisible) {
+            let title = commandParameter.Descriptions.joined(separator: ", ")
             let hueGradient = LinearGradient(gradient: Gradient(colors: (0...359).map {
                 Color(hue: Double($0) / 360.0, saturation: 1.0, brightness: 1.0)
             }), startPoint: .leading, endPoint: .trailing)
@@ -88,6 +89,9 @@ struct HueSatBriMulti: View {
             }), startPoint: .leading, endPoint: .trailing)
 
             VStack {
+                Text(title)
+                    .font(.subheadline)
+                Divider()
                 Text("Hue")
                     .font(.caption)
                 HStack{
