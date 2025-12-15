@@ -101,9 +101,9 @@ struct ContentView: View {
         if let url {
             var newUrl = url.removingPercentEncoding ?? ""
             if colorScheme == .dark {
-                newUrl = newUrl + "&forceDark=true"
+                newUrl = newUrl + "?forceDark=true"
             } else {
-                newUrl = newUrl + "&forceDark=false"
+                newUrl = newUrl + "?forceDark=false"
             }
             self.url = URL(string: newUrl)
             DispatchQueue.main.async {
