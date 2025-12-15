@@ -48,3 +48,10 @@ let gradient = LinearGradient(
 )
 
 ```
+
+```
+if (currentTheme == AppTheme.Dark)
+    temp += "?forceDark=true";
+else
+    temp += "?forceDark=false";
+```
