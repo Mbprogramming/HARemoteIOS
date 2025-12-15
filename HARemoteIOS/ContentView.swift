@@ -65,6 +65,7 @@ struct ContentView: View {
     
     @Environment(\.mainWindowSize) var mainWindowSize
     @Environment(\.modelContext) var modelContext
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
 
@@ -98,7 +99,12 @@ struct ContentView: View {
     
     private func showChart(id: String?, device: String?, command: String?, url: String?) async {
         if let url {
-            let newUrl = url.removingPercentEncoding ?? ""
+            var newUrl = url.removingPercentEncoding ?? ""
+            if colorScheme == .dark {
+                newUrl = newUrl + "&forceDark=true"
+            } else {
+                newUrl = newUrl + "&forceDark=false"
+            }
             self.url = URL(string: newUrl)
             DispatchQueue.main.async {
                 showWebView = true
