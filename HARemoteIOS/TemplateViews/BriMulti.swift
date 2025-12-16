@@ -23,20 +23,14 @@ struct BriMulti: View {
     @State private var hueSatBriModel: HueSatBriTempModel = HueSatBriTempModel()
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             hueSatBriModel.setRanges(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
                 hueSatBriModel.setState(state: state)
             }
             
             listVisible.toggle()
-        }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }, remoteStates: $remoteStates)
         .sheet(isPresented: $listVisible) {
             let brightnessGradient = LinearGradient(gradient: Gradient(colors: (0...255).map {
                 Color(hue: hueSatBriModel.hueDouble, saturation: 1.0, brightness: Double($0) / 255.0)
@@ -96,10 +90,6 @@ struct BriMulti: View {
 
             }
         }
-        .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
     }
 }
 

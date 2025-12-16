@@ -25,7 +25,7 @@ struct VolumeSlider: View {
     @Environment(\.mainWindowSize) var mainWindowSize
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             if let rmMin = remoteItem?.min, let rmMax = remoteItem?.max, let rmStep = remoteItem?.step {
                 min = Int(rmMin) ?? -1
                 max = Int(rmMax) ?? -1
@@ -37,13 +37,7 @@ struct VolumeSlider: View {
                 value = 50
             }
             sliderVisible.toggle()
-        }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }, remoteStates: $remoteStates)
         .popover(isPresented: $sliderVisible,
                  attachmentAnchor: .point(.center), // Ankerpunkt des Popovers relativ zum Button
                  arrowEdge: .top) {

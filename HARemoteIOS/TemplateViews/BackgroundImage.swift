@@ -24,6 +24,7 @@ struct BackgroundImage: View {
                     AsyncServerImage(imageWidth: 400, imageHeight: 400, imageId: getBackground(), background: true)
                         .frame(width: geo.size.width - 20, height: geo.size.height - 20)
                         .padding()
+                    /*
                     if colorScheme == .light {
                         Rectangle()
                             .fill(Color.white.opacity(0.75))
@@ -31,6 +32,7 @@ struct BackgroundImage: View {
                         Rectangle()
                             .fill(Color.black.opacity(0.75))
                     }
+                     */
                 }
                 
             }

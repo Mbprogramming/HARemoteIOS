@@ -21,15 +21,9 @@ struct HueOnOffMulti: View {
     @State private var editMode: EditMode = .active
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             listVisible.toggle()
-        }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }, remoteStates: $remoteStates)
         .sheet(isPresented: $listVisible) {
             if let items = remoteItem?.steps {
                 List(items, id: \.self, selection: $selection) {

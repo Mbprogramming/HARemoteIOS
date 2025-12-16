@@ -59,20 +59,14 @@ struct TempSlider: View {
     }
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             hueSatBriModel.setRangesTemperature(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
                 hueSatBriModel.setStateTemp(state: state)
             }
             
             sliderVisible.toggle()
-        }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }, remoteStates: $remoteStates)
         .popover(isPresented: $sliderVisible,
                  attachmentAnchor: .point(.center), // Ankerpunkt des Popovers relativ zum Button
                  arrowEdge: .top) {

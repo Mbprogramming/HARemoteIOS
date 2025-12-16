@@ -30,12 +30,15 @@ struct RemoteBaseButton: View {
         let backgroundColor: Color = {
             if let currentState {
                 // If you want to use the provided calculatedColor:
-                return currentState.calculatedColor
+                return currentState.calculatedColor.opacity(0.9)
             } else {
                 return Color.primary.opacity(0.3)
             }
         }()
-        
+        let background = RoundedRectangle(cornerRadius: 10)
+            .fill(.ultraThinMaterial)
+            .background(backgroundColor)
+            .cornerRadius(10)
         Button(action: action) {
             HStack {
                 ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
@@ -53,9 +56,9 @@ struct RemoteBaseButton: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .foregroundColor(colorScheme == .dark ? .white : .black)
-        .background(backgroundColor)
+        .background(background)
         .cornerRadius(10)
-        .shadow(radius: 5)
+        .shadow(radius: 3)
     }
 }
 

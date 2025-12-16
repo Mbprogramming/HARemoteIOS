@@ -124,20 +124,14 @@ struct TempBriSlider: View {
     }
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             hueSatBriModel.setRanges(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
                 hueSatBriModel.setState(state: state)
             }
             
             sliderVisible.toggle()
-        }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }, remoteStates: $remoteStates)
         .sheet(isPresented: $sliderVisible) {
             let temperatures = stride(from: 6535, through: 2000, by: -50)
             let gradientColors = temperatures.map { colorTemperatureToRGB(Double($0)) }
