@@ -57,7 +57,7 @@ struct RemoteItemView: View {
                 case .Slider:
                     VolumeSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Combobox:
-                    Text("Remote Item Template is Combobox")
+                    RemoteCombobox(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .SliderHue:
                     Text("Remote Item Template is SliderHue")
                 case .SliderHueSatBri:
