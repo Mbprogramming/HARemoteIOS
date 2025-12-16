@@ -9,8 +9,17 @@ import SwiftUI
 
 struct RemoteStateItemView: View {
     var state: IState
-        
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     var body: some View {
+        // Compute background color from the state (use IState.calculatedColor if available)
+        let backgroundColor: Color = {
+            return state.calculatedColor.opacity(0.9)
+        }()
+        let background = RoundedRectangle(cornerRadius: 10)
+            .fill(.ultraThinMaterial)
+            .background(backgroundColor)
+            .cornerRadius(10)
         VStack {
             if state.showImage == true {
                 AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: state.icon!)
@@ -35,10 +44,9 @@ struct RemoteStateItemView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(state.calculatedColor)
-        )
+        .foregroundColor(colorScheme == .dark ? .white : .black)
+        .background(background)
+        .cornerRadius(10)
     }
 }
 

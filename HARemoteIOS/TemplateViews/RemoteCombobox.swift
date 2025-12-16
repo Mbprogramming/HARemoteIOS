@@ -15,7 +15,26 @@ struct RemoteCombobox: View {
     @Binding var commandIds: [String]
     @Binding var remoteStates: [IState]
     
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     var body: some View {
+        // Derive current state without side effects
+        let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
+        // Compute background color from the state (use IState.calculatedColor if available)
+        let backgroundColor: Color = {
+            if let currentState {
+                // If you want to use the provided calculatedColor:
+                return currentState.calculatedColor.opacity(0.9)
+            } else {
+                return Color.primary.opacity(0.3)
+            }
+        }()
+        let background = RoundedRectangle(cornerRadius: 10)
+            .fill(.ultraThinMaterial)
+            .background(backgroundColor)
+            .cornerRadius(10)
+        
+        
         Menu {
             if let items = remoteItem?.steps {
                 ForEach(items, id:\.self.item1) { item in
@@ -25,17 +44,19 @@ struct RemoteCombobox: View {
                     })
                 }
             }
-               } label: {
-                   HStack {
-                       let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                       ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-                   }
-                   .frame(maxWidth: .infinity, maxHeight: .infinity)
                }
-               .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
+        label: {
+           HStack {
+               let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
+               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
+                   .padding()
+           }
+           .frame(maxWidth: .infinity, maxHeight: .infinity)
+           .foregroundColor(colorScheme == .dark ? .white : .black)
+           .background(background)
+           .cornerRadius(10)
+           .shadow(radius: 3)
+       }
     }
 }
 
