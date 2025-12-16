@@ -55,7 +55,7 @@ struct RemoteItemView: View {
                     HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                         .frame(height: calcInlineRowHeightWidth(columns: 4) * 5)
                 case .Slider:
-                    Text("Remote Item Template is Slider")
+                    VolumeSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
                 case .Combobox:
                     Text("Remote Item Template is Combobox")
                 case .SliderHue:
