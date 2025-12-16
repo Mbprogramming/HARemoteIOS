@@ -16,7 +16,7 @@ struct RemoteButton: View {
     @Binding var remoteStates: [IState]
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             if remoteItem?.template == RemoteTemplate.List
                 || remoteItem?.template == RemoteTemplate.Wrap
                 || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -35,28 +35,7 @@ struct RemoteButton: View {
                 let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
                 commandIds.append(id)
             }
-            }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-                if remoteItem?.template == RemoteTemplate.List
-                    || remoteItem?.template == RemoteTemplate.Wrap
-                    || remoteItem?.template == RemoteTemplate.Grid3X4
-                    || remoteItem?.template == RemoteTemplate.Grid4X5
-                    || remoteItem?.template == RemoteTemplate.Grid5x3 {
-                    Spacer()
-                    Image(systemName: "ellipsis")
-                        .font(.footnote)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
-        //.buttonStyle(.glass)
-        //.frame(height: 150)
+        }, remoteStates: $remoteStates)
     }
 }
 
