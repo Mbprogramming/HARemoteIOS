@@ -134,4 +134,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         .resume()
         return uuid
     }
+    
+    func deleteAutomaticExecution(id: String) {
+        guard let url = URL(string: "\(server)/api/HomeAutomation/AutomaticExecutions?id=" + id) else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+
+        let _ = URLSession.shared.dataTask(with: request)
+            .resume()
+    }
 }

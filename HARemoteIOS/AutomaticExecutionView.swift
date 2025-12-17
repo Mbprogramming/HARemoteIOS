@@ -134,16 +134,18 @@ struct AutomaticExecutionView: View {
             
             List {
                 let entries = filterEntries()
-                // Drive ForEach by indices of the filtered array
-                ForEach(entries.indices, id: \.self) { i in
-                    let entry = entries[i]
-                    // Find the matching index in the source array to bind
-                    if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) ?? automaticExecutionEntries.firstIndex(where: { $0 === entry }) {
+                ForEach(entries) { entry in
+                    if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) {
                         let type = automaticExecutionEntries[sourceIndex].automaticExecutionType
                         AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[sourceIndex])
                             .swipeActions(edge: .trailing) {
                                 Button("Delete", systemImage: "trash.circle") {
-                                    return
+                                    if let id = automaticExecutionEntries[sourceIndex].id {
+                                        // Run off the main actor if you want to avoid blocking UI
+                                        Task {
+                                            HomeRemoteAPI.shared.deleteAutomaticExecution(id: id)
+                                        }
+                                    }
                                 }
                                 .tint(.red)
                             }

@@ -196,6 +196,25 @@ struct ContentView: View {
             closeMacroSheets()
         }
     }
+    
+    // FIX: make this synchronous and spawn an async Task
+    private func automaticExecutionChanged() {
+        Task {
+            do {
+                let entries = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                await MainActor.run {
+                    automaticExecutions = entries
+                }
+            } catch {
+                // Optionally log or handle the error
+                // NSLog("Failed to refresh automatic executions: \(error)")
+            }
+        }
+    }
+    
+    private func openAutomaticExecution(id: String?) {
+        
+    }
 
     private func stateChanged(device: String, state: String, value: String, convertedValue: String, icon: String?, color: String?, lastChange: String) async {
         // If no matching state exists, nothing to do quickly
@@ -252,6 +271,8 @@ struct ContentView: View {
         await connection!.on("MacroSelectionTimeout", handler: macroSelectionTimeout)
         await connection!.on("MacroQuestion", handler: macroQuestion)
         await connection!.on("MacroSelectionList", handler: macroSelectionList)
+        await connection!.on("AutomaticExecutionChanged", handler: automaticExecutionChanged)
+        await connection!.on("OpenAutomaticExecution", handler: openAutomaticExecution)
 
         try await connection!.start()
     }
