@@ -73,6 +73,18 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return mainCommands
     }
     
+    func getAutomaticExecutions() async throws -> [AutomaticExecutionEntry] {
+        guard let url = URL(string: "\(server)/api/homeautomation/automaticexecutions") else { return [] }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let decoder = JSONDecoder()
+        return try decoder.decode([AutomaticExecutionEntry].self, from: data)
+    }
+    
     func getRemoteStates(remoteId: String) async throws -> [IState] {
         guard let url = URL(string: "\(server)/api/homeautomation/allremotestates?remoteId=" + remoteId) else { return [] }
         var request = URLRequest(url: url)

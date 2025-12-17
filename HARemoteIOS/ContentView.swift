@@ -58,6 +58,7 @@ struct ContentView: View {
     @State private var mainCommands: [RemoteItem] = []
     @State private var commandIds: [String] = []
     @State private var remoteStates: [IState] = []
+    @State private var automaticExecutions: [AutomaticExecutionEntry] = []
 
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
@@ -262,34 +263,40 @@ struct ContentView: View {
             }
             NavigationStack {
                 TabView {
-                    NavigationView {
-                        if currentRemoteItem?.template == RemoteTemplate.List ||
-                            currentRemoteItem?.template == RemoteTemplate.Wrap {
-                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
-                                .ignoresSafeArea()
-                        } else {
-                            RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                    Tab("Remote", systemImage: "av.remote"){
+                        NavigationView {
+                            if currentRemoteItem?.template == RemoteTemplate.List ||
+                                currentRemoteItem?.template == RemoteTemplate.Wrap {
+                                RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                                    .ignoresSafeArea()
+                            } else {
+                                RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                            }
                         }
                     }
-                    .tabItem {
-                        Label("Remote", systemImage: "av.remote")
+                    
+                    Tab("States", systemImage: "flag"){
+                        NavigationView {
+                            StateView(remoteStates: $remoteStates)
+                                .ignoresSafeArea()
+                        }
+                    }
+
+                    Tab("History", systemImage: "checklist"){
+                        NavigationView {
+                            HistoryView(commandIds: $commandIds)
+                                .ignoresSafeArea()
+                        }
                     }
                     
-                    NavigationView {
-                        StateView(remoteStates: $remoteStates)
-                            .ignoresSafeArea()
-                    }
-                    .tabItem {
-                        Label("States", systemImage: "flag")
+                    TabSection("Automatic Execution") {
+                        Tab("AutomaticExecution", systemImage: "calendar.circle", role: .search){
+                            NavigationView {
+                                AutomaticExecutionView(automaticExecutionEntries: $automaticExecutions)
+                            }
+                        }
                     }
                     
-                    NavigationView {
-                        HistoryView(commandIds: $commandIds)
-                            .ignoresSafeArea()
-                    }
-                    .tabItem {
-                        Label("History", systemImage: "checklist")
-                    }
                 }
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     ScrollView {
@@ -473,6 +480,7 @@ struct ContentView: View {
                     zones = try await HomeRemoteAPI.shared.getZonesComplete()
                     remotes = try await HomeRemoteAPI.shared.getRemotes()
                     mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
+                    automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
                     if let lastRemote = remoteHistory.first {
                         if let lastRemoteItem = remotes.first(where: {$0.id == lastRemote.remoteId}){
                             remoteStates = []
