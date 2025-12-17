@@ -134,16 +134,49 @@ struct AutomaticExecutionView: View {
             
             List {
                 let entries = filterEntries()
-                ForEach(entries) { entry in
-                    if let idx = automaticExecutionEntries.firstIndex(where: { $0 === entry }) {
-                        AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[idx])
+                // Drive ForEach by indices of the filtered array
+                ForEach(entries.indices, id: \.self) { i in
+                    let entry = entries[i]
+                    // Find the matching index in the source array to bind
+                    if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) ?? automaticExecutionEntries.firstIndex(where: { $0 === entry }) {
+                        let type = automaticExecutionEntries[sourceIndex].automaticExecutionType
+                        AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[sourceIndex])
+                            .swipeActions(edge: .trailing) {
+                                Button("Delete", systemImage: "trash.circle") {
+                                    return
+                                }
+                                .tint(.red)
+                            }
+                            .if(type == .deferred || type == .executeAt) { view in
+                                view.swipeActions(edge: .leading) {
+                                    Button("Run", systemImage: "play.circle") {
+                                        return
+                                    }
+                                    .tint(.blue)
+                                }
+                                .swipeActions(edge: .leading) {
+                                    Button("Add", systemImage: "plus.circle") {
+                                        return
+                                    }
+                                    .tint(.orange)
+                                }
+                            }
                     } else {
                         // Fallback: render read-only if the item is no longer in the source array
-                        // to avoid a crash during transient mismatches.
                         AutomaticExecutionEntryView(automaticExecutionEntry: .constant(entry))
                     }
                 }
             }
+        }
+    }
+}
+
+extension View {
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }
