@@ -110,6 +110,20 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return uuid
     }
     
+    func sendCommandDeferred(device: String, command: String, delay: Int, cyclic: Bool = false) -> String {
+        let uuid = UUID().uuidString
+        let urlString = "\(server)/api/HomeAutomation/CommandDeferred?id=\(uuid)&device=\(device)&command=\(command)&delay=\(delay)&cyclic=\((cyclic ? "true" : "false"))"
+        guard let url = URL(string: urlString) else { return "" }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+
+        let _ = URLSession.shared.dataTask(with: request)
+            .resume()
+        return uuid
+    }
+    
     func escapingUrl(url: String) -> String? {
         var allowedQueryParamAndKey = NSCharacterSet.urlQueryAllowed
         allowedQueryParamAndKey.remove(charactersIn: ";/?:@&=+$, ")

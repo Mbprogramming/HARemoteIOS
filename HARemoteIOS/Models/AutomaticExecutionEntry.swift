@@ -27,6 +27,26 @@ enum AutomaticExecutionType: Decodable, Equatable {
       }
 }
 
+enum AutomaticExecutionAtCycle: Decodable, Equatable {
+    case none
+    case daily
+    case weekly
+    case monthly
+    case unknown(value: String)
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let status = try? container.decode(String.self)
+        switch status {
+            case "None": self = .none
+            case "Daily": self = .daily
+            case "Weekly": self = .weekly
+            case "Monthly": self = .monthly
+            default: self = .unknown(value: status ?? "unknown")
+          }
+      }
+}
+
 enum CheckStateOperationEnum: Decodable {
     case lighter
     case lighterEqual
@@ -66,10 +86,13 @@ enum CheckStateOperationEnum: Decodable {
     let id: String?
     let device: String?
     let command: String?
+    let cyclic: Bool?
     let hasParameter: Bool?
     let parameter: String?
     let decodedParameter: String?
     let automaticExecutionType: AutomaticExecutionType?
+    let automaticExecutionAtCycle: AutomaticExecutionAtCycle?
+    let at: String?
     let nextExecution: String?
     let nextExecutionString: String?
     let commandDescription: String?
