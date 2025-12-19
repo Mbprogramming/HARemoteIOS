@@ -298,7 +298,7 @@ struct ContentView: View {
                     
                     Tab("States", systemImage: "flag"){
                         NavigationView {
-                            StateView(remoteStates: $remoteStates)
+                            StateView(remoteStates: $remoteStates, currentRemote: $currentRemote)
                                 .ignoresSafeArea()
                         }
                     }

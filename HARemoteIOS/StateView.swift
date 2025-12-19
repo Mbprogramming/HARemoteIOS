@@ -46,6 +46,7 @@ struct StateItemView: View {
 
 struct StateView: View {
     @Binding var remoteStates: [IState]
+    @Binding var currentRemote: Remote?
     @Environment(\.mainWindowSize) var mainWindowSize
     
     var body: some View {
@@ -60,11 +61,24 @@ struct StateView: View {
             }
             .padding()
         }
+        .refreshable {
+            Task {
+                do {
+                    let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                    await MainActor.run {
+                        remoteStates = entries
+                    }
+                } catch {
+                    // handle error if needed
+                }
+            }
+        }
     }
 }
 
 #Preview {
     @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var currentRemote: Remote? = nil
     
-    StateView(remoteStates: $remoteStates)
+    StateView(remoteStates: $remoteStates, currentRemote: $currentRemote)
 }

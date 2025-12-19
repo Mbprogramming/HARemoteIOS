@@ -54,7 +54,7 @@ struct AutomaticExecutionEntryView : View {
                     Image(systemName: "7.calendar")
                 case .monthly:
                     Image(systemName: "31.calendar")
-                case .unknown(let value):
+                case .unknown(_):
                     EmptyView()
                 case .some(.none):
                     EmptyView()
@@ -183,6 +183,18 @@ struct AutomaticExecutionView: View {
                     } else {
                         // Fallback: render read-only if the item is no longer in the source array
                         AutomaticExecutionEntryView(automaticExecutionEntry: .constant(entry))
+                    }
+                }
+            }
+            .refreshable {
+                Task {
+                    do {
+                        let entries = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                        await MainActor.run {
+                            automaticExecutionEntries = entries
+                        }
+                    } catch {
+                        // handle error if needed
                     }
                 }
             }
