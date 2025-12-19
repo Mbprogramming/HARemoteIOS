@@ -124,6 +124,21 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return uuid
     }
     
+    func sendCommandDeferredParameter(device: String, command: String, parameter: String, delay: Int, cyclic: Bool = false) -> String {
+        let uuid = UUID().uuidString
+        let myParameter = escapingUrl(url: parameter) ?? ""
+        let urlString = "\(server)/api/HomeAutomation/CommandParameterDeferred?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter)&delay=\(delay)&cyclic=\((cyclic ? "true" : "false"))"
+        guard let url = URL(string: urlString) else { return "" }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+
+        let _ = URLSession.shared.dataTask(with: request)
+            .resume()
+        return uuid
+    }
+    
     func sendCommandAt(device: String, command: String, at: Date, repeatValue: AutomaticExecutionAtCycle) -> String {
         let uuid = UUID().uuidString
         let iso8601 = ISO8601DateFormatter()
@@ -131,6 +146,25 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         let atStr = iso8601.string(from: at)
         let repeatStr = repeatValue.description
         let urlString = "\(server)/api/HomeAutomation/CommandAt?id=\(uuid)&device=\(device)&command=\(command)&at=\(atStr)&cycle=\(repeatStr)"
+        guard let url = URL(string: urlString) else { return "" }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+
+        let _ = URLSession.shared.dataTask(with: request)
+            .resume()
+        return uuid
+    }
+    
+    func sendCommandAtParameter(device: String, command: String, parameter: String, at: Date, repeatValue: AutomaticExecutionAtCycle) -> String {
+        let uuid = UUID().uuidString
+        let iso8601 = ISO8601DateFormatter()
+        iso8601.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let atStr = iso8601.string(from: at)
+        let repeatStr = repeatValue.description
+        let myParameter = escapingUrl(url: parameter) ?? ""
+        let urlString = "\(server)/api/HomeAutomation/CommandParameterAt?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter)&at=\(atStr)&cycle=\(repeatStr)"
         guard let url = URL(string: urlString) else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
