@@ -45,6 +45,23 @@ struct AutomaticExecutionEntryView : View {
                         .padding()
                     Spacer()
                 }
+                switch automaticExecutionEntry.automaticExecutionAtCycle {
+                case .none:
+                    EmptyView()
+                case .daily:
+                    Image(systemName: "1.calendar")
+                case .weekly:
+                    Image(systemName: "7.calendar")
+                case .monthly:
+                    Image(systemName: "31.calendar")
+                case .unknown(let value):
+                    EmptyView()
+                case .some(.none):
+                    EmptyView()
+                }
+                if let cyclic = automaticExecutionEntry.cyclic, cyclic {
+                    Image(systemName: "repeat")
+                }
             }
             HStack {
                 Text(automaticExecutionEntry.commandDescription ?? "Unknown")
@@ -167,6 +184,18 @@ struct AutomaticExecutionView: View {
                         // Fallback: render read-only if the item is no longer in the source array
                         AutomaticExecutionEntryView(automaticExecutionEntry: .constant(entry))
                     }
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                do {
+                    let entries = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                    await MainActor.run {
+                        automaticExecutionEntries = entries
+                    }
+                } catch {
+                    // handle error if needed
                 }
             }
         }
