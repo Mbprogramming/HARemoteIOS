@@ -17,6 +17,9 @@ struct RemoteButtonCommandList: View {
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
+    @State private var delay: Date? = nil
+    @State private var delayType: Int? = nil
+    
     var body: some View {
         // Derive current state without side effects
         let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
