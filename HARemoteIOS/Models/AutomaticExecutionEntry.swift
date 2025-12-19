@@ -45,6 +45,18 @@ enum AutomaticExecutionAtCycle: Decodable, Equatable {
             default: self = .unknown(value: status ?? "unknown")
           }
       }
+    
+    var description : String {
+        switch self {
+        // Use Internationalization, as appropriate.
+        case .none: return "None"
+        case .daily: return "Daily"
+        case .weekly: return "Weekly"
+        case .monthly: return "Monthly"
+        case .unknown(value: let value):
+            return ""
+        }
+      }
 }
 
 enum CheckStateOperationEnum: Decodable {

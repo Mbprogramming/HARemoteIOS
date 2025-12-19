@@ -49,6 +49,26 @@ struct RemoteButton: View {
                     let delay = (hour * 60 * 60) + (minute * 60)
                     let id = HomeRemoteAPI.shared.sendCommandDeferred(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", delay: delay, cyclic: true)
                     commandIds.append(id)
+                } else {
+                    if type == 2 {
+                        let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .none)
+                        commandIds.append(id)
+                    } else {
+                        if type == 3 {
+                            let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .daily)
+                            commandIds.append(id)
+                        } else {
+                            if type == 4 {
+                                let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .weekly)
+                                commandIds.append(id)
+                            } else {
+                                if type == 5 {
+                                    let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .monthly)
+                                    commandIds.append(id)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }, remoteStates: $remoteStates)
