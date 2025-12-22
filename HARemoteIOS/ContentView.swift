@@ -311,7 +311,7 @@ struct ContentView: View {
                     }
                     
                     TabSection("Automatic Execution") {
-                        Tab("AutomaticExecution", systemImage: "calendar.circle", role: .search){
+                        Tab("AutomaticExecution", systemImage: "calendar", role: .search){
                             NavigationView {
                                 AutomaticExecutionView(automaticExecutionEntries: $automaticExecutions)
                             }

@@ -7,6 +7,52 @@
 
 import SwiftUI
 
+/// The `GaugeStyle` of the `OverallView`.
+struct OverallGaugeStyle<Content: View>: GaugeStyle {
+  // MARK: - Properties
+  
+  /// The `View` contained by the gauge.
+  var content: Content
+  
+  /// The `LinearGradient` used to style the gauge.
+  private var gradient = LinearGradient(
+    colors:
+      [
+        Color.blue.opacity(0.3),
+        Color.blue
+      ],
+    startPoint: .trailing,
+    endPoint: .leading
+  )
+  
+  // MARK: - Init
+  
+  /// The `init` of the `OverallGaugeStyle`.
+  /// - Parameter content: The `View` contained by the gauge.
+  init(@ViewBuilder content: () -> Content) {
+    self.content = content()
+  }
+  
+  func makeBody(configuration: Configuration) -> some View {
+    VStack {
+      ZStack {
+        content
+        
+        Circle()
+          .trim(from: 0, to: configuration.value * 0.75)
+          .stroke(gradient, style: StrokeStyle(lineWidth: 20, lineCap: .round))
+          .rotationEffect(.degrees(135))
+          .frame(width: 250, height: 250)
+      }
+      
+      configuration.currentValueLabel
+        .fontWeight(.bold)
+        .font(.title2)
+        .foregroundColor(Color.black)
+    }
+  }
+}
+
 struct VolumeKnob: View {
     @Binding var minValue: Int
     @Binding var maxValue: Int
@@ -19,6 +65,8 @@ struct VolumeKnob: View {
     @State private var difference = Double(0.0)
     
     @State private var currentValueString: String = "0dB"
+    
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var rotation: some Gesture {
         DragGesture()
@@ -79,6 +127,7 @@ struct VolumeKnob: View {
                         Text("")
                     }
                     .gaugeStyle(.accessoryCircular)
+                    .tint(colorScheme == .dark ? Color.white : Color.black)
                     .scaleEffect(CGSize(width: 3, height: 3))
                     .frame(width: 200, height: 200)
                 }

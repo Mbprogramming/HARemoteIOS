@@ -55,8 +55,8 @@ struct RemoteHistoryViewLine: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(width: 100, height: 100)
-            .glassEffect(.regular, in: .capsule)
-            .buttonStyle(.glass)
+            //.glassEffect(.regular, in: .capsule)
+            .buttonStyle(.borderless)
             .padding()
         if let remote2 {
             Button(action: {
@@ -90,8 +90,8 @@ struct RemoteHistoryViewLine: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(width: 100, height: 100)
-            .glassEffect(.regular, in: .capsule)
-            .buttonStyle(.glass)
+            //.glassEffect(.regular, in: .)
+            .buttonStyle(.borderless)
             .padding()
             }
         }

@@ -211,4 +211,36 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         let _ = URLSession.shared.dataTask(with: request)
             .resume()
     }
+    
+    func automaticExecutionImmediatly(id: String) {
+        let urlString = "\(server)/api/HomeAutomation/AutomaticExecutionsImmediatly?id=\(id)"
+        guard let url = URL(string: urlString) else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+        
+        let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error as? URLError {
+                NSLog(error.failingURL?.absoluteString ?? "")
+            }
+        }
+        .resume()
+    }
+    
+    func automaticExecutionAddMinutes(id: String, minutes: Int) {
+        let urlString = "\(server)/api/HomeAutomation/AutomaticExecutionsAddMinutes?id=\(id)&minutes=\(minutes)"
+        guard let url = URL(string: urlString) else { return  }
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+        
+        let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error as? URLError {
+                NSLog(error.failingURL?.absoluteString ?? "")
+            }
+        }
+        .resume()
+    }
 }

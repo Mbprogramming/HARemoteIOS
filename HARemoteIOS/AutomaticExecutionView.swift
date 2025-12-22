@@ -119,6 +119,10 @@ struct AutomaticExecutionView: View {
     @State private var currentFilter: Int = 0
     @State private var automaticCount: Int = 2
     @State private var stateChangeCount: Int = 0
+    
+    @State private var addVisible: Bool = false
+    @State private var deferredDate: Date = Date()
+    @State private var deferredAddId: String = ""
         
     private func filterEntries() -> [AutomaticExecutionEntry] {
         switch currentFilter {
@@ -155,8 +159,9 @@ struct AutomaticExecutionView: View {
                     if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) {
                         let type = automaticExecutionEntries[sourceIndex].automaticExecutionType
                         AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[sourceIndex])
+                            
                             .swipeActions(edge: .trailing) {
-                                Button("Delete", systemImage: "trash.circle") {
+                                Button("Delete", systemImage: "trash") {
                                     if let id = automaticExecutionEntries[sourceIndex].id {
                                         // Run off the main actor if you want to avoid blocking UI
                                         Task {
@@ -166,16 +171,42 @@ struct AutomaticExecutionView: View {
                                 }
                                 .tint(.red)
                             }
-                            .if(type == .deferred || type == .executeAt) { view in
+                            .if(type == .executeAt) { view in
                                 view.swipeActions(edge: .leading) {
-                                    Button("Run", systemImage: "play.circle") {
-                                        return
+                                    Button("Run", systemImage: "play") {
+                                        if let id = automaticExecutionEntries[sourceIndex].id {
+                                            // Run off the main actor if you want to avoid blocking UI
+                                            Task {
+                                                HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                            }
+                                        }
+                                    }
+                                    .tint(.blue)
+                                }
+                            }
+                            .if(type == .deferred) { view in
+                                view.swipeActions(edge: .leading) {
+                                    Button("Run", systemImage: "play") {
+                                        if let id = automaticExecutionEntries[sourceIndex].id {
+                                            // Run off the main actor if you want to avoid blocking UI
+                                            Task {
+                                                HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                            }
+                                        }
                                     }
                                     .tint(.blue)
                                 }
                                 .swipeActions(edge: .leading) {
-                                    Button("Add", systemImage: "plus.circle") {
-                                        return
+                                    Button("Add", systemImage: "plus") {
+                                        if let id = automaticExecutionEntries[sourceIndex].id {
+                                            var components = DateComponents()
+                                            components.hour = 0
+                                            components.minute = 5
+                                            
+                                            deferredDate = Calendar.current.date(from: components) ?? .now
+                                            deferredAddId = id
+                                            addVisible.toggle()
+                                        }
                                     }
                                     .tint(.orange)
                                 }
@@ -185,6 +216,39 @@ struct AutomaticExecutionView: View {
                         AutomaticExecutionEntryView(automaticExecutionEntry: .constant(entry))
                     }
                 }
+            }
+            .popover(isPresented: $addVisible, // Ankerpunkt des Popovers relativ zum Button
+                     arrowEdge: .none) {
+                VStack{
+                    DatePicker(
+                        "Add",
+                        selection: $deferredDate,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .padding()
+                    HStack {
+                        Button("Cancel", systemImage: "xmark.circle") {
+                            addVisible.toggle()
+                        }
+                        .padding()
+                        Spacer()
+                        Button("OK", systemImage: "checkmark.circle") {
+                            
+                            let hour = Calendar.current.component(.hour, from: deferredDate)
+                            let minute = Calendar.current.component(.minute, from: deferredDate)
+                            let delay = (hour * 60) + minute
+                            
+                            addVisible.toggle()
+                            
+                            Task {
+                                HomeRemoteAPI.shared.automaticExecutionAddMinutes(id: deferredAddId, minutes: delay)
+                            }
+                        }
+                        .padding()
+                    }
+                }
+                .padding()
+                .presentationCompactAdaptation(.popover)
             }
             .refreshable {
                 Task {
