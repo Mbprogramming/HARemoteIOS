@@ -16,6 +16,8 @@ struct RemoteButtonGlass: View {
     @Binding var commandIds: [String]
     @Binding var isVisible: Bool
     
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     var body: some View {
         Button(action: {
             if remoteItem?.template == RemoteTemplate.List
@@ -53,6 +55,7 @@ struct RemoteButtonGlass: View {
             .frame(maxWidth: .infinity, maxHeight: height)
         }
             .buttonStyle(.borderless)
+            .foregroundColor(colorScheme == .dark ? .white : .black)
         //.glassEffect(.regular, in: .capsule)
         //.buttonStyle(.glass)
     }

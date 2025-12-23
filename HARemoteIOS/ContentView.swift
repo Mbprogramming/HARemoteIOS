@@ -83,6 +83,8 @@ struct ContentView: View {
     @State private var showWebView: Bool = false
     @State private var url: URL? = URL(string: "https://www.createwithswift.com")
     
+    @State private var currentTab: Int = 0
+    
     @AppStorage("server") var server: String = "http://192.168.5.106:5000"
     @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
     @AppStorage("application") var application: String = "HARemoteIOS"
@@ -284,8 +286,8 @@ struct ContentView: View {
                 ProgressView()
             }
             NavigationStack {
-                TabView {
-                    Tab("Remote", systemImage: "av.remote"){
+                TabView (selection: $currentTab) {
+                    Tab("Remote", systemImage: "av.remote", value: 0){
                         NavigationView {
                             if currentRemoteItem?.template == RemoteTemplate.List ||
                                 currentRemoteItem?.template == RemoteTemplate.Wrap {
@@ -297,13 +299,13 @@ struct ContentView: View {
                         }
                     }
                     
-                    Tab("States", systemImage: "flag"){
+                    Tab("States", systemImage: "flag", value: 1){
                         NavigationView {
                             StateView(remoteStates: $remoteStates, currentRemote: $currentRemote)
                         }
                     }
 
-                    Tab("History", systemImage: "checklist"){
+                    Tab("History", systemImage: "checklist", value: 2){
                         NavigationView {
                             HistoryView(commandIds: $commandIds)
                                 .ignoresSafeArea()
@@ -311,7 +313,7 @@ struct ContentView: View {
                     }
                     
                     TabSection("Automatic Execution") {
-                        Tab("AutomaticExecution", systemImage: "calendar", role: .search){
+                        Tab("AutomaticExecution", systemImage: "calendar", value: 3, role: .search){
                             NavigationView {
                                 AutomaticExecutionView(automaticExecutionEntries: $automaticExecutions)
                             }
@@ -523,6 +525,11 @@ struct ContentView: View {
                     
                 }
                 isLoading = false;
+            }
+            .onChange(of: currentRemote) {
+                DispatchQueue.main.async {
+                    currentTab = 0
+                }
             }
             // Provide window size via environment
             .environment(\.mainWindowSize, geo.size)

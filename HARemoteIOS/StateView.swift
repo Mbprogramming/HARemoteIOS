@@ -70,7 +70,7 @@ struct StateView: View {
             .pickerStyle(.segmented)
             List {
                 let height = mainWindowSize.height * 0.2
-                let sortedStates = currentFilter == 0 ? remoteStates.sorted { $0.lastChangeDate ?? Date.now > $1.lastChangeDate ?? Date.now } : remoteStates.sorted { $0.device ?? "" > $1.device ?? "" }
+                let sortedStates = currentFilter == 0 ? remoteStates.sorted { $0.lastChangeDate ?? Date.now > $1.lastChangeDate ?? Date.now } : remoteStates.sorted { $0.device ?? "" < $1.device ?? "" }
                 ForEach(sortedStates){state in
                     StateItemView(state: state)
                 }

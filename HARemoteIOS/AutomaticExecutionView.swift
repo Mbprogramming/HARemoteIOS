@@ -217,14 +217,14 @@ struct AutomaticExecutionView: View {
                     }
                 }
             }
-            .popover(isPresented: $addVisible, // Ankerpunkt des Popovers relativ zum Button
-                     arrowEdge: .none) {
+            .sheet(isPresented: $addVisible) {
                 VStack{
                     DatePicker(
-                        "Add",
+                        "",
                         selection: $deferredDate,
                         displayedComponents: [.hourAndMinute]
                     )
+                    .datePickerStyle(.wheel)
                     .padding()
                     HStack {
                         Button("Cancel", systemImage: "xmark.circle") {
@@ -248,7 +248,7 @@ struct AutomaticExecutionView: View {
                     }
                 }
                 .padding()
-                .presentationCompactAdaptation(.popover)
+                .presentationDetents([.medium])
             }
             .refreshable {
                 Task {

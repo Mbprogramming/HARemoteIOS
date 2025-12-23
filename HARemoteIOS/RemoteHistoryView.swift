@@ -19,6 +19,7 @@ struct RemoteHistoryViewLine: View {
     @Binding var isVisible: Bool
     
     @Environment(\.modelContext) var modelContext
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
     
@@ -57,6 +58,7 @@ struct RemoteHistoryViewLine: View {
             .frame(width: 100, height: 100)
             //.glassEffect(.regular, in: .capsule)
             .buttonStyle(.borderless)
+            .foregroundStyle(colorScheme == .dark ? .white : .black)
             .padding()
         if let remote2 {
             Button(action: {
@@ -92,6 +94,7 @@ struct RemoteHistoryViewLine: View {
             .frame(width: 100, height: 100)
             //.glassEffect(.regular, in: .)
             .buttonStyle(.borderless)
+            .foregroundStyle(colorScheme == .dark ? .white : .black)
             .padding()
             }
         }
