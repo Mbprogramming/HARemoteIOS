@@ -52,8 +52,9 @@ struct RemoteButtonGlass: View {
             }
             .frame(maxWidth: .infinity, maxHeight: height)
         }
-        .glassEffect(.regular, in: .capsule)
-        .buttonStyle(.glass)
+            .buttonStyle(.borderless)
+        //.glassEffect(.regular, in: .capsule)
+        //.buttonStyle(.glass)
     }
 }
 

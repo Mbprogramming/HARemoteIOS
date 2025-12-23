@@ -21,32 +21,20 @@ struct BackgroundImage: View {
         GeometryReader { geo in
             if remoteItem?.backgroundImage != nil {
                 ZStack {
-                    AsyncServerImage(imageWidth: 400, imageHeight: 400, imageId: getBackground())
-                        .frame(width: geo.size.width, height: geo.size.height)
+                    AsyncServerImage(imageWidth: 400, imageHeight: 400, imageId: getBackground(), background: true)
+                        .frame(width: geo.size.width - 20, height: geo.size.height - 20)
                         .padding()
-                    //AsyncImage(url: URL(string: getBackgroundUrl()))
-                    //            { phase in
-                    //                switch phase {
-                    //                case .empty:
-                    //                    ProgressView()
-                    //                case .success(let image):
-                    //                    image
-                    //                        .resizable()
-                    //                case .failure:
-                    //                    Image(systemName: "wifi.slash")
-                    //                @unknown default:
-                    //                    EmptyView()
-                    //                }
-                    //            }
-                    //   .aspectRatio(contentMode: .fit)
+                    /*
                     if colorScheme == .light {
                         Rectangle()
-                            .fill(Color.white.opacity(0.5))
+                            .fill(Color.white.opacity(0.75))
                     } else {
                         Rectangle()
-                            .fill(Color.black.opacity(0.5))
+                            .fill(Color.black.opacity(0.75))
                     }
+                     */
                 }
+                
             }
         }
     }

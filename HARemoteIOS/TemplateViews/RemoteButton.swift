@@ -16,7 +16,7 @@ struct RemoteButton: View {
     @Binding var remoteStates: [IState]
     
     var body: some View {
-        Button(action: {
+        RemoteBaseButton(remoteItem: remoteItem, action: {
             if remoteItem?.template == RemoteTemplate.List
                 || remoteItem?.template == RemoteTemplate.Wrap
                 || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -35,28 +35,43 @@ struct RemoteButton: View {
                 let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
                 commandIds.append(id)
             }
-            }){
-            HStack {
-                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
-                if remoteItem?.template == RemoteTemplate.List
-                    || remoteItem?.template == RemoteTemplate.Wrap
-                    || remoteItem?.template == RemoteTemplate.Grid3X4
-                    || remoteItem?.template == RemoteTemplate.Grid4X5
-                    || remoteItem?.template == RemoteTemplate.Grid5x3 {
-                    Spacer()
-                    Image(systemName: "ellipsis")
-                        .font(.footnote)
+        }, actionDeferred: { (date: Date, type: Int) in
+            if type == 0 {
+                let hour = Calendar.current.component(.hour, from: date)
+                let minute = Calendar.current.component(.minute, from: date)
+                let delay = (hour * 60 * 60) + (minute * 60)
+                let id = HomeRemoteAPI.shared.sendCommandDeferred(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", delay: delay, cyclic: false)
+                commandIds.append(id)
+            } else {
+                if type == 1 {
+                    let hour = Calendar.current.component(.hour, from: date)
+                    let minute = Calendar.current.component(.minute, from: date)
+                    let delay = (hour * 60 * 60) + (minute * 60)
+                    let id = HomeRemoteAPI.shared.sendCommandDeferred(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", delay: delay, cyclic: true)
+                    commandIds.append(id)
+                } else {
+                    if type == 2 {
+                        let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .none)
+                        commandIds.append(id)
+                    } else {
+                        if type == 3 {
+                            let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .daily)
+                            commandIds.append(id)
+                        } else {
+                            if type == 4 {
+                                let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .weekly)
+                                commandIds.append(id)
+                            } else {
+                                if type == 5 {
+                                    let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .monthly)
+                                    commandIds.append(id)
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
-        //.buttonStyle(.glass)
-        //.frame(height: 150)
+        }, remoteStates: $remoteStates)
     }
 }
 
@@ -69,4 +84,3 @@ struct RemoteButton: View {
     
     RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
 }
-

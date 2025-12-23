@@ -98,7 +98,7 @@ struct ItemView: View {
         }
         .contentShape(Rectangle())
         .swipeActions(edge: .leading) {
-            Button(favorite ? "Unfavorite" : "Favorite", systemImage: "star.fill") {
+            Button("Favorite", systemImage: favorite ? "star" : "star.fill") {
                 toggleFavorite(remoteId: remote.id)
             }
             .tint(favorite ? Color.gray : Color.yellow)
@@ -199,10 +199,14 @@ struct SidePaneView: View {
                 .tabItem {
                     Label("Zones", systemImage: "square.split.bottomrightquarter.fill")
                 }
+                UserSettings()
+                    .tabItem{
+                        Label("Settings", systemImage: "gear")
+                    }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing){
-                    Button("Back", systemImage: "arrow.down"){
+                    Button("Back", systemImage: "chevron.down"){
                         isVisible = false
                     }
                 }

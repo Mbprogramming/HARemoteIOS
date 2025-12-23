@@ -26,17 +26,17 @@ import Observation
     let rowSpan: Int?
     let colSpan: Int?
     let icon: String?
-    //min    [...]
-    //max    [...]
-    //step    [...]
-    //greatStep    [...]
-    //steps    [...]
+    let min: String?
+    let max: String?
+    let step: String?
+    let greatStep: String?
+    let steps: [StringStringTuple]?
     //lastChange    [...]
     //moreParameter    {...}
     //nullable: true
     //defaultConverter    [...]
     let gridHalfHeight: Bool?
-    //commandMenuItems    [...]
+    let commandMenuItems: [RemoteItem]?
     //stateList    [...]
     //gridBackgroundOpacity    [...]
     //gridBackgroundColor    [...]

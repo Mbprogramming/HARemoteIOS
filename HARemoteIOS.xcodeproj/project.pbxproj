@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C7F207E2EE2DD8B0069E365 /* libz.tbd */; };
+		2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7F20802EE2DD9C0069E365 /* SignalRClient */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2C813FE62ED0A93E00BE0709 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C7F207E2EE2DD8B0069E365 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HARemoteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HARemoteIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C813FEF2ED0A93F00BE0709 /* HARemoteIOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HARemoteIOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +58,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */,
+				2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +80,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C7F207D2EE2DD8A0069E365 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2C7F207E2EE2DD8B0069E365 /* libz.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2C813FCF2ED0A93A00BE0709 = {
 			isa = PBXGroup;
 			children = (
 				2C813FDA2ED0A93A00BE0709 /* HARemoteIOS */,
 				2C813FE82ED0A93F00BE0709 /* HARemoteIOSTests */,
 				2C813FF22ED0A93F00BE0709 /* HARemoteIOSUITests */,
+				2C7F207D2EE2DD8A0069E365 /* Frameworks */,
 				2C813FD92ED0A93A00BE0709 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -106,12 +123,14 @@
 			buildRules = (
 			);
 			dependencies = (
+				2CCF9A0A2EE2DA7C00F861E1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2C813FDA2ED0A93A00BE0709 /* HARemoteIOS */,
 			);
 			name = HARemoteIOS;
 			packageProductDependencies = (
+				2C7F20802EE2DD9C0069E365 /* SignalRClient */,
 			);
 			productName = HARemoteIOS;
 			productReference = 2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */;
@@ -195,6 +214,9 @@
 			);
 			mainGroup = 2C813FCF2ED0A93A00BE0709;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C813FD92ED0A93A00BE0709 /* Products */;
 			projectDirPath = "";
@@ -265,6 +287,10 @@
 			isa = PBXTargetDependency;
 			target = 2C813FD72ED0A93A00BE0709 /* HARemoteIOS */;
 			targetProxy = 2C813FF02ED0A93F00BE0709 /* PBXContainerItemProxy */;
+		};
+		2CCF9A0A2EE2DA7C00F861E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2CCF9A092EE2DA7C00F861E1 /* SignalRClient */;
 		};
 /* End PBXTargetDependency section */
 
@@ -588,6 +614,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dotnet/signalr-client-swift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2C7F20802EE2DD9C0069E365 /* SignalRClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */;
+			productName = SignalRClient;
+		};
+		2CCF9A092EE2DA7C00F861E1 /* SignalRClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */;
+			productName = SignalRClient;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C813FD02ED0A93A00BE0709 /* Project object */;
 }
