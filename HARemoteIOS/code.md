@@ -336,3 +336,13 @@ public extension View {
     }
 }
 ```
+
+```
+Gauge(value: value, in: 0...1) { Text("Progress") } currentValueLabel: { Text("\(Int(value * 100))%") } .gaugeStyle(.accessoryCircular) 
+.tint( 
+    Gradient(colors: [ 
+        .blue, 
+        .purple, 
+        .pink 
+    ]) )
+```
