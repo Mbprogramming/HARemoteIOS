@@ -25,12 +25,13 @@ import Observation
     let showValueAndIcon: Bool?
     let stateToIcon: String?
     let stateToColor: String?
-    //lastChange    [...]
+    let lastChange: String?
     let isCombined: Bool?
     let additionalText: String?
     
     init(id: String?, device: String?, value: String?, convertedValue: String?, color: Int64?, icon: String?, convertDescription: String?,
-         nativeType: String?, showValueAndIcon: Bool?, stateToIcon: String?, stateToColor: String?, isCombined: Bool?, additionalText: String?) {
+         nativeType: String?, showValueAndIcon: Bool?, stateToIcon: String?, stateToColor: String?, isCombined: Bool?, additionalText: String?,
+         lastChange: String?) {
         self.id = id
         self.device = device
         self.value = value
@@ -44,6 +45,7 @@ import Observation
         self.stateToColor = stateToColor
         self.isCombined = isCombined
         self.additionalText = additionalText
+        self.lastChange = lastChange
     }
     
     var completeValue : String {
@@ -91,5 +93,16 @@ import Observation
         get {
             return self.color != nil ? Color(uiColorFromHex(rgbValue: Int64(self.color!))).opacity(0.3) : Color.primary.opacity(0.3)
         }
+    }
+    
+    var lastChangeDate: Date? {
+        if let ls = lastChange {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = formatter.date(from: ls) {
+                return date
+            }
+        }
+        return nil
     }
 }

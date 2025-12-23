@@ -11,28 +11,38 @@ struct StateItemView: View {
     var state: IState
     
     var body: some View {
-        HStack {
-            if state.showImage {
-                AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: state.icon!)
-                    .frame(width: 40, height: 40)
+        VStack {
+            HStack {
+                if state.showImage {
+                    AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: state.icon!)
+                        .frame(width: 40, height: 40)
+                }
+                Spacer()
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("\(state.device ?? "") \(state.id ?? "")")
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(1)
+                            .font(.footnote)
+                    }
+                    HStack{
+                        Spacer()
+                        Text(state.convertedValue ?? "")
+                            .bold()
+                    }
+                }
             }
-            Spacer()
-            VStack {
-                HStack {
-                    Spacer()
-                    Text("\(state.device ?? "") \(state.id ?? "")")
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(1)
+            .padding()
+            HStack {
+                Spacer()
+                if let ls = state.lastChangeDate {
+                    Text(ls.formatted())
                         .font(.footnote)
                 }
-                HStack{
-                    Spacer()
-                    Text(state.convertedValue ?? "")
-                        .bold()
-                }
             }
+            .padding()
         }
-        .padding()
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(state.calculatedColor)
@@ -49,27 +59,33 @@ struct StateView: View {
     @Binding var currentRemote: Remote?
     @Environment(\.mainWindowSize) var mainWindowSize
     
+    @State private var currentFilter: Int = 0
+    
     var body: some View {
-        ScrollView {
-            VStack{
+        VStack {
+            Picker("Filter", selection: $currentFilter) {
+                Text("Date ").tag(0)
+                Text("Device").tag(1)
+            }
+            .pickerStyle(.segmented)
+            List {
                 let height = mainWindowSize.height * 0.2
-                Spacer(minLength: height)
-                ForEach(remoteStates){state in
+                let sortedStates = currentFilter == 0 ? remoteStates.sorted { $0.lastChangeDate ?? Date.now > $1.lastChangeDate ?? Date.now } : remoteStates.sorted { $0.device ?? "" > $1.device ?? "" }
+                ForEach(sortedStates){state in
                     StateItemView(state: state)
                 }
                 Spacer(minLength: height)
             }
-            .padding()
-        }
-        .refreshable {
-            Task {
-                do {
-                    let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                    await MainActor.run {
-                        remoteStates = entries
+            .refreshable {
+                Task {
+                    do {
+                        let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                        await MainActor.run {
+                            remoteStates = entries
+                        }
+                    } catch {
+                        // handle error if needed
                     }
-                } catch {
-                    // handle error if needed
                 }
             }
         }

@@ -241,7 +241,8 @@ struct ContentView: View {
                         stateToIcon: s.stateToIcon,
                         stateToColor: s.stateToColor,
                         isCombined: s.isCombined,
-                        additionalText: s.additionalText
+                        additionalText: s.additionalText,
+                        lastChange: s.lastChange
                     )
                 } else {
                     return s
@@ -299,7 +300,6 @@ struct ContentView: View {
                     Tab("States", systemImage: "flag"){
                         NavigationView {
                             StateView(remoteStates: $remoteStates, currentRemote: $currentRemote)
-                                .ignoresSafeArea()
                         }
                     }
 
