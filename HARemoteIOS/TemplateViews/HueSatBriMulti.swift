@@ -50,6 +50,19 @@ struct HueSatBriMulti: View {
         .sheet(isPresented: $listVisible) {
             
             if let items = remoteItem?.steps {
+                HStack {
+                    Button("All", systemImage: "plus.circle") {
+                        selection.removeAll()
+                        for itemEntry in items {
+                            selection.insert(itemEntry)
+                        }
+                    }
+                    Spacer()
+                    Button("None", systemImage: "minus.circle") {
+                        selection.removeAll()
+                    }
+                }
+                .padding()
                 List(items, id: \.self, selection: $selection) {
                     Text($0.item2 ?? "")
                 }
