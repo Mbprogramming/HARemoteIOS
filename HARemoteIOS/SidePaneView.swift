@@ -138,6 +138,8 @@ struct SidePaneView: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var remoteStates: [IState]
     @Binding var isVisible: Bool
+    
+    @State private var expandedZones: Set<String> = []
 
     private func isFavorite(remoteId: String) -> Bool {
         let descriptor = FetchDescriptor<RemoteFavorite>(
@@ -182,7 +184,18 @@ struct SidePaneView: View {
                             return remotes.filter { set.contains($0.id) }
                         }()
                         
-                        Section(header: HeaderView(zone: zone)) {
+                        DisclosureGroup(
+                            isExpanded: Binding(
+                                get: { expandedZones.contains(zone.id) },
+                                set: { newValue in
+                                    if newValue {
+                                        expandedZones.insert(zone.id)
+                                    } else {
+                                        expandedZones.remove(zone.id)
+                                    }
+                                }
+                            )
+                        ) {
                             ForEach(zoneRemotes) { remote in
                                 ItemView(
                                     remote: remote,
@@ -193,6 +206,8 @@ struct SidePaneView: View {
                                     isVisible: $isVisible
                                 )
                             }
+                        } label: {
+                            HeaderView(zone: zone)
                         }
                     }
                 }
