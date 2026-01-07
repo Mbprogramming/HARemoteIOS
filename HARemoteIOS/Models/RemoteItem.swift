@@ -8,7 +8,11 @@
 import Foundation
 import Observation
 
-@Observable class RemoteItem : Decodable, Identifiable {
+@Observable class RemoteItem : Decodable, Identifiable, Equatable {
+    static func == (lhs: RemoteItem, rhs: RemoteItem) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     let id: String?
     let template: RemoteTemplate?
     let description: String?
@@ -31,7 +35,7 @@ import Observation
     let step: String?
     let greatStep: String?
     let steps: [StringStringTuple]?
-    //lastChange    [...]
+    let lastChange: String?
     //moreParameter    {...}
     //nullable: true
     //defaultConverter    [...]
@@ -42,4 +46,15 @@ import Observation
     //gridBackgroundColor    [...]
     let backgroundImage: String?
     //buttonForm    ButtonFormEnum[...]
+    
+    var lastChangeDate: Date? {
+        if let ls = lastChange {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = formatter.date(from: ls) {
+                return date
+            }
+        }
+        return nil
+    }
 }
