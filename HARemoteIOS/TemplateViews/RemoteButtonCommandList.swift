@@ -14,6 +14,7 @@ struct RemoteButtonCommandList: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var commandIds: [String]
     @Binding var remoteStates: [IState]
+    @State private var parentHeight: CGFloat = 60.0
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
@@ -50,9 +51,14 @@ struct RemoteButtonCommandList: View {
         label: {
            HStack {
                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
+               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, parentHeight: $parentHeight)
                    .padding()
            }
+           .onGeometryChange(for: CGSize.self) { proxy in
+                           proxy.size
+                       } action: {
+                           parentHeight = $0.height
+                       }
            .frame(maxWidth: .infinity, maxHeight: .infinity)
            .foregroundColor(colorScheme == .dark ? .white : .black)
            .background(background)

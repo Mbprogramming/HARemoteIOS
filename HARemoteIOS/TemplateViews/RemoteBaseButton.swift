@@ -28,6 +28,7 @@ struct RemoteBaseButton: View {
     @State private var deferredType: Int = 0
     @State private var deferredDate: Date = Date()
     @State private var atDate: Date = Date()
+    @State private var parentHeight: CGFloat = 60.0
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.mainWindowSize) var mainWindowSize
@@ -50,7 +51,7 @@ struct RemoteBaseButton: View {
             .cornerRadius(10)
         Button(action: {}) {
             HStack {
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState)
+                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, parentHeight: $parentHeight)
                 if remoteItem?.template == RemoteTemplate.List
                     || remoteItem?.template == RemoteTemplate.Wrap
                     || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -61,6 +62,11 @@ struct RemoteBaseButton: View {
                         .font(.footnote)
                 }
             }
+            .onGeometryChange(for: CGSize.self) { proxy in
+                            proxy.size
+                        } action: {
+                            parentHeight = $0.height
+                        }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

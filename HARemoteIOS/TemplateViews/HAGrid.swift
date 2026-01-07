@@ -72,6 +72,9 @@ struct HAGrid: View {
 
     func calcRowHeight() -> CGFloat {
         if inline {
+            if let half = remoteItem?.gridHalfHeight, half {
+                return calcColumnWidth()  / 2
+            }
             return calcColumnWidth()
         }
         var result = (mainWindowSize.height - 100) / CGFloat(rows)

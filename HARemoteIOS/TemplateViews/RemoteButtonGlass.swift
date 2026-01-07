@@ -15,6 +15,7 @@ struct RemoteButtonGlass: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var commandIds: [String]
     @Binding var isVisible: Bool
+    @State private var parentHeight: CGFloat = 60.0
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -41,7 +42,7 @@ struct RemoteButtonGlass: View {
             isVisible = false
             }){
             HStack {
-                ButtonTextAndIcon(currentRemoteItem: remoteItem)
+                ButtonTextAndIcon(currentRemoteItem: remoteItem, parentHeight: $parentHeight)
                 if remoteItem?.template == RemoteTemplate.List
                     || remoteItem?.template == RemoteTemplate.Wrap
                     || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -52,6 +53,11 @@ struct RemoteButtonGlass: View {
                         .font(.footnote)
                 }
             }
+            .onGeometryChange(for: CGSize.self) { proxy in
+                            proxy.size
+                        } action: {
+                            parentHeight = $0.height
+                        }
             .frame(maxWidth: .infinity, maxHeight: height)
         }
             .buttonStyle(.borderless)

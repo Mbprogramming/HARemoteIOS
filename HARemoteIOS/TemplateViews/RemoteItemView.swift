@@ -20,6 +20,9 @@ struct RemoteItemView: View {
     @Binding var remoteStates: [IState]
     
     func calcInlineRowHeightWidth(columns: Int) -> CGFloat {
+        if let half = remoteItem?.gridHalfHeight, half {
+            return mainWindowSize.width / CGFloat(columns) / 2
+        }
         return mainWindowSize.width / CGFloat(columns)
     }
     
