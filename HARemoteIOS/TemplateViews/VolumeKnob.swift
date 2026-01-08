@@ -83,13 +83,17 @@ struct VolumeKnob: View {
             if abs(difference) > Double(angleForStep) {
                 if difference < 0.0 {
                     if currentValue + step <= maxValue {
-                        currentValue += step
+                        withAnimation(.spring) {
+                            currentValue += step
+                        }
                     } else {
                         currentValue = maxValue
                     }
                 } else {
                     if currentValue - step >= minValue {
-                        currentValue -= step
+                        withAnimation(.spring) {
+                            currentValue -= step
+                        }
                     } else {
                         currentValue = minValue
                     }
