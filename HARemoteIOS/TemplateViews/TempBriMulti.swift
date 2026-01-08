@@ -101,7 +101,7 @@ struct TempBriMulti: View {
                 .padding()
                 List(items, id: \.self, selection: $selection) {
                     Text($0.item2 ?? "")
-                }
+                }.tint(.none)
                 .environment(\.editMode, $editMode)
                 Spacer()
                 HStack {

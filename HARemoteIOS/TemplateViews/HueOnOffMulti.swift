@@ -23,6 +23,8 @@ struct HueOnOffMulti: View {
     @State private var delay: Date? = nil
     @State private var delayType: Int? = nil
     
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     var body: some View {
         RemoteBaseButton(remoteItem: remoteItem, action: {
             listVisible.toggle()
@@ -48,7 +50,7 @@ struct HueOnOffMulti: View {
                 .padding()
                 List(items, id: \.self, selection: $selection) {
                     Text($0.item2 ?? "")
-                }
+                }.tint(.none)
                 .environment(\.editMode, $editMode)
                 Spacer()
                 HStack {
