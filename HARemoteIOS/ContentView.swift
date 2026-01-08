@@ -437,8 +437,8 @@ struct ContentView: View {
                         NavigationView {
                             if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
                                 mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
-                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
-                                    .ignoresSafeArea()
+                                    RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
+                                        .ignoresSafeArea()
                             } else {
                                 RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
                             }

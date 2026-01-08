@@ -47,6 +47,7 @@ struct RemoteStateItemView: View {
         .foregroundColor(colorScheme == .dark ? .white : .black)
         .background(background)
         .cornerRadius(10)
+        .padding(3)
     }
 }
 

@@ -87,6 +87,7 @@ struct RemoteToggle: View {
                 .minimumScaleFactor(0.3)
                 .font(.title)
         }
+        .padding(3)
     }
 }
 

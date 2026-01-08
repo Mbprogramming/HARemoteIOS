@@ -100,6 +100,7 @@ struct RemoteBaseButton: View {
         .background(background)
         .cornerRadius(10)
         .shadow(radius: 3)
+        .padding(3)
         .sheet(isPresented: $showDeferred) {
             VStack {
                 Text("Delayed Execution")

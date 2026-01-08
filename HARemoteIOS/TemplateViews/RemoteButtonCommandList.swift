@@ -64,6 +64,7 @@ struct RemoteButtonCommandList: View {
            .background(background)
            .cornerRadius(10)
            .shadow(radius: 3)
+           .padding(3)
        }
     }
 }
