@@ -127,7 +127,17 @@ struct VolumeKnob: View {
                         Text("")
                     }
                     .gaugeStyle(.accessoryCircular)
-                    .tint(colorScheme == .dark ? Color.white : Color.black)
+                    .tint(colorScheme == .dark ? AngularGradient(
+                        gradient: Gradient(colors: [Color(hex: 0xEB8D29, alpha: 0.2), Color(hex: 0xEB8D29)]),
+                        center: .center,
+                        startAngle: .degrees(-270),
+                        endAngle: .degrees(90)
+                    ) : AngularGradient(
+                        gradient: Gradient(colors: [Color(hex: 0x003366, alpha: 0.2), Color(hex: 0x003366)]),
+                        center: .center,
+                        startAngle: .degrees(-270),
+                        endAngle: .degrees(90)
+                    ))
                     .scaleEffect(CGSize(width: 3, height: 3))
                     .frame(width: 200, height: 200)
                 }
@@ -162,6 +172,18 @@ extension Double {
     func rounded(toPlaces places:Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return (self * divisor).rounded() / divisor
+    }
+}
+
+extension Color {
+    init(hex: UInt, alpha: Double = 1) {
+        self.init(
+            .sRGB,
+            red: Double((hex >> 16) & 0xff) / 255,
+            green: Double((hex >> 08) & 0xff) / 255,
+            blue: Double((hex >> 00) & 0xff) / 255,
+            opacity: alpha
+        )
     }
 }
 
