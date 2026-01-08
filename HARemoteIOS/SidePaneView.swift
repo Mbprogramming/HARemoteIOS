@@ -93,8 +93,12 @@ struct ItemView: View {
             if favorite {
                 Image(systemName: "star.fill")
                     .foregroundStyle(.yellow)
+                    .font(.caption2)
+                    .bold()
             }
             Image(systemName: "chevron.right")
+                .font(.caption2)
+                .bold()
         }
         .contentShape(Rectangle())
         .swipeActions(edge: .leading) {
