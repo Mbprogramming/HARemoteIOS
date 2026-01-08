@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2C57C3E92F0FE009006D05B8 /* .gitignore */; };
 		2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C7F207E2EE2DD8B0069E365 /* libz.tbd */; };
 		2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7F20802EE2DD9C0069E365 /* SignalRClient */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C57C3E92F0FE009006D05B8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		2C7F207E2EE2DD8B0069E365 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HARemoteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HARemoteIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +93,7 @@
 		2C813FCF2ED0A93A00BE0709 = {
 			isa = PBXGroup;
 			children = (
+				2C57C3E92F0FE009006D05B8 /* .gitignore */,
 				2C813FDA2ED0A93A00BE0709 /* HARemoteIOS */,
 				2C813FE82ED0A93F00BE0709 /* HARemoteIOSTests */,
 				2C813FF22ED0A93F00BE0709 /* HARemoteIOSUITests */,
@@ -234,6 +237,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
