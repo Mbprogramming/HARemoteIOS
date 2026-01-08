@@ -12,7 +12,7 @@ struct RemoteCombobox: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     @State private var parentHeight: CGFloat = 60.0
     
@@ -41,7 +41,7 @@ struct RemoteCombobox: View {
                 ForEach(items, id:\.self.item1) { item in
                     Button(item.item2 ?? "", action: {
                         let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: item.item1 ?? "")
-                        commandIds.append(id)
+                        mainModel.executeCommand(id: id)
                     })
                 }
             }
@@ -69,9 +69,9 @@ struct RemoteCombobox: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteCombobox(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    RemoteCombobox(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

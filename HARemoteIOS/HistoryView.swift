@@ -8,22 +8,27 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     
     var body: some View {
-        ScrollView {
-            VStack {
-                ForEach(commandIds, id: \.self) { id in
-                    Text(id)
-                        .padding()
-                        .font(.title3)
+        List {
+            ForEach(mainModel.commandIds, id: \.self.id) { id in
+                VStack {
+                    Text(id.id)
+                        .font(.subheadline)
+                    Text("\(id.timeStamp)")
+                        .font(.footnote)
+                    Text("\(String(describing: id.received))")
+                        .font(.footnote)
                 }
+                .padding()
+                
             }
         }
     }
 }
 
 #Preview {
-    @Previewable @State var commandIds: [String] = []
-    HistoryView(commandIds: $commandIds)
+    @Previewable @State var mainModel = RemoteMainModel()
+    HistoryView(mainModel: $mainModel)
 }

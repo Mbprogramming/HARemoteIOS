@@ -27,16 +27,16 @@ struct RemoteToggle: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     
     @State private var isOn: Bool = false
     @State private var hasInitializedFromState: Bool = false
     
-    init(remoteItem: RemoteItem?, currentRemoteItem: Binding<RemoteItem?>, remoteItemStack: Binding<[RemoteItem]>, commandIds: Binding<[String]>, remoteStates: Binding<[IState]>) {
+    init(remoteItem: RemoteItem?, currentRemoteItem: Binding<RemoteItem?>, remoteItemStack: Binding<[RemoteItem]>, mainModel: Binding<RemoteMainModel>, remoteStates: Binding<[IState]>) {
         self._currentRemoteItem = currentRemoteItem
         self._remoteItemStack = remoteItemStack
-        self._commandIds = commandIds
+        self._mainModel = mainModel
         self._remoteStates = remoteStates
         self.remoteItem = remoteItem
     }
@@ -73,7 +73,7 @@ struct RemoteToggle: View {
                 .onChange(of: isOn) { _, _ in
                     if isOn != isStateOn {
                         let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
-                        commandIds.append(id)
+                        mainModel.executeCommand(id: id)
                     }
                 }
                 .onChange(of: remoteStates) {
@@ -93,9 +93,9 @@ struct RemoteToggle: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteToggle(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    RemoteToggle(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

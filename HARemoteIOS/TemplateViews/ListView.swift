@@ -19,7 +19,7 @@ struct ListView: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     
     init(
@@ -28,7 +28,7 @@ struct ListView: View {
         height: CGFloat = 150,
         currentRemoteItem: Binding<RemoteItem?>,
         remoteItemStack: Binding<[RemoteItem]>,
-        commandIds: Binding<[String]>,
+        mainModel: Binding<RemoteMainModel>,
         remoteStates: Binding<[IState]>
     ) {
         self.remoteItem = remoteItem
@@ -36,7 +36,7 @@ struct ListView: View {
         self.height = height
         self._currentRemoteItem = currentRemoteItem
         self._remoteItemStack = remoteItemStack
-        self._commandIds = commandIds
+        self._mainModel = mainModel
         self._remoteStates = remoteStates
     }
     
@@ -95,7 +95,7 @@ struct ListView: View {
                     item.template == RemoteTemplate.Space {
                     RemoteItemView(remoteItem: item, level: level + 1,
                                    currentRemoteItem: $currentRemoteItem,
-                                   remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                                   remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
                     .padding()
                 } else {
                     if item.template == RemoteTemplate.EmptyListItem {
@@ -103,7 +103,7 @@ struct ListView: View {
                     } else {
                         RemoteItemView(remoteItem: item, level: level + 1,
                                        currentRemoteItem: $currentRemoteItem,
-                                       remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                                       remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
                         .frame(width: w, height: 150)
                         .padding()
                     }
@@ -135,7 +135,7 @@ struct ListView: View {
                     buildRows()
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
             }
         }
     }
@@ -144,10 +144,10 @@ struct ListView: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }
 

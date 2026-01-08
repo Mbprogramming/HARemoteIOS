@@ -12,7 +12,7 @@ struct RemoteButton: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     
     var body: some View {
@@ -33,7 +33,7 @@ struct RemoteButton: View {
             }
             if remoteItem?.template == RemoteTemplate.Command {
                 let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
-                commandIds.append(id)
+                mainModel.executeCommand(id: id)
             }
         }, actionDeferred: { (date: Date, type: Int) in
             if type == 0 {
@@ -41,30 +41,30 @@ struct RemoteButton: View {
                 let minute = Calendar.current.component(.minute, from: date)
                 let delay = (hour * 60 * 60) + (minute * 60)
                 let id = HomeRemoteAPI.shared.sendCommandDeferred(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", delay: delay, cyclic: false)
-                commandIds.append(id)
+                mainModel.executeCommand(id: id)
             } else {
                 if type == 1 {
                     let hour = Calendar.current.component(.hour, from: date)
                     let minute = Calendar.current.component(.minute, from: date)
                     let delay = (hour * 60 * 60) + (minute * 60)
                     let id = HomeRemoteAPI.shared.sendCommandDeferred(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", delay: delay, cyclic: true)
-                    commandIds.append(id)
+                    mainModel.executeCommand(id: id)
                 } else {
                     if type == 2 {
                         let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .none)
-                        commandIds.append(id)
+                        mainModel.executeCommand(id: id)
                     } else {
                         if type == 3 {
                             let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .daily)
-                            commandIds.append(id)
+                            mainModel.executeCommand(id: id)
                         } else {
                             if type == 4 {
                                 let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .weekly)
-                                commandIds.append(id)
+                                mainModel.executeCommand(id: id)
                             } else {
                                 if type == 5 {
                                     let id = HomeRemoteAPI.shared.sendCommandAt(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", at: date, repeatValue: .monthly)
-                                    commandIds.append(id)
+                                    mainModel.executeCommand(id: id)
                                 }
                             }
                         }
@@ -78,9 +78,9 @@ struct RemoteButton: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

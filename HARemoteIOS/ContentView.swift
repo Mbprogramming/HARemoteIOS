@@ -39,10 +39,6 @@ extension EnvironmentValues {
         get { self[RemotesCollection.self] }
         set { self[RemotesCollection.self] = newValue }
     }
-    var commandIds: [String] {
-        get { self[CommandIdCollection.self] }
-        set { self[CommandIdCollection.self] = newValue }
-    }
 }
 
 struct ContentView: View {
@@ -53,6 +49,7 @@ struct ContentView: View {
     @State private var showSidePane: Bool = false
     @State private var isLoading: Bool = false
 
+    /*
     @State private var zones: [Zone] = []
     @State private var remotes : [Remote] = []
     @State private var mainCommands: [RemoteItem] = []
@@ -63,6 +60,9 @@ struct ContentView: View {
     @State private var currentRemote: Remote? = nil
     @State private var currentRemoteItem: RemoteItem? = nil
     @State private var remoteItemStack: [RemoteItem] = []
+    */
+    
+    @State private var mainModel: RemoteMainModel = RemoteMainModel()
     
     @Environment(\.mainWindowSize) var mainWindowSize
     @Environment(\.modelContext) var modelContext
@@ -101,80 +101,91 @@ struct ContentView: View {
     }
     
     private func showChart(id: String?, device: String?, command: String?, url: String?) async {
-        if let url {
-            var newUrl = url.removingPercentEncoding ?? ""
-            if colorScheme == .dark {
-                newUrl = newUrl + "?forceDark=true"
-            } else {
-                newUrl = newUrl + "?forceDark=false"
-            }
-            self.url = URL(string: newUrl)
-            DispatchQueue.main.async {
-                showWebView = true
+        if mainModel.existId(id: id!) {
+            if let url {
+                var newUrl = url.removingPercentEncoding ?? ""
+                if colorScheme == .dark {
+                    newUrl = newUrl + "?forceDark=true"
+                } else {
+                    newUrl = newUrl + "?forceDark=false"
+                }
+                self.url = URL(string: newUrl)
+                DispatchQueue.main.async {
+                    showWebView = true
+                }
             }
         }
     }
     
     private func commandReceived(id: String, device: String, command: String, message: String) async {
-        NSLog("commandReceived(\(id), \(device), \(command), \(message))")
-        return
+        DispatchQueue.main.async {
+            mainModel.receiveExecution(id: id)
+        }
     }
 
     private func commandExecuted(id: String, device: String, command: String, message: String) async {
-        NSLog("commandExecuted(\(id), \(device), \(command), \(message))")
-        return
+        DispatchQueue.main.async {
+            mainModel.finishExecution(id: id)
+        }
     }
 
     private func openRemote(id: String, zone: String?, remote: String, page: String) async {
-        DispatchQueue.main.async {
-            if let newRemote = remotes.first(where: {$0.id == remote}) {
-                remoteStates = []
-                currentRemote = newRemote
-                currentRemoteItem = newRemote.remote
-                
-                let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
-                if itemToUpdate != nil {
-                    itemToUpdate?.lastUsed = Date()
-                } else {
-                    modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
-                }
-                if remoteHistory.count > 6 {
-                    let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
-                    deleteHistory(indexSet: indexSet)
-                }
-                remoteItemStack.removeAll()
-                Task {
-                    remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+        if mainModel.existId(id: id) {
+            DispatchQueue.main.async {
+                if let newRemote = mainModel.remotes.first(where: {$0.id == remote}) {
+                    mainModel.remoteStates = []
+                    mainModel.currentRemote = newRemote
+                    mainModel.currentRemoteItem = newRemote.remote
+                    
+                    let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
+                    if itemToUpdate != nil {
+                        itemToUpdate?.lastUsed = Date()
+                    } else {
+                        modelContext.insert(RemoteHistoryEntry(remoteId: mainModel.currentRemote?.id ?? ""))
+                    }
+                    if remoteHistory.count > 6 {
+                        let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
+                        deleteHistory(indexSet: indexSet)
+                    }
+                    mainModel.remoteItemStack.removeAll()
+                    Task {
+                        mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
+                    }
                 }
             }
         }
-        return
     }
     
     private func macroSelectionTimeout(id: String) async {
-        DispatchQueue.main.async {
-            closeMacroSheets()
+        if mainModel.existId(id: id) {
+            DispatchQueue.main.async {
+                closeMacroSheets()
+            }
         }
     }
     
     private func macroQuestion(id: String?, question: String?, yesOption: String?, noOption: String?, defaultOption: Int, timeout: Int) async {
-        macroQuestionId = id ?? ""
-        macroQuestion = question ?? ""
-        macroYesOption = yesOption ?? ""
-        macroNoOption = noOption ?? ""
-        macroDefaultOption = defaultOption
-        DispatchQueue.main.async {
-            showMacroQuestion = true
+        if mainModel.existId(id: id!) {
+            macroQuestionId = id ?? ""
+            macroQuestion = question ?? ""
+            macroYesOption = yesOption ?? ""
+            macroNoOption = noOption ?? ""
+            macroDefaultOption = defaultOption
+            DispatchQueue.main.async {
+                showMacroQuestion = true
+            }
         }
     }
     
     private func macroSelectionList(id: String?, question: String, options: [String]?, defaultOption: Int, timeout: Int) async {
-        macroQuestionId = id ?? ""
-        macroQuestion = question
-        macroOptions = options ?? []
-        macroDefaultOption = defaultOption
-        DispatchQueue.main.async {
-            showMacroSelectionList  = true
+        if mainModel.existId(id: id!) {
+            macroQuestionId = id ?? ""
+            macroQuestion = question
+            macroOptions = options ?? []
+            macroDefaultOption = defaultOption
+            DispatchQueue.main.async {
+                showMacroSelectionList  = true
+            }
         }
     }
     
@@ -205,7 +216,7 @@ struct ContentView: View {
             do {
                 let entries = try await HomeRemoteAPI.shared.getAutomaticExecutions()
                 await MainActor.run {
-                    automaticExecutions = entries
+                    mainModel.automaticExecutions = entries
                 }
             } catch {
                 // Optionally log or handle the error
@@ -220,11 +231,11 @@ struct ContentView: View {
 
     private func stateChanged(device: String, state: String, value: String, convertedValue: String, icon: String?, color: String?, lastChange: String) async {
         // If no matching state exists, nothing to do quickly
-        guard remoteStates.contains(where: { $0.device == device && $0.id == state }) else { return }
+        guard mainModel.remoteStates.contains(where: { $0.device == device && $0.id == state }) else { return }
         
         DispatchQueue.main.async {
             // Rebuild the array by replacing only the matching item with a new IState instance
-            let updated: [IState] = remoteStates.map { s in
+            let updated: [IState] = mainModel.remoteStates.map { s in
                 if s.device == device && s.id == state {
                     var colorIn: Int64? = nil
                     if color != nil {
@@ -250,7 +261,7 @@ struct ContentView: View {
                     return s
                 }
             }
-            remoteStates = updated
+            mainModel.remoteStates = updated
         }
     }
 
@@ -280,6 +291,141 @@ struct ContentView: View {
         try await connection!.start()
     }
     
+    @ViewBuilder
+    private var macroSelectionListSheet: some View {
+        ScrollView {
+            VStack {
+                Label("Continue Macro", systemImage: "list.triangle")
+                    .font(.title2)
+                Text(macroQuestion)
+                    .font(.title)
+                Divider()
+                ForEach(macroOptions, id: \.self) { option in
+                    let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
+                    if isDefault {
+                        Button(action: {
+                            continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
+                            return
+                        }){
+                            Text(option)
+                                .bold()
+                                .font(.title3)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.glass)
+                        .tint(Color.orange)
+                        .padding()
+                    } else {
+                        Button(action: {
+                            continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
+                            return
+                        }){
+                            Text(option)
+                                .font(.title3)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.glass)
+                        .padding()
+                    }
+                }
+            }
+            .padding()
+        }
+        .presentationDetents([.medium])
+    }
+
+    @ViewBuilder
+    private var macroQuestionSheet: some View {
+        ScrollView {
+            VStack{
+                Label("Continue Macro", systemImage: "questionmark")
+                    .font(.title2)
+                Text(macroQuestion)
+                    .font(.title)
+                Divider()
+                HStack {
+                    if macroYesOption.isEmpty == false {
+                        if macroDefaultOption == 0 {
+                            Button(action: {
+                                continueMacro(index: 0)
+                                return
+                            }){
+                                Text(macroYesOption)
+                                    .font(.title3)
+                                    .bold()
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.glass)
+                            .tint(Color.orange)
+                            .padding()
+                        } else {
+                            Button(action: {
+                                continueMacro(index: 0)
+                                return
+                            }){
+                                Text(macroYesOption)
+                                    .font(.title3)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.glass)
+                            .padding()
+                        }
+                    }
+                    if macroNoOption.isEmpty == false {
+                        if macroDefaultOption == 1 {
+                            Button(action: {
+                                continueMacro(index: 1)
+                                return
+                            }){
+                                Text(macroNoOption)
+                                    .bold()
+                                    .font(.title3)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.glass)
+                            .tint(Color.orange)
+                            .padding()
+                        } else {
+                            Button(action: {
+                                continueMacro(index: 1)
+                                return
+                            }){
+                                Text(macroNoOption)
+                                    .font(.title3)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.glass)
+                            .padding()
+                        }
+                    }
+                }
+            }
+            .padding()
+        }
+        .presentationDetents([.medium])
+    }
+
+    @ViewBuilder
+    private var webViewSheet: some View {
+        if let url = url {
+            ZStack (alignment: .bottom){
+                WebView(url: url)
+                GlassEffectContainer {
+                    HStack{
+                        ShareLink(item: url)
+                            .padding()
+                            .glassEffect()
+                        Button("Close", systemImage: "chevron.down"){
+                            showWebView = false
+                        }
+                        .padding()
+                        .glassEffect()
+                    }
+                }.padding()
+            }
+        }
+    }
+    
     var body: some View {
         GeometryReader { geo in
             if isLoading {
@@ -289,25 +435,25 @@ struct ContentView: View {
                 TabView (selection: $currentTab) {
                     Tab("Remote", systemImage: "av.remote", value: 0){
                         NavigationView {
-                            if currentRemoteItem?.template == RemoteTemplate.List ||
-                                currentRemoteItem?.template == RemoteTemplate.Wrap {
-                                RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                            if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
+                                mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
+                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
                                     .ignoresSafeArea()
                             } else {
-                                RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
                             }
                         }
                     }
                     
                     Tab("States", systemImage: "flag", value: 1){
                         NavigationView {
-                            StateView(remoteStates: $remoteStates, currentRemote: $currentRemote)
+                            StateView(remoteStates: $mainModel.remoteStates, currentRemote: $mainModel.currentRemote)
                         }
                     }
 
                     Tab("History", systemImage: "checklist", value: 2){
                         NavigationView {
-                            HistoryView(commandIds: $commandIds)
+                            HistoryView(mainModel: $mainModel)
                                 .ignoresSafeArea()
                         }
                     }
@@ -315,140 +461,20 @@ struct ContentView: View {
                     TabSection("Automatic Execution") {
                         Tab("AutomaticExecution", systemImage: "calendar", value: 3, role: .search){
                             NavigationView {
-                                AutomaticExecutionView(automaticExecutionEntries: $automaticExecutions)
+                                AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions)
                             }
                         }
                     }
                     
                 }
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
-                    ScrollView {
-                        VStack {
-                                Label("Continue Macro", systemImage: "list.triangle")
-                                    .font(.title2)
-                                Text(macroQuestion)
-                                    .font(.title)
-                            Divider()
-                            ForEach(macroOptions, id: \.self) { option in
-                                let isDefault = (macroOptions.firstIndex(of: option) == macroDefaultOption)
-                                if isDefault {
-                                    Button(action: {
-                                        continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
-                                        return
-                                    }){
-                                        Text(option)
-                                            .bold()
-                                            .font(.title3)
-                                            .frame(maxWidth: .infinity)
-                                    }
-                                    .buttonStyle(.glass)
-                                    .tint(Color.orange)
-                                    .padding()
-                                } else {
-                                    Button(action: {
-                                        continueMacro(index: (macroOptions.firstIndex(of: option) ?? -1))
-                                        return
-                                    }){
-                                        Text(option)
-                                            .font(.title3)
-                                            .frame(maxWidth: .infinity)
-                                    }
-                                    .buttonStyle(.glass)
-                                    .padding()
-                                }
-                            }
-                        }
-                        .padding()
-                    }
-                    .presentationDetents([.medium])
+                    macroSelectionListSheet
                 }
                 .sheet(isPresented: $showMacroQuestion) { [macroQuestion, macroYesOption, macroNoOption, macroDefaultOption] in
-                    ScrollView {
-                        VStack{
-                            Label("Continue Macro", systemImage: "questionmark")
-                                .font(.title2)
-                            Text(macroQuestion)
-                                .font(.title)
-                    Divider()
-                    HStack {
-                        if macroYesOption.isEmpty == false {
-                            if macroDefaultOption == 0 {
-                                Button(action: {
-                                    continueMacro(index: 0)
-                                    return
-                                }){
-                                    Text(macroYesOption)
-                                        .font(.title3)
-                                        .bold()
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.glass)
-                                .tint(Color.orange)
-                                .padding()
-                            } else {
-                                Button(action: {
-                                    continueMacro(index: 0)
-                                    return
-                                }){
-                                    Text(macroYesOption)
-                                        .font(.title3)
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.glass)
-                                .padding()
-                            }
-                        }
-                        if macroNoOption.isEmpty == false {
-                            if macroDefaultOption == 1 {
-                                Button(action: {
-                                    continueMacro(index: 1)
-                                    return
-                                }){
-                                    Text(macroNoOption)
-                                        .bold()
-                                        .font(.title3)
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.glass)
-                                .tint(Color.orange)
-                                .padding()
-                            } else {
-                                Button(action: {
-                                    continueMacro(index: 1)
-                                    return
-                                }){
-                                    Text(macroNoOption)
-                                        .font(.title3)
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.glass)
-                                .padding()
-                            }
-                        }
-                    }
+                    macroQuestionSheet
                 }
-                .padding()
-            }
-            .presentationDetents([.medium])
-        }
                 .sheet(isPresented: $showWebView) { [url] in
-                    if let url = url {
-                        ZStack (alignment: .bottom){
-                            WebView(url: url)
-                            GlassEffectContainer {
-                                HStack{
-                                    ShareLink(item: url)
-                                        .padding()
-                                        .glassEffect()
-                                    Button("Close", systemImage: "chevron.down"){
-                                        showWebView = false
-                                    }
-                                    .padding()
-                                    .glassEffect()
-                                }
-                            }.padding()
-                        }
-                    }
+                    webViewSheet
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing){
@@ -456,7 +482,7 @@ struct ContentView: View {
                             showSmallPopup2 = true
                         }
                         .popover(isPresented: $showSmallPopup2) {
-                            RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $showSmallPopup2, remotes: remotes)
+                            RemoteHistoryView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteStates: $mainModel.remoteStates, remoteItemStack: $mainModel.remoteItemStack, isVisible: $showSmallPopup2, remotes: mainModel.remotes)
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }
@@ -466,10 +492,10 @@ struct ContentView: View {
                             showSmallPopup = true
                         }
                         .popover(isPresented: $showSmallPopup) {
-                            MainCommandsView(mainCommands: $mainCommands,
-                                             currentRemoteItem: $currentRemoteItem,
-                                             remoteItemStack: $remoteItemStack,
-                                             commandIds: $commandIds,
+                            MainCommandsView(mainCommands: $mainModel.mainCommands,
+                                             currentRemoteItem: $mainModel.currentRemoteItem,
+                                             remoteItemStack: $mainModel.remoteItemStack,
+                                             mainModel: $mainModel,
                                              isVisible: $showSmallPopup)
                             .padding()
                             .presentationCompactAdaptation(.popover)
@@ -480,19 +506,19 @@ struct ContentView: View {
                             showSidePane = true
                         }
                         .fullScreenCover(isPresented: $showSidePane) {
-                            SidePaneView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, remoteStates: $remoteStates, isVisible: $showSidePane)
+                            SidePaneView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, remoteStates: $mainModel.remoteStates, isVisible: $showSidePane)
                         }
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Back", systemImage: "arrow.left") {
-                            if remoteItemStack.count > 0 {
-                                currentRemoteItem = remoteItemStack.popLast()
+                            if mainModel.remoteItemStack.count > 0 {
+                                mainModel.currentRemoteItem = mainModel.remoteItemStack.popLast()
                             }
                         }
-                        .disabled(remoteItemStack.count <= 0)
+                        .disabled(mainModel.remoteItemStack.count <= 0)
                     }
                     ToolbarItem(placement: .principal) {
-                        Text(currentRemote?.description ?? "Remote")
+                        Text(mainModel.currentRemote?.description ?? "Remote")
                             .font(.headline)
                     }
                 }.ignoresSafeArea()
@@ -500,24 +526,24 @@ struct ContentView: View {
             .task {
                 isLoading = true
                 do {
-                    zones = try await HomeRemoteAPI.shared.getZonesComplete()
-                    remotes = try await HomeRemoteAPI.shared.getRemotes()
-                    mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
-                    automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                    mainModel.zones = try await HomeRemoteAPI.shared.getZonesComplete()
+                    mainModel.remotes = try await HomeRemoteAPI.shared.getRemotes()
+                    mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
+                    mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
                     if let lastRemote = remoteHistory.first {
-                        if let lastRemoteItem = remotes.first(where: {$0.id == lastRemote.remoteId}){
-                            remoteStates = []
-                            currentRemote = lastRemoteItem
-                            currentRemoteItem = lastRemoteItem.remote
+                        if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
+                            mainModel.remoteStates = []
+                            mainModel.currentRemote = lastRemoteItem
+                            mainModel.currentRemoteItem = lastRemoteItem.remote
                             
-                            let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
+                            let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
                             if itemToUpdate != nil {
                                 itemToUpdate?.lastUsed = Date()
                             }
-                            remoteItemStack.removeAll()
+                            mainModel.remoteItemStack.removeAll()
                             Task {
-                                remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                            }                            
+                                mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
+                            }
                         }
                     }
                     try await setupConnection()
@@ -526,16 +552,15 @@ struct ContentView: View {
                 }
                 isLoading = false;
             }
-            .onChange(of: currentRemote) {
+            .onChange(of: mainModel.currentRemote) {
                 DispatchQueue.main.async {
                     currentTab = 0
                 }
             }
             // Provide window size via environment
             .environment(\.mainWindowSize, geo.size)
-            .environment(\.zones, zones)
-            .environment(\.remotes, remotes)
-            .environment(\.commandIds, commandIds)
+            .environment(\.zones, mainModel.zones)
+            .environment(\.remotes, mainModel.remotes)
         }
     }
 }
@@ -543,3 +568,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+

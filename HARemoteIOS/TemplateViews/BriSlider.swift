@@ -12,7 +12,7 @@ struct BriSlider: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     
     @State private var sliderVisible: Bool = false
@@ -58,7 +58,7 @@ struct BriSlider: View {
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
                         let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.briComplete)
-                        commandIds.append(id)
+                        mainModel.executeCommand(id: id)
                         sliderVisible.toggle()
                     }
                     .padding()
@@ -80,9 +80,9 @@ struct BriSlider: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    BriSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    BriSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

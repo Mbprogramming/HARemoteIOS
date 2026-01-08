@@ -12,7 +12,7 @@ struct RemoteButtonCommandList: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     @State private var parentHeight: CGFloat = 60.0
     
@@ -43,7 +43,7 @@ struct RemoteButtonCommandList: View {
                 ForEach(items, id:\.self.description) { item in
                     Button(item.description ?? "", action: {
                         let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
-                        commandIds.append(id)
+                        mainModel.executeCommand(id: id)
                     })
                 }
             }
@@ -71,9 +71,9 @@ struct RemoteButtonCommandList: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    RemoteButtonCommandList(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    RemoteButtonCommandList(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

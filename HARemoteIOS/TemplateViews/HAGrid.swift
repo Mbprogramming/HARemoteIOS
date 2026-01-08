@@ -16,7 +16,7 @@ struct HAGrid: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     
     @Environment(\.mainWindowSize) var mainWindowSize
@@ -112,7 +112,7 @@ struct HAGrid: View {
                                                     level: level + 1,
                                                     currentRemoteItem: $currentRemoteItem,
                                                     remoteItemStack: $remoteItemStack,
-                                                    commandIds: $commandIds,
+                                                    mainModel: $mainModel,
                                                     remoteStates: $remoteStates
                                                 )
                                                 .frame(height: rowHeight)
@@ -123,7 +123,7 @@ struct HAGrid: View {
                                                     level: level + 1,
                                                     currentRemoteItem: $currentRemoteItem,
                                                     remoteItemStack: $remoteItemStack,
-                                                    commandIds: $commandIds,
+                                                    mainModel: $mainModel,
                                                     remoteStates: $remoteStates
                                                 )
                                                 .frame(height: rowHeight)
@@ -143,7 +143,7 @@ struct HAGrid: View {
                         .padding()
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
             }
         }
     }
@@ -152,13 +152,13 @@ struct HAGrid: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     var level: Int = 0
     var rows:Int = 4
     var columns:Int = 3
     
-    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }
 

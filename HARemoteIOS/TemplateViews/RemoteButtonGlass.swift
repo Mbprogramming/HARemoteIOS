@@ -13,7 +13,7 @@ struct RemoteButtonGlass: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var isVisible: Bool
     @State private var parentHeight: CGFloat = 60.0
     
@@ -37,7 +37,7 @@ struct RemoteButtonGlass: View {
             }
             if remoteItem?.template == RemoteTemplate.Command {
                 let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
-                commandIds.append(id)
+                mainModel.executeCommand(id: id)
             }
             isVisible = false
             }){
@@ -70,9 +70,9 @@ struct RemoteButtonGlass: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var isVisible: Bool = true
     var remoteItem: RemoteItem? = nil
     
-    RemoteButtonGlass(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, isVisible: $isVisible)
+    RemoteButtonGlass(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, isVisible: $isVisible)
 }

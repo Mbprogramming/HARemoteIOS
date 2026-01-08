@@ -12,7 +12,7 @@ struct HueOnOffMulti: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var commandIds: [String]
+    @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     
     @State private var listVisible: Bool = false
@@ -80,30 +80,30 @@ struct HueOnOffMulti: View {
                                 let minute = Calendar.current.component(.minute, from: delay!)
                                 let delay = (hour * 60 * 60) + (minute * 60)
                                 let id = HomeRemoteAPI.shared.sendCommandDeferredParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded, delay: delay, cyclic: false)
-                                commandIds.append(id)
+                                mainModel.executeCommand(id: id)
                             } else {
                                 if delayType! == 1 {
                                     let hour = Calendar.current.component(.hour, from: delay!)
                                     let minute = Calendar.current.component(.minute, from: delay!)
                                     let delay = (hour * 60 * 60) + (minute * 60)
                                     let id = HomeRemoteAPI.shared.sendCommandDeferredParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded, delay: delay, cyclic: true)
-                                    commandIds.append(id)
+                                    mainModel.executeCommand(id: id)
                                 } else {
                                     if delayType! == 2 {
                                         let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded, at: delay!, repeatValue: .none)
-                                        commandIds.append(id)
+                                        mainModel.executeCommand(id: id)
                                     } else {
                                         if delayType! == 3 {
                                             let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded, at: delay!, repeatValue: .daily)
-                                            commandIds.append(id)
+                                            mainModel.executeCommand(id: id)
                                         } else {
                                             if delayType! == 4 {
                                                 let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded, at: delay!, repeatValue: .weekly)
-                                                commandIds.append(id)
+                                                mainModel.executeCommand(id: id)
                                             } else {
                                                 if delayType! == 5 {
                                                     let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded, at: delay!, repeatValue: .monthly)
-                                                    commandIds.append(id)
+                                                    mainModel.executeCommand(id: id)
                                                 }
                                             }
                                         }
@@ -113,7 +113,7 @@ struct HueOnOffMulti: View {
 
                         } else {
                             let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: encoded)
-                            commandIds.append(id)
+                            mainModel.executeCommand(id: id)
                         }
                         listVisible.toggle()
                     }
@@ -134,9 +134,9 @@ struct HueOnOffMulti: View {
 #Preview {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var commandIds: [String] = []
+    @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
     
-    HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, commandIds: $commandIds, remoteStates: $remoteStates)
+    HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }
