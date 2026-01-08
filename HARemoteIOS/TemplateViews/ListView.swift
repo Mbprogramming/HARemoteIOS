@@ -46,7 +46,7 @@ struct ListView: View {
         if cols < 1 {
             cols = 1
         }
-        w = (mainWindowSize.width / CGFloat(cols)) - (CGFloat(cols + 1) * 10.0)
+        w = (mainWindowSize.width / CGFloat(cols))
         if let children = remoteItem?.children {
             let count = children.count
             if count == 0 {
@@ -96,7 +96,6 @@ struct ListView: View {
                     RemoteItemView(remoteItem: item, level: level + 1,
                                    currentRemoteItem: $currentRemoteItem,
                                    remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
-                    .padding()
                 } else {
                     if item.template == RemoteTemplate.EmptyListItem {
                         EmptyView()
@@ -105,11 +104,11 @@ struct ListView: View {
                                        currentRemoteItem: $currentRemoteItem,
                                        remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
                         .frame(width: w, height: 150)
-                        .padding()
                     }
                 }
             }
         }
+        .padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
     }
     
     var body: some View {

@@ -140,7 +140,6 @@ struct HAGrid: View {
                                 }
                             }
                         }
-                        .padding()
                 }
             } else {
                 RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
