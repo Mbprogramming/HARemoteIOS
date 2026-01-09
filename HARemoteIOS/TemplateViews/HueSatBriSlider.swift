@@ -190,12 +190,6 @@ struct HueSatBriSlider: View {
             .padding()
             .presentationDetents([.medium])
         }
-        .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
-        //.buttonStyle(.glass)
-        //.frame(height: 150)
     }
 }
 
