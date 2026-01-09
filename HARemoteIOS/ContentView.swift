@@ -147,6 +147,7 @@ struct ContentView: View {
                         let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
                         deleteHistory(indexSet: indexSet)
                     }
+                    try? modelContext.save()
                     mainModel.remoteItemStack.removeAll()
                     Task {
                         mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")

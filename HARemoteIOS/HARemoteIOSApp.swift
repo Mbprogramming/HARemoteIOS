@@ -14,6 +14,6 @@ struct HARemoteIOSApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [RemoteHistoryEntry.self, RemoteFavorite.self])
+        .modelContainer(for: [RemoteHistoryEntry.self, RemoteFavorite.self, HueMultiEntry.self])
     }
 }

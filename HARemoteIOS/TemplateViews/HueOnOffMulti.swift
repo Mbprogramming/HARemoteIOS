@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HueOnOffMulti: View {
     var remoteItem: RemoteItem?
@@ -22,8 +23,13 @@ struct HueOnOffMulti: View {
     
     @State private var delay: Date? = nil
     @State private var delayType: Int? = nil
+    @State private var showSaveBox: Bool = false
+    @State private var name: String = ""
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.modelContext) var modelContext
+    
+    @Query(sort: \HueMultiEntry.name, order: .forward) var multiEntries: [HueMultiEntry]
     
     var body: some View {
         RemoteBaseButton(remoteItem: remoteItem, action: {
@@ -43,6 +49,75 @@ struct HueOnOffMulti: View {
                         }
                     }
                     Spacer()
+                    Button("Save", systemImage: "text.badge.plus") {
+                        if !selection.isEmpty {
+                            showSaveBox.toggle()
+                        }
+                    }
+                    .disabled(selection.isEmpty)
+                    .popover(isPresented: $showSaveBox,
+                             attachmentAnchor: .point(.center), // Ankerpunkt des Popovers relativ zum Button
+                             arrowEdge: .bottom) {
+                        VStack {
+                            Text("Save selection")
+                                .font(.title)
+                            TextField(
+                                "Enter name here",
+                                text: $name
+                            )
+                            HStack {
+                                Button("Cancel", systemImage: "xmark.circle") {
+                                    showSaveBox.toggle()
+                                }
+                                .padding()
+                                Spacer()
+                                Button("OK", systemImage: "checkmark.circle") {
+                                    var sel: String = ""
+                                    for s in selection {
+                                        if let i1 = s.item1 {
+                                            sel.append(i1)
+                                            sel.append(",")
+                                        }
+                                    }
+                                    let entry = HueMultiEntry(name: name, ids: sel)
+                                    modelContext.insert(entry)
+                                    
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        // Consider presenting an alert or logging the error in production
+                                        print("Failed to save HueMultiEntry: \(error)")
+                                    }
+                                    showSaveBox.toggle()
+                                }
+                            }
+                        }
+                        .padding()
+                        .presentationCompactAdaptation(.popover)
+                    }
+                    Spacer()
+                    Menu {
+                        ForEach(multiEntries, id: \.self.id) { e in
+                            Button(e.name) {
+                                if let entries = e.ids.split(separator: ",").map(\.description) as? [String],
+                                   let items = remoteItem?.steps {
+                                    selection.removeAll()
+                                    entries.forEach({ i in
+                                        let item = items.first(where: { $0.item1 == i })
+                                        if item != nil {
+                                            selection.insert(item!)
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "text.justify")
+                            Text("Load")
+                        }
+                    }
+                    Spacer()
                     Button("None", systemImage: "minus.circle") {
                         selection.removeAll()
                     }
@@ -50,7 +125,8 @@ struct HueOnOffMulti: View {
                 .padding()
                 List(items, id: \.self, selection: $selection) {
                     Text($0.item2 ?? "")
-                }.tint(.none)
+                }
+                .tint(.none)
                 .environment(\.editMode, $editMode)
                 Spacer()
                 HStack {
@@ -125,7 +201,6 @@ struct HueOnOffMulti: View {
 
             }
         }
-        
         .buttonStyle(.bordered)
         .tint(Color.primary)
         .buttonBorderShape(.roundedRectangle(radius: 10))
@@ -142,3 +217,4 @@ struct HueOnOffMulti: View {
     
     HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }
+
