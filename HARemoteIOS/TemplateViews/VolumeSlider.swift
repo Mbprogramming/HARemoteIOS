@@ -119,10 +119,6 @@ struct VolumeSlider: View {
             .frame(minWidth: mainWindowSize.width - 20)
             .presentationCompactAdaptation(.popover)
         }
-        .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
     }
 }
 

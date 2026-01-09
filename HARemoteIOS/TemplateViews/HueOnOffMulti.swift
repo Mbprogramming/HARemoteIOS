@@ -201,10 +201,6 @@ struct HueOnOffMulti: View {
 
             }
         }
-        .buttonStyle(.bordered)
-        .tint(Color.primary)
-        .buttonBorderShape(.roundedRectangle(radius: 10))
-        .shadow(radius: 5)
     }
 }
 
