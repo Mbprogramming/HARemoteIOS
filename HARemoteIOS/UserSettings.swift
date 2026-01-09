@@ -40,6 +40,15 @@ struct UserSettings: View {
                 Section("Hue Predefines") {
                     ForEach(multiEntries, id: \.self.id) { entry in
                         Text(entry.name)
+                            .swipeActions(edge: .trailing) {
+                                Button("Delete", systemImage: "trash") {
+                                    modelContext.delete(entry)
+                                    DispatchQueue.main.async {
+                                        try? self.modelContext.save()
+                                    }
+                                }
+                                .tint(.red)
+                            }
                     }
                 }
             }
