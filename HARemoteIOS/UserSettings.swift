@@ -47,6 +47,7 @@ struct UserSettings: View {
                                         try? self.modelContext.save()
                                     }
                                 }
+                                
                                 .tint(.red)
                             }
                     }
