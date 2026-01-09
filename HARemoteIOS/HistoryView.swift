@@ -12,18 +12,37 @@ struct HistoryView: View {
     
     var body: some View {
         List {
+            Spacer(minLength: 100)
             ForEach(mainModel.commandIds, id: \.self.id) { id in
                 VStack {
                     Text(id.id)
                         .font(.subheadline)
-                    Text("\(id.timeStamp)")
-                        .font(.footnote)
-                    Text("\(String(describing: id.received))")
-                        .font(.footnote)
+                    HStack {
+                        Text("Send:")
+                            .font(.footnote)
+                        Spacer()
+                        Text("\(id.timeStamp)")
+                            .font(.footnote)
+                    }
+                    HStack {
+                        Text("Received:")
+                            .font(.footnote)
+                        Spacer()
+                        Text("\(String(describing: id.received))")
+                            .font(.footnote)
+                    }
+                    HStack {
+                        Text("Finished:")
+                            .font(.footnote)
+                        Spacer()
+                        Text("\(String(describing: id.received))")
+                            .font(.footnote)
+                    }
                 }
                 .padding()
                 
             }
+            Spacer(minLength: 100)
         }
     }
 }

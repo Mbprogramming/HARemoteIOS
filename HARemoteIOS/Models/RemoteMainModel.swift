@@ -31,13 +31,16 @@ import Observation
         }
     }
     public func finishExecution(id: String) {
-        if let index = commandIds.firstIndex(of: CommandExecutionEntry(id: id)) {
-            _ = commandIds.remove(at: index)
+        // if let index = commandIds.firstIndex(of: CommandExecutionEntry(id: id)) {
+           // _ = commandIds.remove(at: index)
+        // }
+        if let item = commandIds.first(where: { $0.id == id }){
+            item.finished = Date()
         }
     }
     
     public func existId(id: String) -> Bool {
-        if let _ = commandIds.first(where: { $0.id == id }){
+        if let _ = commandIds.first(where: { id.starts(with: $0.id) }){
             return true
         }
         return false
