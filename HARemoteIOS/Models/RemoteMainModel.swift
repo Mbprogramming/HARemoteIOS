@@ -8,14 +8,19 @@
 import Foundation
 import Observation
 
-@Observable class RemoteMainModel {
+@Observable class RemoteMainModel : Equatable {
+    static func == (lhs: RemoteMainModel, rhs: RemoteMainModel) -> Bool {
+        return lhs.nonVisibleProperty == rhs.nonVisibleProperty
+    }
+    
     var zones: [Zone] = []
     var remotes : [Remote] = []
     var mainCommands: [RemoteItem] = []
     var commandIds: [CommandExecutionEntry] = []
     var remoteStates: [IState] = []
     var automaticExecutions: [AutomaticExecutionEntry] = []
-
+    var nonVisibleProperty: UUID = UUID()
+    
     var currentRemote: Remote? = nil
     var currentRemoteItem: RemoteItem? = nil
     var remoteItemStack: [RemoteItem] = []

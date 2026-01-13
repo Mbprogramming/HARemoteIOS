@@ -18,6 +18,7 @@ struct HAGrid: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
+    @Binding var orientation: UIDeviceOrientation
     
     @Environment(\.mainWindowSize) var mainWindowSize
     
@@ -113,7 +114,8 @@ struct HAGrid: View {
                                                     currentRemoteItem: $currentRemoteItem,
                                                     remoteItemStack: $remoteItemStack,
                                                     mainModel: $mainModel,
-                                                    remoteStates: $remoteStates
+                                                    remoteStates: $remoteStates,
+                                                    orientation: $orientation
                                                 )
                                                 .frame(height: rowHeight)
                                                 .gridCellColumns(item.colSpan!)
@@ -124,7 +126,8 @@ struct HAGrid: View {
                                                     currentRemoteItem: $currentRemoteItem,
                                                     remoteItemStack: $remoteItemStack,
                                                     mainModel: $mainModel,
-                                                    remoteStates: $remoteStates
+                                                    remoteStates: $remoteStates,
+                                                    orientation: $orientation
                                                 )
                                                 .frame(height: rowHeight)
                                             }
@@ -153,11 +156,12 @@ struct HAGrid: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
     var remoteItem: RemoteItem? = nil
     var level: Int = 0
     var rows:Int = 4
     var columns:Int = 3
     
-    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
 }
 

@@ -11,12 +11,14 @@ import SwiftData
 struct RemoteHistoryViewLine: View {
     var remote1: Remote
     var remote2: Remote? = nil
-
+    var remote3: Remote? = nil
+    
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteStates: [IState]
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var isVisible: Bool
+    @Binding var orientation: UIDeviceOrientation
     
     @Environment(\.modelContext) var modelContext
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -60,42 +62,81 @@ struct RemoteHistoryViewLine: View {
             .buttonStyle(.borderless)
             .foregroundStyle(colorScheme == .dark ? .white : .black)
             .padding()
-        if let remote2 {
-            Button(action: {
-                remoteStates = []
-                currentRemote = remote2
-                currentRemoteItem = remote2.remote
-                
-                let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
-                if itemToUpdate != nil {
-                    itemToUpdate?.lastUsed = Date()
-                }
-                try? modelContext.save()
-                remoteItemStack.removeAll()
-                Task {
-                    remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                }
-                isVisible = false
-            }){
-                VStack {
-                    if remote1.icon != nil {
-                        AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote2.icon!)
-                            .frame(width: 40, height: 40)
+            if let remote2 {
+                Button(action: {
+                    remoteStates = []
+                    currentRemote = remote2
+                    currentRemoteItem = remote2.remote
+                    
+                    let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
+                    if itemToUpdate != nil {
+                        itemToUpdate?.lastUsed = Date()
                     }
-                    Text(remote2.description)
-                        .truncationMode(.middle)
-                        .allowsTightening(true)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.3)
-                        .font(.title)
+                    try? modelContext.save()
+                    remoteItemStack.removeAll()
+                    Task {
+                        remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                    }
+                    isVisible = false
+                }){
+                    VStack {
+                        if remote2.icon != nil {
+                            AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote2.icon!)
+                                .frame(width: 40, height: 40)
+                        }
+                        Text(remote2.description)
+                            .truncationMode(.middle)
+                            .allowsTightening(true)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.3)
+                            .font(.title)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(width: 100, height: 100)
+                //.glassEffect(.regular, in: .)
+                .buttonStyle(.borderless)
+                .foregroundStyle(colorScheme == .dark ? .white : .black)
+                .padding()
             }
-            .frame(width: 100, height: 100)
-            //.glassEffect(.regular, in: .)
-            .buttonStyle(.borderless)
-            .foregroundStyle(colorScheme == .dark ? .white : .black)
-            .padding()
+            if orientation == .landscapeLeft || orientation == .landscapeRight {
+                if let remote3 {
+                    Button(action: {
+                        remoteStates = []
+                        currentRemote = remote3
+                        currentRemoteItem = remote3.remote
+                        
+                        let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
+                        if itemToUpdate != nil {
+                            itemToUpdate?.lastUsed = Date()
+                        }
+                        try? modelContext.save()
+                        remoteItemStack.removeAll()
+                        Task {
+                            remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                        }
+                        isVisible = false
+                    }){
+                        VStack {
+                            if remote3.icon != nil {
+                                AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote3.icon!)
+                                    .frame(width: 40, height: 40)
+                            }
+                            Text(remote3.description)
+                                .truncationMode(.middle)
+                                .allowsTightening(true)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.3)
+                                .font(.title)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                    .frame(width: 100, height: 100)
+                    //.glassEffect(.regular, in: .)
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    .padding()
+                }
             }
         }
     }
@@ -107,7 +148,8 @@ struct RemoteHistoryView: View {
     @Binding var remoteStates: [IState]
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var isVisible: Bool
-    
+    @Binding var orientation: UIDeviceOrientation
+
     var remotes : [Remote]
 
     @Environment(\.mainWindowSize) var mainWindowSize
@@ -136,10 +178,19 @@ struct RemoteHistoryView: View {
                     Text("No remotes found")
                         .padding()
                 }
-                ForEach(Array(stride(from: 0, to: remoteList.count, by: 2)), id: \.self) { i in
-                    let remote1 = remoteList[i]
-                    let remote2 = (i + 1 < remoteList.count) ? remoteList[i + 1] : nil
-                    RemoteHistoryViewLine(remote1: remote1, remote2: remote2, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible)
+                if orientation == .landscapeLeft || orientation == .landscapeRight {
+                    ForEach(Array(stride(from: 0, to: remoteList.count, by: 3)), id: \.self) { i in
+                        let remote1 = remoteList[i]
+                        let remote2 = (i + 1 < remoteList.count) ? remoteList[i + 1] : nil
+                        let remote3 = (i + 2 < remoteList.count) ? remoteList[i + 2] : nil
+                        RemoteHistoryViewLine(remote1: remote1, remote2: remote2, remote3: remote3, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible, orientation: $orientation)
+                    }
+                } else {
+                    ForEach(Array(stride(from: 0, to: remoteList.count, by: 2)), id: \.self) { i in
+                        let remote1 = remoteList[i]
+                        let remote2 = (i + 1 < remoteList.count) ? remoteList[i + 1] : nil
+                        RemoteHistoryViewLine(remote1: remote1, remote2: remote2, remote3: nil, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible, orientation: $orientation)
+                    }
                 }
             }
         }
@@ -152,7 +203,9 @@ struct RemoteHistoryView: View {
     @Previewable @State var remoteStates: [IState] = []
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var isVisible: Bool = true
+    @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
     
     var remotes : [Remote] = []
-    RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible, remotes: remotes)
+    
+    RemoteHistoryView(currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible, orientation: $orientation, remotes: remotes)
 }

@@ -110,7 +110,6 @@ struct ItemView: View {
         .onTapGesture {
             remoteStates = []
             currentRemote = remote
-            currentRemoteItem = remote.remote
             
             let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
             if itemToUpdate != nil {

@@ -41,6 +41,24 @@ extension EnvironmentValues {
     }
 }
 
+struct DeviceRotationViewModifier: ViewModifier {
+    let action: (UIDeviceOrientation) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear()
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                action(UIDevice.current.orientation)
+            }
+    }
+}
+
+extension View {
+    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
+        self.modifier(DeviceRotationViewModifier(action: action))
+    }
+}
+
 struct ContentView: View {
     @State private var navigateToSettings: Bool = false
     @State private var navigateToHome: Bool = false
@@ -84,6 +102,8 @@ struct ContentView: View {
     @State private var url: URL? = URL(string: "https://www.createwithswift.com")
     
     @State private var currentTab: Int = 0
+    
+    @State private var orientation = UIDeviceOrientation.unknown
     
     @AppStorage("server") var server: String = "http://192.168.5.106:5000"
     @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
@@ -438,10 +458,10 @@ struct ContentView: View {
                         NavigationView {
                             if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
                                 mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
-                                    RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
+                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation)
                                         .ignoresSafeArea()
                             } else {
-                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates)
+                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation)
                             }
                         }
                     }
@@ -466,7 +486,6 @@ struct ContentView: View {
                             }
                         }
                     }
-                    
                 }
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     macroSelectionListSheet
@@ -483,7 +502,7 @@ struct ContentView: View {
                             showSmallPopup2 = true
                         }
                         .popover(isPresented: $showSmallPopup2) {
-                            RemoteHistoryView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteStates: $mainModel.remoteStates, remoteItemStack: $mainModel.remoteItemStack, isVisible: $showSmallPopup2, remotes: mainModel.remotes)
+                            RemoteHistoryView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteStates: $mainModel.remoteStates, remoteItemStack: $mainModel.remoteItemStack, isVisible: $showSmallPopup2, orientation: $orientation, remotes: mainModel.remotes)
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }
@@ -497,7 +516,8 @@ struct ContentView: View {
                                              currentRemoteItem: $mainModel.currentRemoteItem,
                                              remoteItemStack: $mainModel.remoteItemStack,
                                              mainModel: $mainModel,
-                                             isVisible: $showSmallPopup)
+                                             isVisible: $showSmallPopup,
+                                             orientation: $orientation)
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }
@@ -535,7 +555,6 @@ struct ContentView: View {
                         if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
                             mainModel.remoteStates = []
                             mainModel.currentRemote = lastRemoteItem
-                            mainModel.currentRemoteItem = lastRemoteItem.remote
                             
                             let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
                             if itemToUpdate != nil {
@@ -556,6 +575,61 @@ struct ContentView: View {
             .onChange(of: mainModel.currentRemote) {
                 DispatchQueue.main.async {
                     currentTab = 0
+                    switch orientation {
+                    case .unknown:
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    case .portrait:
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    case .portraitUpsideDown:
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    case .landscapeLeft:
+                        if mainModel.currentRemote?.landscapeRemote != nil {
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                        } else {
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        }
+                    case .landscapeRight:
+                        if mainModel.currentRemote?.landscapeRemote != nil {
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                        } else {
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        }
+                    case .faceUp:
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    case .faceDown:
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    @unknown default:
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    }
+                }
+            }
+            .onRotate { newOrientation in
+                orientation = newOrientation
+                switch orientation {
+                case .unknown:
+                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                case .portrait:
+                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                case .portraitUpsideDown:
+                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                case .landscapeLeft:
+                    if mainModel.currentRemote?.landscapeRemote != nil {
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                    } else {
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    }
+                case .landscapeRight:
+                    if mainModel.currentRemote?.landscapeRemote != nil {
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                    } else {
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    }
+                case .faceUp:
+                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                case .faceDown:
+                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                @unknown default:
+                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
                 }
             }
             // Provide window size via environment

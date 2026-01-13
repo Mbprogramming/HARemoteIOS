@@ -12,13 +12,15 @@ struct RemoteView: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
+    @Binding var orientation: UIDeviceOrientation
     
     var body: some View {
         RemoteItemView(remoteItem: currentRemoteItem,
-        currentRemoteItem: $currentRemoteItem,
-        remoteItemStack: $remoteItemStack,
-        mainModel: $mainModel,
-        remoteStates: $remoteStates)
+                       currentRemoteItem: $currentRemoteItem,
+                       remoteItemStack: $remoteItemStack,
+                       mainModel: $mainModel,
+                       remoteStates: $remoteStates,
+                       orientation: $orientation)
     }
 }
 
@@ -27,6 +29,7 @@ struct RemoteView: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
     
-    RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
 }

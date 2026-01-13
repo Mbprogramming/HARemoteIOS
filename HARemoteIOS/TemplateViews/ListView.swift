@@ -21,25 +21,8 @@ struct ListView: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
-    
-    init(
-        remoteItem: RemoteItem? = nil,
-        level: Int = 0,
-        height: CGFloat = 150,
-        currentRemoteItem: Binding<RemoteItem?>,
-        remoteItemStack: Binding<[RemoteItem]>,
-        mainModel: Binding<RemoteMainModel>,
-        remoteStates: Binding<[IState]>
-    ) {
-        self.remoteItem = remoteItem
-        self.level = level
-        self.height = height
-        self._currentRemoteItem = currentRemoteItem
-        self._remoteItemStack = remoteItemStack
-        self._mainModel = mainModel
-        self._remoteStates = remoteStates
-    }
-    
+    @Binding var orientation: UIDeviceOrientation
+        
     private func buildRows() {
         rows = []
         cols = remoteItem?.colSpan ?? 1
@@ -95,14 +78,16 @@ struct ListView: View {
                     item.template == RemoteTemplate.Space {
                     RemoteItemView(remoteItem: item, level: level + 1,
                                    currentRemoteItem: $currentRemoteItem,
-                                   remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                                   remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates,
+                                   orientation: $orientation)
                 } else {
                     if item.template == RemoteTemplate.EmptyListItem {
                         EmptyView()
                     } else {
                         RemoteItemView(remoteItem: item, level: level + 1,
                                        currentRemoteItem: $currentRemoteItem,
-                                       remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                                       remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates,
+                                       orientation: $orientation)
                         .frame(width: w, height: 150)
                     }
                 }
@@ -130,6 +115,9 @@ struct ListView: View {
                 .onChange(of: remoteItem) {
                     buildRows()
                 }
+                .onChange(of: orientation) {
+                    buildRows()
+                }
                 .onAppear {
                     buildRows()
                 }
@@ -145,8 +133,10 @@ struct ListView: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
+    
     var remoteItem: RemoteItem? = nil
     
-    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
 }
 
