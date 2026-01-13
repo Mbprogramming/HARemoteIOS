@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2C57C3E92F0FE009006D05B8 /* .gitignore */; };
+		2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2C57C3F02F169DCC006D05B8 /* Kingfisher */; };
 		2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C7F207E2EE2DD8B0069E365 /* libz.tbd */; };
 		2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7F20802EE2DD9C0069E365 /* SignalRClient */; };
 /* End PBXBuildFile section */
@@ -60,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */,
 				2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */,
 				2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */,
 			);
@@ -126,6 +128,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2C57C3F32F169E23006D05B8 /* PBXTargetDependency */,
 				2CCF9A0A2EE2DA7C00F861E1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -134,6 +137,7 @@
 			name = HARemoteIOS;
 			packageProductDependencies = (
 				2C7F20802EE2DD9C0069E365 /* SignalRClient */,
+				2C57C3F02F169DCC006D05B8 /* Kingfisher */,
 			);
 			productName = HARemoteIOS;
 			productReference = 2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */;
@@ -219,6 +223,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */,
+				2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C813FD92ED0A93A00BE0709 /* Products */;
@@ -282,6 +287,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2C57C3F32F169E23006D05B8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2C57C3F22F169E23006D05B8 /* Kingfisher */;
+		};
 		2C813FE72ED0A93E00BE0709 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2C813FD72ED0A93A00BE0709 /* HARemoteIOS */;
@@ -622,6 +631,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
 		2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/dotnet/signalr-client-swift";
@@ -633,6 +650,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2C57C3F02F169DCC006D05B8 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		2C57C3F22F169E23006D05B8 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		2C7F20802EE2DD9C0069E365 /* SignalRClient */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */;

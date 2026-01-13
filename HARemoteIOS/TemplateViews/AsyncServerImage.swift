@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct AsyncServerImage: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -29,7 +30,11 @@ struct AsyncServerImage: View {
 
         Group {
             if let iconUrl, let url = URL(string: iconUrl) {
-                AsyncImage(url: url) { phase in
+                KFImage(url)
+                    .aspectRatio(contentMode: .fit)
+                    .scaledToFit()
+                    .padding()
+                /*{ phase in
                     switch phase {
                     case .empty:
                         ProgressView()
@@ -50,7 +55,7 @@ struct AsyncServerImage: View {
                     @unknown default:
                         EmptyView()
                     }
-                }
+                }*/
             } else {
                 EmptyView()
             }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Kingfisher
 
 struct UserSettings: View {
     @AppStorage("server") var server: String = "http://192.168.5.106:5000"
@@ -33,7 +34,7 @@ struct UserSettings: View {
                 }
                 Section("Cache"){
                     Button("Clear Cache"){
-                        return
+                        KingfisherManager.shared.cache.clearCache()
                     }
                     .buttonStyle(.automatic)
                 }
