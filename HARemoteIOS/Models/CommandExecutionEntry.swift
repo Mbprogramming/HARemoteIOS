@@ -24,4 +24,18 @@ import Observation
         self.received = nil
         self.finished = nil
     }
+    
+    init(other: CommandExecutionEntry, received: Date) {
+        self.id = other.id
+        self.timeStamp = other.timeStamp
+        self.received = received
+        self.finished = nil
+    }
+    
+    init (other: CommandExecutionEntry, finished: Date) {
+        self.id = other.id
+        self.timeStamp = other.timeStamp
+        self.received = other.received
+        self.finished = finished
+    }
 }

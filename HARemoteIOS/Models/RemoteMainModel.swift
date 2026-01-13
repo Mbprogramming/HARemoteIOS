@@ -26,15 +26,12 @@ import Observation
     }
 
     public func receiveExecution(id: String) {
-        if let item = commandIds.first(where: { $0.id == id }){
+        if var item = commandIds.first(where: { id.starts(with: $0.id) }){
             item.received = Date()
         }
     }
     public func finishExecution(id: String) {
-        // if let index = commandIds.firstIndex(of: CommandExecutionEntry(id: id)) {
-           // _ = commandIds.remove(at: index)
-        // }
-        if let item = commandIds.first(where: { $0.id == id }){
+        if var item = commandIds.first(where: { id.starts(with: $0.id)}){
             item.finished = Date()
         }
     }
