@@ -18,6 +18,9 @@ struct UserSettings: View {
     
     @Query(sort: \HueMultiEntry.name, order: .forward) var multiEntries: [HueMultiEntry]
     
+    @State var showAlert = false
+    @State var cacheSizeResult: Result<UInt, KingfisherError>? = nil
+
     var body: some View {
             Form {
                 Section("Server"){
@@ -33,6 +36,34 @@ struct UserSettings: View {
                         .disableAutocorrection(true)
                 }
                 Section("Cache"){
+                    Button("Check Cache") {
+                                KingfisherManager.shared.cache.calculateDiskStorageSize { result in
+                                    cacheSizeResult = result
+                                    showAlert = true
+                                }
+                            }
+                            .alert(
+                                "Disk Cache",
+                                isPresented: $showAlert,
+                                presenting: cacheSizeResult,
+                                actions: { result in
+                                    switch result {
+                                    case .success:
+                                        Button("Clear") {
+                                            KingfisherManager.shared.cache.clearCache()
+                                        }
+                                        Button("Cancel", role: .cancel) {}
+                                    case .failure:
+                                        Button("OK") { }
+                                    }
+                                }, message: { result in
+                                    switch result {
+                                    case .success(let size):
+                                        Text("Size: \(Double(size) / 1024 / 1024) MB")
+                                    case .failure(let error):
+                                        Text(error.localizedDescription)
+                                    }
+                                })
                     Button("Clear Cache"){
                         KingfisherManager.shared.cache.clearCache()
                     }
