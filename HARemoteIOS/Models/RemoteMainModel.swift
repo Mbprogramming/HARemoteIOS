@@ -26,12 +26,12 @@ import Observation
     }
 
     public func receiveExecution(id: String) {
-        if var item = commandIds.first(where: { id.starts(with: $0.id) }){
+        if let item = commandIds.first(where: { id.starts(with: $0.id) }){
             item.received = Date()
         }
     }
     public func finishExecution(id: String) {
-        if var item = commandIds.first(where: { id.starts(with: $0.id)}){
+        if let item = commandIds.first(where: { id.starts(with: $0.id)}){
             item.finished = Date()
         }
     }
