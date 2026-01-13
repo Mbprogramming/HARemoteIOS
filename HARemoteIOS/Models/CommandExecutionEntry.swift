@@ -8,7 +8,7 @@
 import Foundation
 import Observation
 
-@Observable class CommandExecutionEntry : Equatable {
+@Observable class CommandExecutionEntry : Equatable, Identifiable {
     static func == (lhs: CommandExecutionEntry, rhs: CommandExecutionEntry) -> Bool {
         return lhs.id == rhs.id
     }
@@ -37,5 +37,17 @@ import Observation
         self.timeStamp = other.timeStamp
         self.received = other.received
         self.finished = finished
+    }
+    
+    var sendStr: String {
+        return timeStamp.formatted(date: .numeric, time: .complete)
+    }
+    
+    var receivedStr: String {
+        return received == nil ? "-" : received!.formatted(date: .numeric, time: .complete)
+    }
+    
+    var finishedStr: String {
+        return finished == nil ? "-" : finished!.formatted(date: .numeric, time: .complete)
     }
 }

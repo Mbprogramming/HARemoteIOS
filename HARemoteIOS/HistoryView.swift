@@ -15,16 +15,16 @@ struct HistoryView: View {
             Spacer(minLength: 100)
             ForEach(mainModel.commandIds, id: \.id) { id in
                 VStack {
-                    let str1 = id.timeStamp.formatted(date: .numeric, time: .complete)
-                    let str2 = id.received == nil ? "-" : id.received!.formatted(date: .numeric, time: .complete)
-                    let str3 = id.finished == nil ? "-" : id.finished!.formatted(date: .numeric, time: .complete)
-                    Text(id.id)
-                        .font(.subheadline)
+                    HStack {
+                        Text(id.id)
+                            .font(.subheadline)
+                        Spacer()
+                    }
                     HStack {
                         Text("Send:")
                             .font(.footnote)
                         Spacer()
-                        Text("\(str1)")
+                        Text("\(id.sendStr)")
                             .font(.footnote)
                         
                     }
@@ -32,19 +32,18 @@ struct HistoryView: View {
                         Text("Received:")
                             .font(.footnote)
                         Spacer()
-                        Text("\(str2)")
+                        Text("\(id.receivedStr)")
                             .font(.footnote)
                     }
                     HStack {
                         Text("Finished:")
                             .font(.footnote)
                         Spacer()
-                        Text("\(str3)")
+                        Text("\(id.finishedStr)")
                             .font(.footnote)
                     }
                 }
                 .padding()
-                
             }
             Spacer(minLength: 100)
         }
