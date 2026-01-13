@@ -206,25 +206,25 @@ import Observation
     
     var briComplete: String {
         get {
-            return "\(brightness)"
+            return "Brightness:\(brightness)"
         }
     }
     
     var tempComplete: String {
         get {
-            return "\(temperature)"
+            return "Temperature:\(temperature)"
         }
     }
     
     var hueComplete: String {
         get {
-            return "\(hue)"
+            return "Hue:\(hue)"
         }
     }
     
     var satComplete: String {
         get {
-            return "\(saturation)"
+            return "Saturation:\(saturation)"
         }
     }
 }
