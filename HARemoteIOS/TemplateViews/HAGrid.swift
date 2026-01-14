@@ -19,6 +19,7 @@ struct HAGrid: View {
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     @Binding var orientation: UIDeviceOrientation
+    @Binding var disableScroll: Bool
     
     @Environment(\.mainWindowSize) var mainWindowSize
     
@@ -115,7 +116,8 @@ struct HAGrid: View {
                                                     remoteItemStack: $remoteItemStack,
                                                     mainModel: $mainModel,
                                                     remoteStates: $remoteStates,
-                                                    orientation: $orientation
+                                                    orientation: $orientation,
+                                                    disableScroll: $disableScroll
                                                 )
                                                 .frame(height: rowHeight)
                                                 .gridCellColumns(item.colSpan!)
@@ -127,7 +129,8 @@ struct HAGrid: View {
                                                     remoteItemStack: $remoteItemStack,
                                                     mainModel: $mainModel,
                                                     remoteStates: $remoteStates,
-                                                    orientation: $orientation
+                                                    orientation: $orientation,
+                                                    disableScroll: $disableScroll
                                                 )
                                                 .frame(height: rowHeight)
                                             }
@@ -157,11 +160,12 @@ struct HAGrid: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
+    @Previewable @State var disableScroll: Bool = false
     var remoteItem: RemoteItem? = nil
     var level: Int = 0
     var rows:Int = 4
     var columns:Int = 3
     
-    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
 }
 

@@ -100,6 +100,7 @@ struct ContentView: View {
     @State private var showMacroQuestion: Bool = false
     @State private var showWebView: Bool = false
     @State private var url: URL? = URL(string: "https://www.createwithswift.com")
+    @State private var disableScroll: Bool = false
     
     @State private var currentTab: Int = 0
     
@@ -458,10 +459,10 @@ struct ContentView: View {
                         NavigationView {
                             if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
                                 mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
-                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation)
+                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                                         .ignoresSafeArea()
                             } else {
-                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation)
+                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                             }
                         }
                     }

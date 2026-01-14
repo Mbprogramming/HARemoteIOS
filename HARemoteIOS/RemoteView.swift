@@ -13,6 +13,7 @@ struct RemoteView: View {
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     @Binding var orientation: UIDeviceOrientation
+    @Binding var disableScroll: Bool
     
     var body: some View {
         RemoteItemView(remoteItem: currentRemoteItem,
@@ -20,7 +21,8 @@ struct RemoteView: View {
                        remoteItemStack: $remoteItemStack,
                        mainModel: $mainModel,
                        remoteStates: $remoteStates,
-                       orientation: $orientation)
+                       orientation: $orientation,
+                       disableScroll: $disableScroll)
     }
 }
 
@@ -30,6 +32,7 @@ struct RemoteView: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
+    @Previewable @State var disableScroll: Bool = false
     
-    RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+    RemoteView(currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
 }

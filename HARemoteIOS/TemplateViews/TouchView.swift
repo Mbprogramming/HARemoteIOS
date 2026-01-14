@@ -14,8 +14,12 @@ struct TouchView: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
+    @Binding var disableScroll: Bool
+    
+    @State var selectedMode: Int = 0
     
     @Environment(\.mainWindowSize) var mainWindowSize
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     func calcRowHeight() -> CGFloat {
         return calcColumnWidth()
@@ -126,28 +130,67 @@ struct TouchView: View {
         let colCount = 0...2
         let rowCountArray = Array(rowCount)
         let colCountArray = Array(colCount)
-        Grid (alignment: .topLeading) {
-            ForEach(rowCountArray, id: \.self) { y in
-                GridRow {
-                    ForEach(colCountArray, id: \.self) { x in
-                        if remoteItems[3 * y + x] != nil {
-                            RemoteButton(remoteItem: remoteItems[3 * y + x]!, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
-                                .frame(width: columnWidth - 20, height: rowHeight - 20)
-                                .padding(10)
-                        } else {
-                            if icons[3 * y + x] != nil {
-                                AsyncServerImage(imageWidth: Int(columnWidth) - 20, imageHeight: Int(rowHeight) - 20, imageId: icons[3 * y + x], background: false)
-                                    .frame(width: columnWidth - 20, height: rowHeight - 20)
-                                    .padding(10)
-                            } else {
-                                Rectangle()
-                                    .frame(width: columnWidth, height: rowHeight)
-                                    .foregroundColor(.clear)
+        VStack {
+            Picker("Mode", selection: $selectedMode) {
+                Text("Button").tag(0)
+                Text("Gesture").tag(1)
+            }
+            .pickerStyle(.segmented)
+            Spacer()
+            ZStack {
+                if selectedMode == 1 {
+                    Rectangle()
+                        .fill(colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.3))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding()
+                }
+                Grid (alignment: .topLeading) {
+                    ForEach(rowCountArray, id: \.self) { y in
+                        GridRow {
+                            ForEach(colCountArray, id: \.self) { x in
+                                if selectedMode == 0 {
+                                    if remoteItems[3 * y + x] != nil {
+                                        RemoteButton(remoteItem: remoteItems[3 * y + x]!, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                                            .frame(width: columnWidth - 10, height: rowHeight - 10)
+                                            .padding(5)
+                                    } else {
+                                        if icons[3 * y + x] != nil {
+                                            AsyncServerImage(imageWidth: Int(columnWidth) - 10, imageHeight: Int(rowHeight) - 10, imageId: icons[3 * y + x], background: false)
+                                                .frame(width: columnWidth - 10, height: rowHeight - 10)
+                                                .padding(5)
+                                        } else {
+                                            Rectangle()
+                                                .frame(width: columnWidth, height: rowHeight)
+                                                .foregroundColor(.clear)
+                                        }
+                                    }
+                                } else {
+                                    if icons[3 * y + x] != nil {
+                                        AsyncServerImage(imageWidth: Int(columnWidth) - 10, imageHeight: Int(rowHeight) - 10, imageId: icons[3 * y + x], background: false)
+                                            .frame(width: columnWidth - 10, height: rowHeight - 10)
+                                            .padding(5)
+                                    } else {
+                                        Rectangle()
+                                            .frame(width: columnWidth, height: rowHeight)
+                                            .foregroundColor(.clear)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+        .onChange(of: selectedMode) {
+            if selectedMode == 0 {
+                disableScroll = false
+            } else {
+                disableScroll = true
+            }
+        }
+        .onAppear() {
+            selectedMode = 0
+            disableScroll = false
         }
     }
 }
@@ -157,7 +200,8 @@ struct TouchView: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var disableScroll: Bool = false
     var remoteItem: RemoteItem? = nil
     
-    TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, disableScroll: $disableScroll)
 }

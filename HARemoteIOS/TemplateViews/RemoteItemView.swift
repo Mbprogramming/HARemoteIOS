@@ -19,6 +19,7 @@ struct RemoteItemView: View {
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     @Binding var orientation: UIDeviceOrientation
+    @Binding var disableScroll: Bool
     
     func calcInlineRowHeightWidth(columns: Int) -> CGFloat {
         if let half = remoteItem?.gridHalfHeight, half {
@@ -45,20 +46,20 @@ struct RemoteItemView: View {
                     RemoteState(remoteItem: remoteItem, remoteStates: $remoteStates)
                 case .List:
                     ListView(remoteItem: remoteItem, level: level,
-                             height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                             height: height, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                 case .Wrap:
                     Text("Remote Item Template is Wrap")
                 case .Grid3X4:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                 case .Grid3x4Inline:
                     let rows = remoteItem?.calculateUsedGridRows() ?? 0
-                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                         .frame(height: calcInlineRowHeightWidth(columns: 3) * CGFloat(rows))
                 case .Grid4X5:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                 case .Grid4x5Inline:
                     let rows = remoteItem?.calculateUsedGridRows() ?? 0
-                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                         .frame(height: calcInlineRowHeightWidth(columns: 4) * CGFloat(rows))
                 case .Slider:
                     VolumeSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
@@ -85,7 +86,7 @@ struct RemoteItemView: View {
                         Divider()
                     }
                 case .Touch:
-                    TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                    TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, disableScroll: $disableScroll)
                         .frame(height: calcInlineRowHeightWidth(columns: 3) * 3 + 10)
                 case .SelectionList:
                     HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
@@ -102,16 +103,16 @@ struct RemoteItemView: View {
                 case .StateList:
                     Text("Remote Item Template is StateList")
                 case .Grid5x3:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                 case .Grid5x3Inline:
                     let rows = remoteItem?.calculateUsedGridRows() ?? 0
-                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 5, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 5, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                         .frame(height: calcInlineRowHeightWidth(columns: 5) * CGFloat(rows))
                 case .Grid6x4:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                 case .Grid6x4Inline:
                     let rows = remoteItem?.calculateUsedGridRows() ?? 0
-                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 6, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 6, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                         .frame(height: calcInlineRowHeightWidth(columns: 6) * CGFloat(rows))
                 case .TwoColumnList:
                     Text("Remote Item Template is TwoColumnList")
@@ -133,8 +134,9 @@ struct RemoteItemView: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
+    @Previewable @State var disableScroll: Bool = false
     var remoteItem: RemoteItem? = nil
     
-    RemoteItemView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+    RemoteItemView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
 }
 

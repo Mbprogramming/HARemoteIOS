@@ -22,7 +22,8 @@ struct ListView: View {
     @Binding var mainModel: RemoteMainModel
     @Binding var remoteStates: [IState]
     @Binding var orientation: UIDeviceOrientation
-        
+    @Binding var disableScroll: Bool
+
     private func buildRows() {
         rows = []
         cols = remoteItem?.colSpan ?? 1
@@ -80,7 +81,8 @@ struct ListView: View {
                     RemoteItemView(remoteItem: item, level: level + 1,
                                    currentRemoteItem: $currentRemoteItem,
                                    remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates,
-                                   orientation: $orientation)
+                                   orientation: $orientation,
+                                   disableScroll: $disableScroll)
                 } else {
                     if item.template == RemoteTemplate.EmptyListItem {
                         EmptyView()
@@ -88,7 +90,8 @@ struct ListView: View {
                         RemoteItemView(remoteItem: item, level: level + 1,
                                        currentRemoteItem: $currentRemoteItem,
                                        remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates,
-                                       orientation: $orientation)
+                                       orientation: $orientation,
+                                       disableScroll: $disableScroll)
                         .frame(width: w, height: 150)
                     }
                 }
@@ -112,6 +115,7 @@ struct ListView: View {
                             Spacer(minLength: height)
                         }
                     }
+                    .scrollDisabled(disableScroll)
                 }
                 .onChange(of: remoteItem) {
                     buildRows()
@@ -135,9 +139,10 @@ struct ListView: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
-    
+    @Previewable @State var disableScroll: Bool = false
+
     var remoteItem: RemoteItem? = nil
     
-    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
 }
 
