@@ -85,7 +85,8 @@ struct RemoteItemView: View {
                         Divider()
                     }
                 case .Touch:
-                    Text("Remote Item Template is Touch")
+                    TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                        .frame(height: calcInlineRowHeightWidth(columns: 3) * 3 + 10)
                 case .SelectionList:
                     HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
                 case .SelectionListTempBri:

@@ -67,7 +67,7 @@ struct RemoteBaseButton: View {
                         } action: {
                             parentHeight = $0.height
                         }
-            .padding()
+            .padding(5)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .simultaneousGesture(LongPressGesture().onEnded { _ in

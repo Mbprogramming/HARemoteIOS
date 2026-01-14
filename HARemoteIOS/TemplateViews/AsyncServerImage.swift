@@ -28,12 +28,11 @@ struct AsyncServerImage: View {
     var body: some View {
         let iconUrl = getBackgroundUrl(currentScheme: colorScheme)
 
-        Group {
+        //Group {
             if let iconUrl, let url = URL(string: iconUrl) {
                 KFImage(url)
-                    .aspectRatio(contentMode: .fit)
+                    //.aspectRatio(contentMode: .fit)
                     .scaledToFit()
-                    .padding()
                 /*{ phase in
                     switch phase {
                     case .empty:
@@ -59,7 +58,7 @@ struct AsyncServerImage: View {
             } else {
                 EmptyView()
             }
-        }
+        //}
     }
 }
 

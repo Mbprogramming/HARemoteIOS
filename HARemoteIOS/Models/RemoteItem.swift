@@ -13,6 +13,95 @@ import Observation
         return lhs.id == rhs.id
     }
     
+    enum CodingKeys: CodingKey {
+        case id
+        case template
+        case description
+        case children
+        case device
+        case command
+        case stateDevice
+        case state
+        case stateIcon
+        case clientIcon
+        case showStateAndIcon
+        case posX
+        case posY
+        case rowSpan
+        case colSpan
+        case icon
+        case min
+        case max
+        case step
+        case greatStep
+        case steps
+        case lastChange
+        case moreParameter
+        case gridHalfHeight
+        case commandMenuItems
+        case backgroundImage
+        case _$observationRegistrar
+    }
+    
+    required init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(String.self, forKey: .id)
+        self.template = try container.decodeIfPresent(RemoteTemplate.self, forKey: .template)
+        self.description = try container.decodeIfPresent(String.self, forKey: .description)
+        self.children = try container.decodeIfPresent([RemoteItem].self, forKey: .children)
+        self.device = try container.decodeIfPresent(String.self, forKey: .device)
+        self.command = try container.decodeIfPresent(String.self, forKey: .command)
+        self.stateDevice = try container.decodeIfPresent(String.self, forKey: .stateDevice)
+        self.state = try container.decodeIfPresent(String.self, forKey: .state)
+        self.stateIcon = try container.decodeIfPresent(String.self, forKey: .stateIcon)
+        self.clientIcon = try container.decodeIfPresent(String.self, forKey: .clientIcon)
+        self.showStateAndIcon = try container.decodeIfPresent(Bool.self, forKey: .showStateAndIcon)
+        self.posX = try container.decodeIfPresent(Int.self, forKey: .posX)
+        self.posY = try container.decodeIfPresent(Int.self, forKey: .posY)
+        self.rowSpan = try container.decodeIfPresent(Int.self, forKey: .rowSpan)
+        self.colSpan = try container.decodeIfPresent(Int.self, forKey: .colSpan)
+        self.icon = try container.decodeIfPresent(String.self, forKey: .icon)
+        self.min = try container.decodeIfPresent(String.self, forKey: .min)
+        self.max = try container.decodeIfPresent(String.self, forKey: .max)
+        self.step = try container.decodeIfPresent(String.self, forKey: .step)
+        self.greatStep = try container.decodeIfPresent(String.self, forKey: .greatStep)
+        self.steps = try container.decodeIfPresent([StringStringTuple].self, forKey: .steps)
+        self.lastChange = try container.decodeIfPresent(String.self, forKey: .lastChange)
+        self.moreParameter = try container.decodeIfPresent([String : String].self, forKey: .moreParameter)
+        self.gridHalfHeight = try container.decodeIfPresent(Bool.self, forKey: .gridHalfHeight)
+        self.commandMenuItems = try container.decodeIfPresent([RemoteItem].self, forKey: .commandMenuItems)
+        self.backgroundImage = try container.decodeIfPresent(String.self, forKey: .backgroundImage)
+    }
+    
+    init(id: String? = nil, template: RemoteTemplate? = nil, description: String? = nil, device: String? = nil, command: String? = nil, icon: String? = nil) {
+        self.id = id
+        self.template = template
+        self.device = device
+        self.command = command
+        self.icon = icon
+        self.description = description
+        self.children = nil
+        self.stateDevice = nil
+        self.state = nil
+        self.stateIcon = nil
+        self.clientIcon = nil
+        self.showStateAndIcon = nil
+        self.posX = nil
+        self.posY = nil
+        self.rowSpan = nil
+        self.colSpan = nil
+        self.min = nil
+        self.max = nil
+        self.step = nil
+        self.greatStep = nil
+        self.steps = nil
+        self.lastChange = nil
+        self.moreParameter = nil
+        self.gridHalfHeight = nil
+        self.commandMenuItems = nil
+        self.backgroundImage = nil
+    }
+    
     let id: String?
     let template: RemoteTemplate?
     let description: String?
@@ -36,7 +125,7 @@ import Observation
     let greatStep: String?
     let steps: [StringStringTuple]?
     let lastChange: String?
-    //moreParameter    {...}
+    let moreParameter: Dictionary<String, String>?
     //nullable: true
     //defaultConverter    [...]
     let gridHalfHeight: Bool?

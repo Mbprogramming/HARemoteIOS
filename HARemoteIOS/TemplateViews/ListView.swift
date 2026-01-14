@@ -74,6 +74,7 @@ struct ListView: View {
                     item.template == RemoteTemplate.Grid4x5Inline ||
                     item.template == RemoteTemplate.Grid5x3Inline ||
                     item.template == RemoteTemplate.Grid6x4Inline ||
+                    item.template == RemoteTemplate.Touch ||
                     item.template == RemoteTemplate.Divider ||
                     item.template == RemoteTemplate.Space {
                     RemoteItemView(remoteItem: item, level: level + 1,
