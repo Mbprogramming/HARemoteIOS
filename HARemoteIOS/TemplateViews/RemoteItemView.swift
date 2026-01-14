@@ -51,13 +51,15 @@ struct RemoteItemView: View {
                 case .Grid3X4:
                     HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 3, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
                 case .Grid3x4Inline:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
-                        .frame(height: calcInlineRowHeightWidth(columns: 3) * 4)
+                    let rows = remoteItem?.calculateUsedGridRows() ?? 0
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 3, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                        .frame(height: calcInlineRowHeightWidth(columns: 3) * CGFloat(rows))
                 case .Grid4X5:
                     HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
                 case .Grid4x5Inline:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 5, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
-                        .frame(height: calcInlineRowHeightWidth(columns: 4) * 5)
+                    let rows = remoteItem?.calculateUsedGridRows() ?? 0
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 4, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                        .frame(height: calcInlineRowHeightWidth(columns: 4) * CGFloat(rows))
                 case .Slider:
                     VolumeSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
                 case .Combobox:
@@ -101,13 +103,15 @@ struct RemoteItemView: View {
                 case .Grid5x3:
                     HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
                 case .Grid5x3Inline:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 3, columns: 5, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
-                        .frame(height: calcInlineRowHeightWidth(columns: 5) * 5)
+                    let rows = remoteItem?.calculateUsedGridRows() ?? 0
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 5, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                        .frame(height: calcInlineRowHeightWidth(columns: 5) * CGFloat(rows))
                 case .Grid6x4:
                     HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
                 case .Grid6x4Inline:
-                    HAGrid(remoteItem: remoteItem, level: level, rows: 4, columns: 6, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
-                        .frame(height: calcInlineRowHeightWidth(columns: 6) * 5)
+                    let rows = remoteItem?.calculateUsedGridRows() ?? 0
+                    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: 6, inline: true, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation)
+                        .frame(height: calcInlineRowHeightWidth(columns: 6) * CGFloat(rows))
                 case .TwoColumnList:
                     Text("Remote Item Template is TwoColumnList")
                 case .EmptyListItem:

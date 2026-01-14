@@ -57,4 +57,25 @@ import Observation
         }
         return nil
     }
+    
+    public func calculateUsedGridRows() -> Int {
+        if template == .Grid3x4Inline ||
+            template == .Grid4x5Inline ||
+            template == .Grid5x3Inline ||
+            template == .Grid6x4Inline {
+            var maxRow = -1
+            if children != nil {
+                for child in children! {
+                    if child.posY != nil && child.posY! > maxRow {
+                        maxRow = child.posY!
+                    }
+                }
+                return maxRow + 1
+            } else {
+                return 0
+            }
+        } else {
+            return 0
+        }
+    }
 }
