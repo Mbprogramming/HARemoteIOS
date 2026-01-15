@@ -66,25 +66,15 @@ struct ContentView: View {
     @State private var showSmallPopup2: Bool = false
     @State private var showSidePane: Bool = false
     @State private var isLoading: Bool = false
-
-    /*
-    @State private var zones: [Zone] = []
-    @State private var remotes : [Remote] = []
-    @State private var mainCommands: [RemoteItem] = []
-    @State private var commandIds: [String] = []
-    @State private var remoteStates: [IState] = []
-    @State private var automaticExecutions: [AutomaticExecutionEntry] = []
-
-    @State private var currentRemote: Remote? = nil
-    @State private var currentRemoteItem: RemoteItem? = nil
-    @State private var remoteItemStack: [RemoteItem] = []
-    */
     
     @State private var mainModel: RemoteMainModel = RemoteMainModel()
+    
+    @State private var showDebug: Bool = false
     
     @Environment(\.mainWindowSize) var mainWindowSize
     @Environment(\.modelContext) var modelContext
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.scenePhase) private var scenePhase
     
     @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
 
@@ -568,6 +558,13 @@ struct ContentView: View {
                         }
                     }
                     try await setupConnection()
+                    if let mainCmd = IntentHandleService.shared.mainCommandId {
+                        if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
+                            let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
+                            mainModel.executeCommand(id: id)
+                        }
+                        IntentHandleService.shared.mainCommandId = nil
+                    }
                 } catch {
                     
                 }
@@ -604,6 +601,32 @@ struct ContentView: View {
                     }
                 }
             }
+            .onChange(of: IntentHandleService.shared.mainCommandId) {
+                if let mainCmd = IntentHandleService.shared.mainCommandId {
+                    if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
+                        let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
+                        mainModel.executeCommand(id: id)
+                    }
+                    IntentHandleService.shared.mainCommandId = nil
+                }
+            }
+            .onChange(of: scenePhase) { oldPhase, newPhase in
+                if newPhase == .background {
+                    var items: [UIApplicationShortcutItem] = []
+                    for cmd in mainModel.mainCommands {
+                        let icon = UIApplicationShortcutIcon(systemImageName: cmd.clientIcon ?? "bolt.fill")
+                        let item = UIApplicationShortcutItem(
+                            type: "seeb.HARemoteIOS.mainCommand",
+                            localizedTitle: cmd.description ?? "Command",
+                            localizedSubtitle: nil,
+                            icon: icon,
+                            userInfo: ["id": (cmd.id ?? "") as NSString]
+                        )
+                        items.append(item)
+                    }
+                    UIApplication.shared.shortcutItems = items
+                }
+            }
             .onRotate { newOrientation in
                 orientation = newOrientation
                 switch orientation {
@@ -632,6 +655,19 @@ struct ContentView: View {
                 @unknown default:
                     mainModel.currentRemoteItem = mainModel.currentRemote?.remote
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .mainCommandShortcut)) { obj in
+                showDebug.toggle()
+            }
+            .alert(isPresented: $showDebug) {
+                Alert(
+                    title: Text("Please Give Us a Second Chance"),
+                    message: Text("We’d love your feedback before you uninstall."),
+                    primaryButton: .default(Text("Send Feedback")) {
+                        showDebug.toggle()
+                    },
+                    secondaryButton: .cancel(Text("Maybe Later"))
+                )
             }
             // Provide window size via environment
             .environment(\.mainWindowSize, geo.size)
