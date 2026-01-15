@@ -17,7 +17,14 @@ struct TouchView: View {
     @Binding var disableScroll: Bool
     
     @State var selectedMode: Int = 0
+    @State private var offset: CGSize = .zero
     
+    @State private var triggerUp: Int = 0
+    @State private var triggerDown: Int = 0
+    @State private var triggerLeft: Int = 0
+    @State private var triggerRight: Int = 0
+    @State private var triggerTap: Int = 0
+
     @Environment(\.mainWindowSize) var mainWindowSize
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -139,10 +146,44 @@ struct TouchView: View {
             Spacer()
             ZStack {
                 if selectedMode == 1 {
-                    Rectangle()
-                        .fill(colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.3))
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
+                        .fill(.gray.opacity(0.4))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
+                        .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                            .onChanged { value in
+                                withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.8)) {
+                                    self.offset = value.translation
+                                }
+                            }
+                            .onEnded({ value in
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                    self.offset = .zero
+                                }
+                                let xOffset = value.translation.width
+                                let yOffset = value.translation.height
+                                
+                                if abs(xOffset) > abs(yOffset) && abs(xOffset) > 100 {
+                                    if xOffset < 0 {
+                                        // left
+                                        triggerLeft += 1
+                                    } else {
+                                        // right
+                                        triggerRight += 1
+                                    }
+                                } else {
+                                    if abs(yOffset) > 100 {
+                                        if yOffset < 0 {
+                                            // up
+                                            triggerUp += 1
+                                        } else {
+                                            // down
+                                            triggerDown += 1
+                                        }
+                                    }
+                                }
+                            }))
                 }
                 Grid (alignment: .topLeading) {
                     ForEach(rowCountArray, id: \.self) { y in
@@ -169,6 +210,46 @@ struct TouchView: View {
                                         AsyncServerImage(imageWidth: Int(columnWidth) - 10, imageHeight: Int(rowHeight) - 10, imageId: icons[3 * y + x], background: false)
                                             .frame(width: columnWidth - 10, height: rowHeight - 10)
                                             .padding(5)
+                                            .if(3 * y + x == 1) { img in
+                                                img.phaseAnimator([1.0, 0.5, 1.0], trigger: triggerUp) { content, phase in
+                                                    content.scaleEffect(phase)
+                                                } animation: { phase in
+                                                    // Interactive Spring sorgt für direkte, flüssige Reaktion
+                                                        .interactiveSpring(response: 0.3, dampingFraction: 0.6)
+                                                }
+                                            }
+                                            .if(3 * y + x == 3) { img in
+                                                img.phaseAnimator([1.0, 0.5, 1.0], trigger: triggerLeft) { content, phase in
+                                                    content.scaleEffect(phase)
+                                                } animation: { phase in
+                                                    // Interactive Spring sorgt für direkte, flüssige Reaktion
+                                                        .interactiveSpring(response: 0.3, dampingFraction: 0.6)
+                                                }
+                                            }
+                                            .if(3 * y + x == 4) { img in
+                                                img.phaseAnimator([1.0, 0.5, 1.0], trigger: triggerTap) { content, phase in
+                                                    content.scaleEffect(phase)
+                                                } animation: { phase in
+                                                    // Interactive Spring sorgt für direkte, flüssige Reaktion
+                                                        .interactiveSpring(response: 0.3, dampingFraction: 0.6)
+                                                }
+                                            }
+                                            .if(3 * y + x == 5) { img in
+                                                img.phaseAnimator([1.0, 0.5, 1.0], trigger: triggerRight) { content, phase in
+                                                    content.scaleEffect(phase)
+                                                } animation: { phase in
+                                                    // Interactive Spring sorgt für direkte, flüssige Reaktion
+                                                    .interactiveSpring(response: 0.3, dampingFraction: 0.6)
+                                                }
+                                            }
+                                            .if(3 * y + x == 7) { img in
+                                                img.phaseAnimator([1.0, 0.5, 1.0], trigger: triggerDown) { content, phase in
+                                                    content.scaleEffect(phase)
+                                                } animation: { phase in
+                                                    // Interactive Spring sorgt für direkte, flüssige Reaktion
+                                                    .interactiveSpring(response: 0.3, dampingFraction: 0.6)
+                                                }
+                                            }
                                     } else {
                                         Rectangle()
                                             .frame(width: columnWidth, height: rowHeight)
@@ -179,6 +260,7 @@ struct TouchView: View {
                         }
                     }
                 }
+                .offset(offset)
             }
         }
         .onChange(of: selectedMode) {
@@ -205,3 +287,4 @@ struct TouchView: View {
     
     TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, disableScroll: $disableScroll)
 }
+
