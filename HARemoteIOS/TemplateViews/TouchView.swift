@@ -147,10 +147,20 @@ struct TouchView: View {
             ZStack {
                 if selectedMode == 1 {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
                         .fill(.gray.opacity(0.4))
+                        .glassEffect(.regular, in: .rect(cornerRadius: 10))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
+                        .gesture(TapGesture(count: 1)
+                            .onEnded {
+                                triggerTap += 1
+                                if remoteItems.count > 4 {
+                                    if let item = remoteItems[4] {
+                                        let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
+                                        mainModel.executeCommand(id: id)
+                                    }
+                                }
+                            })
                         .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
                             .onChanged { value in
                                 withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.8)) {
@@ -168,18 +178,42 @@ struct TouchView: View {
                                     if xOffset < 0 {
                                         // left
                                         triggerLeft += 1
+                                        if remoteItems.count > 3 {
+                                            if let item = remoteItems[3] {
+                                                let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
+                                                mainModel.executeCommand(id: id)
+                                            }
+                                        }
                                     } else {
                                         // right
                                         triggerRight += 1
+                                        if remoteItems.count > 5 {
+                                            if let item = remoteItems[5] {
+                                                let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
+                                                mainModel.executeCommand(id: id)
+                                            }
+                                        }
                                     }
                                 } else {
                                     if abs(yOffset) > 100 {
                                         if yOffset < 0 {
                                             // up
                                             triggerUp += 1
+                                            if remoteItems.count > 1 {
+                                                if let item = remoteItems[1] {
+                                                    let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
+                                                    mainModel.executeCommand(id: id)
+                                                }
+                                            }
                                         } else {
                                             // down
                                             triggerDown += 1
+                                            if remoteItems.count > 7 {
+                                                if let item = remoteItems[7] {
+                                                    let id = HomeRemoteAPI.shared.sendCommand(device: item.device ?? "", command: item.command ?? "")
+                                                    mainModel.executeCommand(id: id)
+                                                }
+                                            }
                                         }
                                     }
                                 }
