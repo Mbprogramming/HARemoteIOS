@@ -50,8 +50,8 @@ struct RemoteCombobox: View {
         label: {
            HStack {
                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, targetHeight: targetHeight, parentHeight: $parentHeight)
-                   .padding()
+               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, targetHeight: targetHeight - 10, parentHeight: $parentHeight)
+                   .padding(5)
            }
            .onGeometryChange(for: CGSize.self) { proxy in
                            proxy.size

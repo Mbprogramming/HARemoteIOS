@@ -88,7 +88,7 @@ struct RemoteItemView: View {
                     }
                 case .Touch:
                     TouchView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, disableScroll: $disableScroll)
-                        .frame(height: calcInlineRowHeightWidth(columns: 3) * 3 + 10)
+                        .frame(height: calcInlineRowHeightWidth(columns: 3) * 3 + 30)
                 case .SelectionList:
                     HueOnOffMulti(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
                 case .SelectionListTempBri:
