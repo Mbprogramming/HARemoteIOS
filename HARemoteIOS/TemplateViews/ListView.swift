@@ -10,7 +10,7 @@ import SwiftUI
 struct ListView: View {
     var remoteItem: RemoteItem?
     var level: Int = 0
-    var height: CGFloat = 150
+    var targetHeight: CGFloat = 150
     @State var rows: [ListViewRow] = []
     @State var cols: Int = 1
     @State var w: CGFloat = 150
@@ -79,6 +79,7 @@ struct ListView: View {
                     item.template == RemoteTemplate.Divider ||
                     item.template == RemoteTemplate.Space {
                     RemoteItemView(remoteItem: item, level: level + 1,
+                                   targetHeight: 140,
                                    currentRemoteItem: $currentRemoteItem,
                                    remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates,
                                    orientation: $orientation,
@@ -88,6 +89,7 @@ struct ListView: View {
                         EmptyView()
                     } else {
                         RemoteItemView(remoteItem: item, level: level + 1,
+                                       targetHeight: 140,
                                        currentRemoteItem: $currentRemoteItem,
                                        remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates,
                                        orientation: $orientation,
@@ -127,7 +129,7 @@ struct ListView: View {
                     buildRows()
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                RemoteButton(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
             }
         }
     }
@@ -143,6 +145,6 @@ struct ListView: View {
 
     var remoteItem: RemoteItem? = nil
     
-    ListView(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
+    ListView(remoteItem: remoteItem, targetHeight: 60, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
 }
 

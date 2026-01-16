@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BriSlider: View {
     var remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 220
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -22,7 +23,7 @@ struct BriSlider: View {
     @Environment(\.mainWindowSize) var mainWindowSize
     
     var body: some View {
-        RemoteBaseButton(remoteItem: remoteItem, action: {
+        RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: {
             hueSatBriModel.setRangesBri(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
                 hueSatBriModel.setStateBri(state: state)
@@ -77,6 +78,7 @@ struct BriSlider: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    BriSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    BriSlider(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

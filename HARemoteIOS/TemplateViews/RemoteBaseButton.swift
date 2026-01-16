@@ -13,12 +13,15 @@ struct RemoteBaseButton: View {
     private let action: () -> Void
     private let actionDeferred: ((Date, Int) -> Void)?
     private var remoteItem: RemoteItem?
+    public var targetHeight: CGFloat = 200
 
     init(remoteItem: RemoteItem?,
+         targetHeight: CGFloat,
          action: @escaping () -> Void,
          actionDeferred: ((Date, Int) -> Void)? = nil,
          remoteStates: Binding<[IState]>) {
         self.remoteItem = remoteItem
+        self.targetHeight = targetHeight
         self.action = action
         self.actionDeferred = actionDeferred
         self._remoteStates = remoteStates
@@ -51,7 +54,7 @@ struct RemoteBaseButton: View {
             .cornerRadius(10)
         Button(action: {}) {
             HStack {
-                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, parentHeight: $parentHeight)
+                ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, targetHeight: targetHeight, parentHeight: $parentHeight)
                 if remoteItem?.template == RemoteTemplate.List
                     || remoteItem?.template == RemoteTemplate.Wrap
                     || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -277,7 +280,7 @@ struct RemoteBaseButton: View {
 #Preview {
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    
-    RemoteBaseButton(remoteItem: remoteItem, action: { return }, actionDeferred: nil, remoteStates: $remoteStates)
+    RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: { return }, actionDeferred: nil, remoteStates: $remoteStates)
 }

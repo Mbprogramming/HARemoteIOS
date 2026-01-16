@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RemoteCombobox: View {
     var remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 220
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -49,7 +50,7 @@ struct RemoteCombobox: View {
         label: {
            HStack {
                let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
-               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, parentHeight: $parentHeight)
+               ButtonTextAndIcon(currentRemoteItem: remoteItem, currentState: currentState, targetHeight: targetHeight, parentHeight: $parentHeight)
                    .padding()
            }
            .onGeometryChange(for: CGSize.self) { proxy in
@@ -57,7 +58,6 @@ struct RemoteCombobox: View {
                        } action: {
                            parentHeight = $0.height
                        }
-           .frame(maxWidth: .infinity, maxHeight: .infinity)
            .foregroundColor(colorScheme == .dark ? .white : .black)
            .background(background)
            .cornerRadius(10)
@@ -73,6 +73,7 @@ struct RemoteCombobox: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    RemoteCombobox(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    RemoteCombobox(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

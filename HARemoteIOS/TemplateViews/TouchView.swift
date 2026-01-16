@@ -225,9 +225,8 @@ struct TouchView: View {
                             ForEach(colCountArray, id: \.self) { x in
                                 if selectedMode == 0 {
                                     if remoteItems[3 * y + x] != nil {
-                                        RemoteButton(remoteItem: remoteItems[3 * y + x]!, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
-                                            .frame(width: columnWidth - 10, height: rowHeight - 10)
-                                            .padding(5)
+                                        RemoteButton(remoteItem: remoteItems[3 * y + x]!, targetHeight: rowHeight - 30, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                                            .frame(width: columnWidth - 10)
                                     } else {
                                         if icons[3 * y + x] != nil {
                                             AsyncServerImage(imageWidth: Int(columnWidth) - 10, imageHeight: Int(rowHeight) - 10, imageId: icons[3 * y + x], background: false)

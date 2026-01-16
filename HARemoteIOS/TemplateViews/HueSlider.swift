@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HueSlider: View {
     var remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 220
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -22,7 +23,7 @@ struct HueSlider: View {
     @Environment(\.mainWindowSize) var mainWindowSize
     
     var body: some View {
-        RemoteBaseButton(remoteItem: remoteItem, action: {
+        RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: {
             hueSatBriModel.setRangesHue(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
                 hueSatBriModel.setStateHue(state: state)
@@ -82,6 +83,7 @@ struct HueSlider: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    HueSlider(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    HueSlider(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

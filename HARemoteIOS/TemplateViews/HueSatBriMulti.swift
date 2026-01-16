@@ -10,6 +10,7 @@ import SwiftData
 
 struct HueSatBriMulti: View {
     var remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 220
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -37,7 +38,7 @@ struct HueSatBriMulti: View {
     private let commandParameter = CommandParameterForMultipleValues()
 
     var body: some View {
-        RemoteBaseButton(remoteItem: remoteItem, action: {
+        RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: {
             hueSatBriModel.setRanges(min: remoteItem?.min ?? "", max: remoteItem?.max ?? "")
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }) {
                 hueSatBriModel.setState(state: state)
@@ -297,6 +298,7 @@ struct HueSatBriMulti: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    HueSatBriMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    HueSatBriMulti(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

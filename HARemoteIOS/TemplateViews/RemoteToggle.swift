@@ -10,6 +10,7 @@ import SwiftUI
 struct RemoteToggle: View {
     private var _compareValues: [StringStringTuple] = []
     private var _remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 220
     
     var remoteItem: RemoteItem? {
         get {
@@ -33,8 +34,9 @@ struct RemoteToggle: View {
     @State private var isOn: Bool = false
     @State private var hasInitializedFromState: Bool = false
     
-    init(remoteItem: RemoteItem?, currentRemoteItem: Binding<RemoteItem?>, remoteItemStack: Binding<[RemoteItem]>, mainModel: Binding<RemoteMainModel>, remoteStates: Binding<[IState]>) {
+    init(remoteItem: RemoteItem?, targetHeight: CGFloat, currentRemoteItem: Binding<RemoteItem?>, remoteItemStack: Binding<[RemoteItem]>, mainModel: Binding<RemoteMainModel>, remoteStates: Binding<[IState]>) {
         self._currentRemoteItem = currentRemoteItem
+        self.targetHeight = targetHeight
         self._remoteItemStack = remoteItemStack
         self._mainModel = mainModel
         self._remoteStates = remoteStates
@@ -87,6 +89,7 @@ struct RemoteToggle: View {
                 .minimumScaleFactor(0.3)
                 .font(.title)
         }
+        .frame(height: targetHeight)
         .padding(3)
     }
 }
@@ -97,6 +100,7 @@ struct RemoteToggle: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    RemoteToggle(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    RemoteToggle(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

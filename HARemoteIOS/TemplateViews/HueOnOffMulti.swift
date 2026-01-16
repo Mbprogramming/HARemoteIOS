@@ -10,6 +10,7 @@ import SwiftData
 
 struct HueOnOffMulti: View {
     var remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 220
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -32,7 +33,7 @@ struct HueOnOffMulti: View {
     @Query(sort: \HueMultiEntry.name, order: .forward) var multiEntries: [HueMultiEntry]
     
     var body: some View {
-        RemoteBaseButton(remoteItem: remoteItem, action: {
+        RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: {
             listVisible.toggle()
         }, actionDeferred: { (date: Date, type: Int) in
             delay = date
@@ -210,7 +211,8 @@ struct HueOnOffMulti: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    HueOnOffMulti(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    HueOnOffMulti(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }
 

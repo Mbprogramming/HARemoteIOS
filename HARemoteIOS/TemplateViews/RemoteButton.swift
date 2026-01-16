@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RemoteButton: View {
     var remoteItem: RemoteItem?
+    var targetHeight: CGFloat = 250
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -16,7 +17,7 @@ struct RemoteButton: View {
     @Binding var remoteStates: [IState]
     
     var body: some View {
-        RemoteBaseButton(remoteItem: remoteItem, action: {
+        RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: {
             if remoteItem?.template == RemoteTemplate.List
                 || remoteItem?.template == RemoteTemplate.Wrap
                 || remoteItem?.template == RemoteTemplate.Grid3X4
@@ -81,6 +82,7 @@ struct RemoteButton: View {
     @Previewable @State var mainModel = RemoteMainModel()
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
     
-    RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+    RemoteButton(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
 }

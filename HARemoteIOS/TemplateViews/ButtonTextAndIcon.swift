@@ -10,6 +10,7 @@ import SwiftUI
 struct ButtonTextAndIcon: View {
     var currentRemoteItem: RemoteItem?
     var currentState: IState?
+    var targetHeight: CGFloat = 150
     
     @Binding var parentHeight: CGFloat
     
@@ -23,8 +24,8 @@ struct ButtonTextAndIcon: View {
         if currentState != nil {
             VStack {
                 if currentState?.showImage == true {
-                    AsyncServerImage(imageWidth: parentHeight >= 50.0 ? 40 : 20, imageHeight: parentHeight >= 50.0 ? 40 : 20, imageId: currentState!.icon!)
-                        .frame(width: parentHeight >= 50.0 ? 40 : 20, height: parentHeight >= 50.0 ? 40 : 20 )
+                    AsyncServerImage(imageWidth: targetHeight >= 50.0 ? 40 : 20, imageHeight: targetHeight >= 50.0 ? 40 : 20, imageId: currentState!.icon!)
+                        .frame(width: targetHeight >= 50.0 ? 40 : 20, height: targetHeight >= 50.0 ? 40 : 20 )
                 }
                 if currentState?.showText == true {
                     Text(currentState?.completeValue ?? "")
@@ -34,7 +35,7 @@ struct ButtonTextAndIcon: View {
                         .minimumScaleFactor(0.3)
                         .font(.title)
                 }
-                if parentHeight >= 50.0 {
+                if targetHeight >= 50.0 {
                     Spacer()
                     HStack {
                         Text(currentRemoteItem?.description ?? "Unknown")
@@ -45,24 +46,27 @@ struct ButtonTextAndIcon: View {
                     }
                 }
             }
+            .frame(height: targetHeight)
         } else {
             if currentRemoteItem?.icon != nil {
                 VStack{
-                    AsyncServerImage(imageWidth: parentHeight >= 50.0 ? 40 : 20, imageHeight: parentHeight >= 50.0 ? 40 : 20, imageId: getIcon())
-                        .frame(width: parentHeight >= 50.0 ? 40 : 20, height: parentHeight >= 50.0 ? 40 : 20 )
-                    if parentHeight >= 50.0 {
+                    AsyncServerImage(imageWidth: targetHeight >= 50.0 ? 40 : 20, imageHeight: targetHeight >= 50.0 ? 40 : 20, imageId: getIcon())
+                        .frame(width: targetHeight >= 50.0 ? 40 : 20, height: targetHeight >= 50.0 ? 40 : 20 )
+                    if targetHeight >= 50.0 {
                         Text(currentRemoteItem?.description ?? "Unknown")
                             .truncationMode(.middle)
                             .allowsTightening(true)
                             .minimumScaleFactor(0.3)
                     }
                 }
+                .frame(height: targetHeight)
             } else {
                 Text(currentRemoteItem?.description ?? "Unknown")
                     .truncationMode(.middle)
                     .allowsTightening(true)
                     .minimumScaleFactor(0.3)
                     .font(.title)
+                    .frame(height: targetHeight)
             }
         }
     }
@@ -72,6 +76,7 @@ struct ButtonTextAndIcon: View {
 #Preview {
     @Previewable @State var parentHeight: CGFloat = 60
     var remoteItem: RemoteItem? = nil
+    var targetHeight: CGFloat = 60
 
-    ButtonTextAndIcon(currentRemoteItem: remoteItem, parentHeight: $parentHeight)
+    ButtonTextAndIcon(currentRemoteItem: remoteItem, targetHeight: targetHeight, parentHeight: $parentHeight)
 }

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct RemoteStateItemView: View {
     var state: IState
+    var targetHeight: CGFloat = 220
+    
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View {
@@ -43,25 +45,23 @@ struct RemoteStateItemView: View {
             }
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(height: targetHeight)
         .foregroundColor(colorScheme == .dark ? .white : .black)
         .background(background)
         .cornerRadius(10)
-        .padding(3)
     }
 }
 
 struct RemoteState: View {
     var remoteItem: RemoteItem?
-    var height: CGFloat = 150
+    var targetHeight: CGFloat = 220
     
     @Binding var remoteStates: [IState]
     
     var body: some View {
         let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
         if currentState != nil {
-            RemoteStateItemView(state: currentState!)
-                .frame(maxWidth: .infinity, maxHeight: height)
+            RemoteStateItemView(state: currentState!, targetHeight: targetHeight)
         }
     }
 }
@@ -69,6 +69,6 @@ struct RemoteState: View {
 #Preview {
     @Previewable @State var remoteStates: [IState] = []
     var remoteItem: RemoteItem? = nil
-
-    RemoteState(remoteItem: remoteItem, height: 150, remoteStates: $remoteStates)
+    
+    RemoteState(remoteItem: remoteItem, targetHeight: 60, remoteStates: $remoteStates)
 }

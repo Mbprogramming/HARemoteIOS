@@ -13,6 +13,7 @@ struct HAGrid: View {
     var rows: Int = 4
     var columns: Int = 3
     var inline: Bool = false
+    var targetHeight: CGFloat = 220
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
@@ -112,6 +113,7 @@ struct HAGrid: View {
                                                 RemoteItemView(
                                                     remoteItem: item,
                                                     level: level + 1,
+                                                    targetHeight: rowHeight - 10,
                                                     currentRemoteItem: $currentRemoteItem,
                                                     remoteItemStack: $remoteItemStack,
                                                     mainModel: $mainModel,
@@ -119,12 +121,12 @@ struct HAGrid: View {
                                                     orientation: $orientation,
                                                     disableScroll: $disableScroll
                                                 )
-                                                .frame(height: rowHeight)
                                                 .gridCellColumns(item.colSpan!)
                                             } else {
                                                 RemoteItemView(
                                                     remoteItem: item,
                                                     level: level + 1,
+                                                    targetHeight: rowHeight - 10,
                                                     currentRemoteItem: $currentRemoteItem,
                                                     remoteItemStack: $remoteItemStack,
                                                     mainModel: $mainModel,
@@ -132,7 +134,6 @@ struct HAGrid: View {
                                                     orientation: $orientation,
                                                     disableScroll: $disableScroll
                                                 )
-                                                .frame(height: rowHeight)
                                             }
                                         } else {
                                             if temp2[y][x] == true {
@@ -148,7 +149,7 @@ struct HAGrid: View {
                         }
                 }
             } else {
-                RemoteButton(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
+                RemoteButton(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)
             }
         }
     }
@@ -166,6 +167,6 @@ struct HAGrid: View {
     var rows:Int = 4
     var columns:Int = 3
     
-    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
+    HAGrid(remoteItem: remoteItem, level: level, rows: rows, columns: columns, targetHeight: 60, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates, orientation: $orientation, disableScroll: $disableScroll)
 }
 
