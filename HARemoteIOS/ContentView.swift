@@ -537,11 +537,13 @@ struct ContentView: View {
             }
             .task {
                 isLoading = true
+                UIDevice.current.beginGeneratingDeviceOrientationNotifications()
                 do {
                     mainModel.zones = try await HomeRemoteAPI.shared.getZonesComplete()
                     mainModel.remotes = try await HomeRemoteAPI.shared.getRemotes()
                     mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
                     mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                    orientation = UIDevice.current.orientation
                     if let lastRemote = remoteHistory.first {
                         if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
                             mainModel.remoteStates = []
@@ -628,46 +630,58 @@ struct ContentView: View {
                 }
             }
             .onRotate { newOrientation in
-                orientation = newOrientation
-                switch orientation {
+                switch newOrientation {
                 case .unknown:
-                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    print("rotation unknown")
                 case .portrait:
-                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    if orientation != .portraitUpsideDown && orientation != .portrait {
+                        print("set to portrait")
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        orientation = .portrait
+                    }
                 case .portraitUpsideDown:
-                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    if orientation != .portraitUpsideDown && orientation != .portrait {
+                        print("set to portrait")
+                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        orientation = .portrait
+                    }
                 case .landscapeLeft:
                     if mainModel.currentRemote?.landscapeRemote != nil {
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                        if orientation != .landscapeLeft && orientation != .landscapeRight {
+                            print("set to landscape")
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                            orientation = .landscapeLeft
+                        }
                     } else {
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        if orientation != .portraitUpsideDown && orientation != .portrait
+                            && orientation != .landscapeLeft && orientation != .landscapeRight {
+                            print("set to portrait")
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            orientation = .portrait
+                        }
                     }
                 case .landscapeRight:
                     if mainModel.currentRemote?.landscapeRemote != nil {
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                        if orientation != .landscapeLeft && orientation != .landscapeRight {
+                            print("set to landscape")
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                            orientation = .landscapeLeft
+                        }
                     } else {
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        if orientation != .portraitUpsideDown && orientation != .portrait
+                            && orientation != .landscapeLeft && orientation != .landscapeRight {
+                            print("set to portrait")
+                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            orientation = .portrait
+                        }
                     }
                 case .faceUp:
-                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    print("rotation faceUp")
                 case .faceDown:
-                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    print("rotation faceDown")
                 @unknown default:
-                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                    print("rotation unknown default")
                 }
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .mainCommandShortcut)) { obj in
-                showDebug.toggle()
-            }
-            .alert(isPresented: $showDebug) {
-                Alert(
-                    title: Text("Please Give Us a Second Chance"),
-                    message: Text("We’d love your feedback before you uninstall."),
-                    primaryButton: .default(Text("Send Feedback")) {
-                        showDebug.toggle()
-                    },
-                    secondaryButton: .cancel(Text("Maybe Later"))
-                )
             }
             // Provide window size via environment
             .environment(\.mainWindowSize, geo.size)
