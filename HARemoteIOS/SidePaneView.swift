@@ -33,9 +33,7 @@ struct HeaderView: View {
 struct ItemView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
-    
-    @Query(sort: \RemoteHistoryEntry.lastUsed, order: .forward) var remoteHistory: [RemoteHistoryEntry]
-    
+        
     public var remote: Remote
     
     @Binding var currentRemote: Remote?
@@ -43,13 +41,6 @@ struct ItemView: View {
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var remoteStates: [IState]
     @Binding var isVisible: Bool
-    
-    private func deleteHistory(indexSet: IndexSet) {
-        for i in indexSet {
-            let remoteHistoryItem = remoteHistory[i]
-            modelContext.delete(remoteHistoryItem)
-        }
-    }
     
     private func isFavorite(remoteId: String) -> Bool {
         let descriptor = FetchDescriptor<RemoteFavorite>(
@@ -110,17 +101,6 @@ struct ItemView: View {
         .onTapGesture {
             remoteStates = []
             currentRemote = remote
-            
-            let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
-            if itemToUpdate != nil {
-                itemToUpdate?.lastUsed = Date()
-            } else {
-                modelContext.insert(RemoteHistoryEntry(remoteId: currentRemote?.id ?? ""))
-            }
-            if remoteHistory.count > 6 {
-                let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
-                deleteHistory(indexSet: indexSet)
-            }
             remoteItemStack.removeAll()
             Task {
                 remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")

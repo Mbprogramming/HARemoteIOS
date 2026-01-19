@@ -22,21 +22,13 @@ struct RemoteHistoryViewLine: View {
     
     @Environment(\.modelContext) var modelContext
     @Environment(\.colorScheme) var colorScheme: ColorScheme
-    
-    @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
-    
+        
     var body: some View {
         HStack {
             Button(action: {
                 remoteStates = []
                 currentRemote = remote1
                 currentRemoteItem = remote1.remote
-                
-                let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
-                if itemToUpdate != nil {
-                    itemToUpdate?.lastUsed = Date()
-                }
-                try? modelContext.save()
                 remoteItemStack.removeAll()
                 Task {
                     remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
@@ -67,13 +59,7 @@ struct RemoteHistoryViewLine: View {
                     remoteStates = []
                     currentRemote = remote2
                     currentRemoteItem = remote2.remote
-                    
-                    let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
-                    if itemToUpdate != nil {
-                        itemToUpdate?.lastUsed = Date()
-                    }
-                    try? modelContext.save()
-                    remoteItemStack.removeAll()
+                                        remoteItemStack.removeAll()
                     Task {
                         remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
                     }
@@ -105,12 +91,6 @@ struct RemoteHistoryViewLine: View {
                         remoteStates = []
                         currentRemote = remote3
                         currentRemoteItem = remote3.remote
-                        
-                        let itemToUpdate = remoteHistory.first(where: { $0.remoteId == currentRemote?.id ?? "" })
-                        if itemToUpdate != nil {
-                            itemToUpdate?.lastUsed = Date()
-                        }
-                        try? modelContext.save()
                         remoteItemStack.removeAll()
                         Task {
                             remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
@@ -156,18 +136,17 @@ struct RemoteHistoryView: View {
     
     @Environment(\.modelContext) var modelContext
     
-    @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
+    @Query var remoteHistory: [RemoteHistoryEntry]
     
     func buildRemoteContainer() -> [Remote] {
-        remotes.compactMap { remote in
-            // If the remote's id matches any history entry, include it.
-            // Adjust matching logic if you want unique ordering or a 1:1 mapping
-            if remoteHistory.contains(where: { $0.remoteId == remote.id }) {
-                return remote
-            } else {
-                return nil
+        let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
+        var result: [Remote] = []
+        for remote in tempHistory {
+            if let r = remotes.first(where: { $0.id == remote.remoteId }) {
+                result.append(r)
             }
         }
+        return result
     }
     
     var body: some View {

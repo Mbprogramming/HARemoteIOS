@@ -76,7 +76,7 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.scenePhase) private var scenePhase
     
-    @Query(sort: \RemoteHistoryEntry.lastUsed, order: .reverse) var remoteHistory: [RemoteHistoryEntry]
+    @Query var remoteHistory: [RemoteHistoryEntry]
 
     @State private var connection: HubConnection?
     
@@ -101,9 +101,12 @@ struct ContentView: View {
     @AppStorage("application") var application: String = "HARemoteIOS"
     
     private func deleteHistory(indexSet: IndexSet) {
+        let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
         for i in indexSet {
-            let remoteHistoryItem = remoteHistory[i]
-            modelContext.delete(remoteHistoryItem)
+            if i >= 0 && i < tempHistory.count {
+                let remoteHistoryItem = tempHistory[i]
+                modelContext.delete(remoteHistoryItem)
+            }
         }
     }
     
@@ -147,18 +150,6 @@ struct ContentView: View {
                     mainModel.remoteStates = []
                     mainModel.currentRemote = newRemote
                     mainModel.currentRemoteItem = newRemote.remote
-                    
-                    let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
-                    if itemToUpdate != nil {
-                        itemToUpdate?.lastUsed = Date()
-                    } else {
-                        modelContext.insert(RemoteHistoryEntry(remoteId: mainModel.currentRemote?.id ?? ""))
-                    }
-                    if remoteHistory.count > 6 {
-                        let indexSet = IndexSet(remoteHistory.indices.prefix(remoteHistory.count - 6))
-                        deleteHistory(indexSet: indexSet)
-                    }
-                    try? modelContext.save()
                     mainModel.remoteItemStack.removeAll()
                     Task {
                         mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
@@ -544,7 +535,8 @@ struct ContentView: View {
                     mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
                     mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
                     orientation = UIDevice.current.orientation
-                    if let lastRemote = remoteHistory.first {
+                    let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
+                    if let lastRemote = tempHistory.first {
                         if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
                             mainModel.remoteStates = []
                             mainModel.currentRemote = lastRemoteItem
@@ -628,6 +620,20 @@ struct ContentView: View {
                     }
                     UIApplication.shared.shortcutItems = items
                 }
+            }
+            .onChange(of: mainModel.currentRemote) {
+                let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
+                if itemToUpdate != nil {
+                    itemToUpdate?.lastUsed = Date()
+                } else {
+                    modelContext.insert(RemoteHistoryEntry(remoteId: mainModel.currentRemote?.id ?? ""))
+                }
+                try? modelContext.save()
+                if remoteHistory.count > 6 {
+                    let indexSet = IndexSet(integersIn: 6...remoteHistory.count - 1)
+                    deleteHistory(indexSet: indexSet)
+                }
+                try? modelContext.save()
             }
             .onRotate { newOrientation in
                 switch newOrientation {
