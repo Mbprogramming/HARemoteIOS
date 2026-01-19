@@ -15,6 +15,7 @@ import Observation
     
     var zones: [Zone] = []
     var remotes : [Remote] = []
+    var devices: [IBaseDevice] = []
     var mainCommands: [RemoteItem] = []
     var commandIds: [CommandExecutionEntry] = []
     var remoteStates: [IState] = []

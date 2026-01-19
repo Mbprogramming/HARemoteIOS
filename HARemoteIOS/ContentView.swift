@@ -464,7 +464,7 @@ struct ContentView: View {
                     TabSection("Automatic Execution") {
                         Tab("AutomaticExecution", systemImage: "calendar", value: 3, role: .search){
                             NavigationView {
-                                AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions)
+                                AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
                             }
                         }
                     }
@@ -534,6 +534,7 @@ struct ContentView: View {
                     mainModel.remotes = try await HomeRemoteAPI.shared.getRemotes()
                     mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
                     mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                    mainModel.devices = try await HomeRemoteAPI.shared.getAll()
                     orientation = UIDevice.current.orientation
                     let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
                     if let lastRemote = tempHistory.first {

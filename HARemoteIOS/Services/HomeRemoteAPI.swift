@@ -23,6 +23,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     private var zones: [Zone] = []
     private var remotes: [Remote] = []
     private var mainCommands: [RemoteItem] = []
+    private var devices: [IBaseDevice] = []
         
     private init() {
     }
@@ -41,6 +42,22 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             zones = try decoder.decode([Zone].self, from: data)
         }
         return zones
+    }
+    
+    func getAll() async throws -> [IBaseDevice] {
+        if devices.count <= 0 {
+            guard let url = URL(string: "\(server)/api/homeautomation") else { return [] }
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("\(username)", forHTTPHeaderField: "X-User")
+            request.setValue("\(application)", forHTTPHeaderField: "X-App")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
+            let decoder = JSONDecoder()
+            devices = try decoder.decode([IBaseDevice].self, from: data)
+        }
+        return devices
     }
     
     func getRemotes() async throws -> [Remote] {
@@ -244,3 +261,4 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         .resume()
     }
 }
+
