@@ -105,4 +105,22 @@ import Observation
         }
         return nil
     }
+    
+    var nativeTypeValue: String? {
+        if nativeType != nil {
+            if nativeType!.localizedCaseInsensitiveContains("System.String") {
+                return "String"
+            }
+            if nativeType!.localizedCaseInsensitiveContains("System.Int32") {
+                return "Int32"
+            }
+            if nativeType!.localizedCaseInsensitiveContains("System.Boolean") {
+                return "Bool"
+            }
+            if nativeType!.localizedCaseInsensitiveContains("System.Double") {
+                return "Double"
+            }
+        }
+        return nil
+    }
 }

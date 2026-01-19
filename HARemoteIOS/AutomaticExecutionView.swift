@@ -130,6 +130,8 @@ struct AutomaticExecutionView: View {
 
     @State private var currentWizardStep: Int = 0
     
+    @State private var currentStateValue: IState? = nil
+    
     private var devicesForState: [IBaseDevice] {
          return mainModel.devices.filter { device in
             !(device.states?.isEmpty ?? true)
@@ -140,6 +142,22 @@ struct AutomaticExecutionView: View {
         return devicesForState.first{ $0.id == selectedStateDevice }?.states ?? []
     }
     
+    private var currentSelectedState: IState? {
+        if let device = mainModel.devices.first(where: { $0.id == selectedStateDevice }) {
+            if let state = device.states?.first(where: { $0.id == selectedState }) {
+                return state
+            }
+        }
+        return nil
+    }
+
+    private var currentSelectedDevice: IBaseDevice? {
+        if let device = mainModel.devices.first(where: { $0.id == selectedStateDevice }) {
+            return device
+        }
+        return nil
+    }
+
     private func filterEntries() -> [AutomaticExecutionEntry] {
         switch currentFilter {
         case 0:
@@ -287,13 +305,32 @@ struct AutomaticExecutionView: View {
                     Tab("Step 1", systemImage: "1.circle", value: 0) {
                         VStack {
                             Text("Select device and state")
-                                .font(.headline)
+                                .font(.title)
                                 .padding()
                             Spacer()
+                            Text("Device:")
+                                .font(.caption)
+                                .padding()
                             step1
+                                .padding()
+                            Text("State:")
+                                .font(.caption)
                                 .padding()
                             step12
                                 .padding()
+                            Spacer()
+                            HStack {
+                                Text("\(currentSelectedState?.value ?? "None")")
+                                    .font(.caption2)
+                                    .padding()
+                                Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                    .font(.caption2)
+                                    .padding()
+                                Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                    .font(.caption2)
+                                    .padding()
+                            }
+                            .padding()
                             Spacer()
                             HStack {
                                 Spacer()
@@ -309,7 +346,46 @@ struct AutomaticExecutionView: View {
                         }
                     }
                     Tab("Step 2", systemImage: "2.circle", value: 1) {
-                        Text("Step 2")
+                        VStack {
+                            Text("Compare to")
+                                .font(.title)
+                                .padding()
+                            Spacer()
+                            HStack {
+                                Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                    .font(.headline)
+                                    .bold()
+                            }
+                            HStack {
+                                Text("\(currentSelectedState?.value ?? "None")")
+                                    .font(.caption2)
+                                    .padding()
+                                Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                    .font(.caption2)
+                                    .padding()
+                                Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                    .font(.caption2)
+                                    .padding()
+                            }
+                            HStack {
+                                Button(action: {
+                                    currentWizardStep = 0
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .padding()
+                                .glassEffect()
+                                Spacer()
+                                Button(action: {
+                                    currentWizardStep = 2
+                                }) {
+                                    Image(systemName: "chevron.right")
+                                }
+                                .padding()
+                                .glassEffect()
+                            }
+                            .padding()
+                        }
                     }
                     Tab("Step 3", systemImage: "3.circle", value: 2) {
                         Text("Step 3")
@@ -361,6 +437,17 @@ struct AutomaticExecutionView: View {
                     } catch {
                         // handle error if needed
                     }
+                }
+            }
+        }
+        .onChange(of: selectedState) {
+            Task {
+                do {
+                    if currentSelectedState != nil {
+                        currentStateValue = try? await HomeRemoteAPI.shared.getSpecificState(device: currentSelectedState!.device, id: currentSelectedState!.id)
+                    }
+                } catch {
+                    // handle error if needed
                 }
             }
         }

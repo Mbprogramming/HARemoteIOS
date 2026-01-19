@@ -60,6 +60,19 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return devices
     }
     
+    func getSpecificState(device: String?, id: String?) async throws -> IState? {
+        guard let url = URL(string: "\(server)/api/homeautomation/specificstate?device=\(device ?? "")&id=\(id ?? "")") else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        
+        let decoder = JSONDecoder()
+        return try decoder.decode(IState.self, from: data)
+    }
+    
     func getRemotes() async throws -> [Remote] {
         if remotes.count <= 0 {
             guard let url = URL(string: "\(server)/api/homeautomation/remotes") else { return [] }
