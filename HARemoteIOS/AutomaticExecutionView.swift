@@ -214,11 +214,15 @@ struct AutomaticExecutionView: View {
         ZStack (alignment: .bottomTrailing) {
             VStack {
                 Picker("Filter", selection: $currentFilter) {
-                    Text("Automatic ").tag(0)
-                    Text("State Change").tag(1)
-                    Text("All").tag(2)
-                }
+                    Text("Automatic")
+                        .tag(0)
+                    Text("State Change")
+                        .tag(1)
+                    Text("All")
+                        .tag(2)
+               }
                 .pickerStyle(.segmented)
+                .controlSize(.large)
                 Spacer()
                 
                 List {
