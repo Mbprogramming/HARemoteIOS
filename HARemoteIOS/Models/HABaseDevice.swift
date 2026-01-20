@@ -7,8 +7,8 @@
 
 import Foundation
 
-@Observable class BaseDevice: Decodable, Identifiable, Equatable, Hashable {
-    static func == (lhs: BaseDevice, rhs: BaseDevice) -> Bool {
+@Observable class HABaseDevice: Decodable, Identifiable, Equatable, Hashable {
+    static func == (lhs: HABaseDevice, rhs: HABaseDevice) -> Bool {
         return lhs.id == rhs.id
     }
     

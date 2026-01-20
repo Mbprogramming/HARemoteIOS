@@ -23,7 +23,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     private var zones: [Zone] = []
     private var remotes: [Remote] = []
     private var mainCommands: [RemoteItem] = []
-    private var devices: [BaseDevice] = []
+    private var devices: [HABaseDevice] = []
         
     private init() {
     }
@@ -44,7 +44,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return zones
     }
     
-    func getAll() async throws -> [BaseDevice] {
+    func getAll() async throws -> [HABaseDevice] {
         if devices.count <= 0 {
             guard let url = URL(string: "\(server)/api/homeautomation") else { return [] }
             var request = URLRequest(url: url)
@@ -55,7 +55,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             let (data, _) = try await URLSession.shared.data(for: request)
             
             let decoder = JSONDecoder()
-            devices = try decoder.decode([BaseDevice].self, from: data)
+            devices = try decoder.decode([HABaseDevice].self, from: data)
         }
         return devices
     }

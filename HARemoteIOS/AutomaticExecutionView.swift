@@ -132,7 +132,7 @@ struct AutomaticExecutionView: View {
     
     @State private var currentStateValue: HAState? = nil
     
-    private var devicesForState: [BaseDevice] {
+    private var devicesForState: [HABaseDevice] {
          return mainModel.devices.filter { device in
             !(device.states?.isEmpty ?? true)
         }
@@ -151,7 +151,7 @@ struct AutomaticExecutionView: View {
         return nil
     }
 
-    private var currentSelectedDevice: BaseDevice? {
+    private var currentSelectedDevice: HABaseDevice? {
         if let device = mainModel.devices.first(where: { $0.id == selectedStateDevice }) {
             return device
         }
@@ -180,7 +180,7 @@ struct AutomaticExecutionView: View {
     @ViewBuilder
     private var pickerContent: some View {
         Text("Not selected").tag(nil as String?)
-        ForEach(devicesForState, id: \.id) { (device: BaseDevice) in
+        ForEach(devicesForState, id: \.id) { (device: HABaseDevice) in
             Text(device.name ?? "")
                 .tag(device.id)
         }

@@ -15,7 +15,7 @@ import Observation
     
     var zones: [Zone] = []
     var remotes : [Remote] = []
-    var devices: [BaseDevice] = []
+    var devices: [HABaseDevice] = []
     var mainCommands: [RemoteItem] = []
     var commandIds: [CommandExecutionEntry] = []
     var remoteStates: [HAState] = []
@@ -49,7 +49,7 @@ import Observation
         return false
     }
     
-    public var devicesWithStates: [BaseDevice] {
+    public var devicesWithStates: [HABaseDevice] {
         return devices.filter { device in
             !(device.states?.isEmpty ?? true)
         }
@@ -66,7 +66,7 @@ import Observation
         }
     }
     
-    public var devicesWithCommands: [BaseDevice] {
+    public var devicesWithCommands: [HABaseDevice] {
         return devices.filter { device in
             !(device.commands?.isEmpty ?? true)
         }
