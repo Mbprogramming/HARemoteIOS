@@ -130,6 +130,11 @@ struct AutomaticExecutionView: View {
     @State private var selectedCommandDevice: String? = nil
     @State private var selectedCommandGroup: String? = nil
     @State private var selectedCommand: String? = nil
+    @State private var selectedOperationNum: OperationNum? = nil
+    @State private var selectedOperationString: OperationString? = nil
+    @State private var selectedOperationBool: OperationBool? = nil
+    @State private var limit: String = ""
+    @FocusState private var isFocused: Bool
 
     @State private var currentWizardStep: Int = 0
     
@@ -275,6 +280,80 @@ struct AutomaticExecutionView: View {
         .pickerStyle(.menu)
     }
 
+    @ViewBuilder
+    private var pickerNum: some View {
+        Picker("Select a operation", selection: $selectedOperationNum) {
+            Text("Not selected").tag(nil as OperationNum?)
+            ForEach(OperationNum.allCases) { operation in
+                Text(operation.showValue)
+                    .tag(operation) // Wichtig für die korrekte Zuordnung
+            }
+        }
+        .pickerStyle(.menu)
+    }
+
+    @ViewBuilder
+    private var pickerString: some View {
+        Picker("Select a operation", selection: $selectedOperationString) {
+            Text("Not selected").tag(nil as OperationString?)
+            ForEach(OperationString.allCases) { operation in
+                Text(operation.showValue)
+                    .tag(operation) // Wichtig für die korrekte Zuordnung
+            }
+        }
+        .pickerStyle(.menu)
+    }
+
+    @ViewBuilder
+    private var pickerBool: some View {
+        Picker("Select a operation", selection: $selectedOperationBool) {
+            Text("Not selected").tag(nil as OperationBool?)
+            ForEach(OperationBool.allCases) { operation in
+                Text(operation.showValue)
+                    .tag(operation) // Wichtig für die korrekte Zuordnung
+            }
+        }
+        .pickerStyle(.menu)
+    }
+    
+    @ViewBuilder
+    private var step2: some View {
+        if currentSelectedState?.nativeTypeValue != nil {
+            switch currentSelectedState!.nativeTypeValue {
+            case "String":
+                VStack {
+                    pickerString
+                    TextField("Limit...", text: $limit)
+                        .focused($isFocused)
+                        .keyboardType(.asciiCapable)
+                        .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
+                }
+            case "Int32":
+                VStack {
+                    pickerNum
+                    TextField("Limit...", text: $limit)
+                        .focused($isFocused)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
+                }
+            case "Double":
+                VStack {
+                    pickerNum
+                    TextField("Limit...", text: $limit)
+                        .focused($isFocused)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
+                }
+            case "Bool":
+                VStack {
+                    pickerBool
+                }
+            default:
+                Text("Unknown")
+            }
+        }
+    }
+    
     var body: some View {
         ZStack (alignment: .bottomTrailing) {
             VStack {
@@ -437,6 +516,9 @@ struct AutomaticExecutionView: View {
                                     .font(.caption2)
                                     .padding()
                             }
+                            Spacer()
+                            step2.padding()
+                            Spacer()
                             HStack {
                                 Button(action: {
                                     currentWizardStep = 0
@@ -507,7 +589,7 @@ struct AutomaticExecutionView: View {
                                 .glassEffect()
                                 Spacer()
                                 Button(action: {
-                                    //currentWizardStep = 4
+                                    currentWizardStep = 4
                                 }) {
                                     Image(systemName: "chevron.right")
                                 }
@@ -515,6 +597,11 @@ struct AutomaticExecutionView: View {
                                 .glassEffect()
                             }
                             .padding()
+                        }
+                    }
+                    Tab("Step 4", systemImage: "4.circle", value: 3) {
+                        Button("Create automatic execution") {
+                            addStateVisible.toggle()
                         }
                     }
                 }
@@ -577,6 +664,9 @@ struct AutomaticExecutionView: View {
                     // handle error if needed
                 }
             }
+        }
+        .onChange(of: currentWizardStep) {
+            isFocused = false
         }
         .onChange(of: selectedStateDevice) {
             selectedState = nil
