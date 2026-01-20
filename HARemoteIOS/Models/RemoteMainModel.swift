@@ -26,6 +26,12 @@ import Observation
     var currentRemoteItem: RemoteItem? = nil
     var remoteItemStack: [RemoteItem] = []
     
+    public var automaticExecutionCount : Int {
+        get {
+            return self.automaticExecutions.count
+        }
+    }
+    
     public func executeCommand(id: String) {
         let cmd = CommandExecutionEntry(id: id)
         commandIds.append(cmd)

@@ -222,18 +222,26 @@ struct AutomaticExecutionView: View {
         return nil
     }
 
+    private var filter1: [AutomaticExecutionEntry] {
+        return automaticExecutionEntries.filter { entry in
+            guard let t = entry.automaticExecutionType else { return false }
+            return t == .deferred || t == .executeAt
+        }
+    }
+
+    private var filter2: [AutomaticExecutionEntry] {
+        return automaticExecutionEntries.filter { entry in
+            guard let t = entry.automaticExecutionType else { return false }
+            return t == .stateChange
+        }
+    }
+
     private func filterEntries() -> [AutomaticExecutionEntry] {
         switch currentFilter {
         case 0:
-            return automaticExecutionEntries.filter { entry in
-                guard let t = entry.automaticExecutionType else { return false }
-                return t == .deferred || t == .executeAt
-            }
+            return filter1
         case 1:
-            return automaticExecutionEntries.filter { entry in
-                guard let t = entry.automaticExecutionType else { return false }
-                return t == .stateChange
-            }
+            return filter2
         case 2:
             return automaticExecutionEntries
         default:
@@ -448,11 +456,11 @@ struct AutomaticExecutionView: View {
         ZStack (alignment: .bottomTrailing) {
             VStack {
                 Picker("Filter", selection: $currentFilter) {
-                    Text("Automatic")
+                    Text("Automatic (\(filter1.count))")
                         .tag(0)
-                    Text("State Change")
+                    Text("State Change (\(filter2.count))")
                         .tag(1)
-                    Text("All")
+                    Text("All (\(automaticExecutionEntries.count))")
                         .tag(2)
                }
                 .pickerStyle(.segmented)

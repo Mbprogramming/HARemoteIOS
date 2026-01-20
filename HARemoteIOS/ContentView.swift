@@ -467,6 +467,7 @@ struct ContentView: View {
                                 AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
                             }
                         }
+                        .badge(mainModel.automaticExecutionCount)
                     }
                 }
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
