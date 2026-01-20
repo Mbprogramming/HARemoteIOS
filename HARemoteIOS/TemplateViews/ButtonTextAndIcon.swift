@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ButtonTextAndIcon: View {
     var currentRemoteItem: RemoteItem?
-    var currentState: IState?
+    var currentState: HAState?
     var targetHeight: CGFloat = 150
     
     @Binding var parentHeight: CGFloat

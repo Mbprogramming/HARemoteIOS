@@ -90,7 +90,7 @@ import Observation
         temperature = temperatureMin
     }
     
-    public func setState(state: IState) {
+    public func setState(state: HAState) {
         let partsValue = state.value?.components(separatedBy: ";") ?? []
         for part in partsValue {
             let inner = part.components(separatedBy: ":")
@@ -111,19 +111,19 @@ import Observation
         }
     }
     
-    public func setStateHue(state: IState) {
+    public func setStateHue(state: HAState) {
         hue = Int(state.value ?? "0") ?? 0
     }
 
-    public func setStateSat(state: IState) {
+    public func setStateSat(state: HAState) {
         saturation = Int(state.value ?? "0") ?? 0
     }
 
-    public func setStateBri(state: IState) {
+    public func setStateBri(state: HAState) {
         brightness = Int(state.value ?? "0") ?? 0
     }
 
-    public func setStateTemp(state: IState) {
+    public func setStateTemp(state: HAState) {
         temperature = Int(state.value ?? "0") ?? 0
     }
 

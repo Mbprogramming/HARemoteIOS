@@ -23,7 +23,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     private var zones: [Zone] = []
     private var remotes: [Remote] = []
     private var mainCommands: [RemoteItem] = []
-    private var devices: [IBaseDevice] = []
+    private var devices: [BaseDevice] = []
         
     private init() {
     }
@@ -44,7 +44,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return zones
     }
     
-    func getAll() async throws -> [IBaseDevice] {
+    func getAll() async throws -> [BaseDevice] {
         if devices.count <= 0 {
             guard let url = URL(string: "\(server)/api/homeautomation") else { return [] }
             var request = URLRequest(url: url)
@@ -55,12 +55,12 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             let (data, _) = try await URLSession.shared.data(for: request)
             
             let decoder = JSONDecoder()
-            devices = try decoder.decode([IBaseDevice].self, from: data)
+            devices = try decoder.decode([BaseDevice].self, from: data)
         }
         return devices
     }
     
-    func getSpecificState(device: String?, id: String?) async throws -> IState? {
+    func getSpecificState(device: String?, id: String?) async throws -> HAState? {
         guard let url = URL(string: "\(server)/api/homeautomation/specificstate?device=\(device ?? "")&id=\(id ?? "")") else { return nil }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -70,7 +70,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         let (data, _) = try await URLSession.shared.data(for: request)
         
         let decoder = JSONDecoder()
-        return try decoder.decode(IState.self, from: data)
+        return try decoder.decode(HAState.self, from: data)
     }
     
     func getRemotes() async throws -> [Remote] {
@@ -115,7 +115,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return try decoder.decode([AutomaticExecutionEntry].self, from: data)
     }
     
-    func getRemoteStates(remoteId: String) async throws -> [IState] {
+    func getRemoteStates(remoteId: String) async throws -> [HAState] {
         guard let url = URL(string: "\(server)/api/homeautomation/allremotestates?remoteId=" + remoteId) else { return [] }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -124,7 +124,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         
         let (data, _) = try await URLSession.shared.data(for: request)
         let decoder = JSONDecoder()
-        return try decoder.decode([IState].self, from: data)
+        return try decoder.decode([HAState].self, from: data)
     }
     
     func sendCommand(device: String, command: String) -> String {

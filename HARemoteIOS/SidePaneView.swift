@@ -39,7 +39,7 @@ struct ItemView: View {
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @Binding var isVisible: Bool
     
     private func isFavorite(remoteId: String) -> Bool {
@@ -119,7 +119,7 @@ struct SidePaneView: View {
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @Binding var isVisible: Bool
     
     @State private var expandedZones: Set<String> = []
@@ -217,7 +217,7 @@ struct SidePaneView: View {
     @Previewable @State var currentRemote: Remote? = nil
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var remoteItemStack: [RemoteItem] = []
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     @Previewable @State var isVisible: Bool = true
     
     SidePaneView(

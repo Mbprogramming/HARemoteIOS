@@ -15,7 +15,7 @@ struct RemoteHistoryViewLine: View {
     
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var isVisible: Bool
     @Binding var orientation: UIDeviceOrientation
@@ -125,7 +125,7 @@ struct RemoteHistoryViewLine: View {
 struct RemoteHistoryView: View {
     @Binding var currentRemote: Remote?
     @Binding var currentRemoteItem: RemoteItem?
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var isVisible: Bool
     @Binding var orientation: UIDeviceOrientation
@@ -179,7 +179,7 @@ struct RemoteHistoryView: View {
 #Preview {
     @Previewable @State var currentRemote: Remote? = nil
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var isVisible: Bool = true
     @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait

@@ -14,7 +14,7 @@ struct RemoteButtonCommandList: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @State private var parentHeight: CGFloat = 60.0
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -72,7 +72,7 @@ struct RemoteButtonCommandList: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var mainModel = RemoteMainModel()
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     var remoteItem: RemoteItem? = nil
     var targetHeight: CGFloat = 60
     

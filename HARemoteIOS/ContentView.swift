@@ -238,13 +238,13 @@ struct ContentView: View {
         
         DispatchQueue.main.async {
             // Rebuild the array by replacing only the matching item with a new IState instance
-            let updated: [IState] = mainModel.remoteStates.map { s in
+            let updated: [HAState] = mainModel.remoteStates.map { s in
                 if s.device == device && s.id == state {
                     var colorIn: Int64? = nil
                     if color != nil {
                         colorIn = Int64(color!)
                     }
-                    return IState(
+                    return HAState(
                         id: s.id,
                         device: s.device,
                         value: value,

@@ -7,8 +7,8 @@
 
 import Foundation
 
-@Observable class IBaseDevice: Decodable, Identifiable, Equatable, Hashable {
-    static func == (lhs: IBaseDevice, rhs: IBaseDevice) -> Bool {
+@Observable class BaseDevice: Decodable, Identifiable, Equatable, Hashable {
+    static func == (lhs: BaseDevice, rhs: BaseDevice) -> Bool {
         return lhs.id == rhs.id
     }
     
@@ -22,8 +22,8 @@ import Foundation
     let config: String?
     let autoLoad: Bool?
     let autoStart: Bool?
-    //commands    [...]
-    let states: [IState]?
+    let commands: [Command]?
+    let states: [HAState]?
     //remoteFragments    [...]
     let icon: String?
     let tryToStartup: String?

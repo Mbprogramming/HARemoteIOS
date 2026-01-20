@@ -29,12 +29,12 @@ struct RemoteToggle: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     
     @State private var isOn: Bool = false
     @State private var hasInitializedFromState: Bool = false
     
-    init(remoteItem: RemoteItem?, targetHeight: CGFloat, currentRemoteItem: Binding<RemoteItem?>, remoteItemStack: Binding<[RemoteItem]>, mainModel: Binding<RemoteMainModel>, remoteStates: Binding<[IState]>) {
+    init(remoteItem: RemoteItem?, targetHeight: CGFloat, currentRemoteItem: Binding<RemoteItem?>, remoteItemStack: Binding<[RemoteItem]>, mainModel: Binding<RemoteMainModel>, remoteStates: Binding<[HAState]>) {
         self._currentRemoteItem = currentRemoteItem
         self.targetHeight = targetHeight
         self._remoteItemStack = remoteItemStack
@@ -44,7 +44,7 @@ struct RemoteToggle: View {
     }
     
     // Compute the current IState for this toggle, if available
-    private var currentState: IState? {
+    private var currentState: HAState? {
         guard let item = remoteItem else { return nil }
         return remoteStates.first(where: { $0.device == item.stateDevice && $0.id == item.state })
     }
@@ -98,7 +98,7 @@ struct RemoteToggle: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var mainModel = RemoteMainModel()
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     var remoteItem: RemoteItem? = nil
     var targetHeight: CGFloat = 60
     

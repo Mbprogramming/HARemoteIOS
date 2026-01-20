@@ -11,7 +11,7 @@ struct RemoteView: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @Binding var orientation: UIDeviceOrientation
     @Binding var disableScroll: Bool
     
@@ -30,7 +30,7 @@ struct RemoteView: View {
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var mainModel = RemoteMainModel()
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     @Previewable @State var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
     @Previewable @State var disableScroll: Bool = false
     

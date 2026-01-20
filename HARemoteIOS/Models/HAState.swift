@@ -9,8 +9,8 @@ import SwiftUI
 import Foundation
 import Observation
 
-@Observable class IState: Decodable, Identifiable, Equatable {
-    static func == (lhs: IState, rhs: IState) -> Bool {
+@Observable class HAState: Decodable, Identifiable, Equatable {
+    static func == (lhs: HAState, rhs: HAState) -> Bool {
         return lhs.device == rhs.device && lhs.id == rhs.id && lhs.value == rhs.value
     }
     

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StateItemView: View {
-    var state: IState
+    var state: HAState
     
     var body: some View {
         VStack {
@@ -55,7 +55,7 @@ struct StateItemView: View {
 }
 
 struct StateView: View {
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     @Binding var currentRemote: Remote?
     @Environment(\.mainWindowSize) var mainWindowSize
     
@@ -93,7 +93,7 @@ struct StateView: View {
 }
 
 #Preview {
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     @Previewable @State var currentRemote: Remote? = nil
     
     StateView(remoteStates: $remoteStates, currentRemote: $currentRemote)

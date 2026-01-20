@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RemoteStateItemView: View {
-    var state: IState
+    var state: HAState
     var targetHeight: CGFloat = 220
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -56,7 +56,7 @@ struct RemoteState: View {
     var remoteItem: RemoteItem?
     var targetHeight: CGFloat = 220
     
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     
     var body: some View {
         let currentState = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice })
@@ -67,7 +67,7 @@ struct RemoteState: View {
 }
 
 #Preview {
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     var remoteItem: RemoteItem? = nil
     
     RemoteState(remoteItem: remoteItem, targetHeight: 60, remoteStates: $remoteStates)

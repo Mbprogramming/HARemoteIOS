@@ -15,7 +15,7 @@ struct TempBriMulti: View {
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
     @Binding var mainModel: RemoteMainModel
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     
     @State private var sliderVisible: Bool = false
     @State private var listVisible: Bool = false
@@ -326,7 +326,7 @@ struct TempBriMulti: View {
     @Previewable @State var remoteItemStack: [RemoteItem] = []
     @Previewable @State var currentRemoteItem: RemoteItem? = nil
     @Previewable @State var mainModel = RemoteMainModel()
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     var remoteItem: RemoteItem? = nil
     var targetHeight: CGFloat = 60
     TempBriMulti(remoteItem: remoteItem, targetHeight: targetHeight, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, remoteStates: $remoteStates)

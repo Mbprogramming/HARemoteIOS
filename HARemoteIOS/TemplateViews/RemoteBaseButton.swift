@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RemoteBaseButton: View {
-    @Binding var remoteStates: [IState]
+    @Binding var remoteStates: [HAState]
     
     private let action: () -> Void
     private let actionDeferred: ((Date, Int) -> Void)?
@@ -19,7 +19,7 @@ struct RemoteBaseButton: View {
          targetHeight: CGFloat,
          action: @escaping () -> Void,
          actionDeferred: ((Date, Int) -> Void)? = nil,
-         remoteStates: Binding<[IState]>) {
+         remoteStates: Binding<[HAState]>) {
         self.remoteItem = remoteItem
         self.targetHeight = targetHeight
         self.action = action
@@ -278,7 +278,7 @@ struct RemoteBaseButton: View {
 }
 
 #Preview {
-    @Previewable @State var remoteStates: [IState] = []
+    @Previewable @State var remoteStates: [HAState] = []
     var remoteItem: RemoteItem? = nil
     var targetHeight: CGFloat = 60
     

@@ -130,19 +130,19 @@ struct AutomaticExecutionView: View {
 
     @State private var currentWizardStep: Int = 0
     
-    @State private var currentStateValue: IState? = nil
+    @State private var currentStateValue: HAState? = nil
     
-    private var devicesForState: [IBaseDevice] {
+    private var devicesForState: [BaseDevice] {
          return mainModel.devices.filter { device in
             !(device.states?.isEmpty ?? true)
         }
     }
     
-    private var states: [IState] {
+    private var states: [HAState] {
         return devicesForState.first{ $0.id == selectedStateDevice }?.states ?? []
     }
     
-    private var currentSelectedState: IState? {
+    private var currentSelectedState: HAState? {
         if let device = mainModel.devices.first(where: { $0.id == selectedStateDevice }) {
             if let state = device.states?.first(where: { $0.id == selectedState }) {
                 return state
@@ -151,7 +151,7 @@ struct AutomaticExecutionView: View {
         return nil
     }
 
-    private var currentSelectedDevice: IBaseDevice? {
+    private var currentSelectedDevice: BaseDevice? {
         if let device = mainModel.devices.first(where: { $0.id == selectedStateDevice }) {
             return device
         }
@@ -180,7 +180,7 @@ struct AutomaticExecutionView: View {
     @ViewBuilder
     private var pickerContent: some View {
         Text("Not selected").tag(nil as String?)
-        ForEach(devicesForState, id: \.id) { (device: IBaseDevice) in
+        ForEach(devicesForState, id: \.id) { (device: BaseDevice) in
             Text(device.name ?? "")
                 .tag(device.id)
         }
@@ -196,7 +196,7 @@ struct AutomaticExecutionView: View {
     
     @ViewBuilder
     private var pickerContent2: some View {
-        ForEach(states, id: \.id) { (state: IState) in
+        ForEach(states, id: \.id) { (state: HAState) in
             Text(state.id ?? "")
                 .tag(state.id)
         }
