@@ -134,6 +134,7 @@ struct AutomaticExecutionView: View {
     @State private var selectedOperationString: OperationString? = nil
     @State private var selectedOperationBool: OperationBool? = nil
     @State private var limit: String = ""
+    @State private var limitBool: String? = nil
     @FocusState private var isFocused: Bool
 
     @State private var currentWizardStep: Int = 0
@@ -168,10 +169,55 @@ struct AutomaticExecutionView: View {
         }
         return nil
     }
+    
+    private var currentSelectedCommand: HACommand? {
+        if let device = mainModel.devices.first(where: { $0.id == selectedCommandDevice }) {
+            if let command = device.commands?.first(where: { $0.id == selectedCommand }) {
+                return command
+            }
+        }
+        return nil
+    }
 
     private var currentSelectedDevice: HABaseDevice? {
         if let device = mainModel.devices.first(where: { $0.id == selectedStateDevice }) {
             return device
+        }
+        return nil
+    }
+    
+    private var currentOperation: String? {
+        if currentSelectedState?.nativeTypeValue != nil {
+            switch currentSelectedState!.nativeTypeValue {
+            case "String":
+                return selectedOperationString?.rawValue
+            case "Int32":
+                return selectedOperationNum?.rawValue
+            case "Double":
+                return selectedOperationNum?.rawValue
+            case "Bool":
+                return selectedOperationBool?.rawValue
+            default:
+                return nil
+            }
+        }
+        return nil
+    }
+    
+    private var currentLimit: String? {
+        if currentSelectedState?.nativeTypeValue != nil {
+            switch currentSelectedState!.nativeTypeValue {
+            case "String":
+                return limit
+            case "Int32":
+                return limit
+            case "Double":
+                return limit
+            case "Bool":
+                return limitBool
+            default:
+                return nil
+            }
         }
         return nil
     }
@@ -322,7 +368,11 @@ struct AutomaticExecutionView: View {
             switch currentSelectedState!.nativeTypeValue {
             case "String":
                 VStack {
-                    pickerString
+                    HStack {
+                        Text("Operation: ")
+                            .font(.caption)
+                        pickerString
+                    }
                     TextField("Limit...", text: $limit)
                         .focused($isFocused)
                         .keyboardType(.asciiCapable)
@@ -330,7 +380,11 @@ struct AutomaticExecutionView: View {
                 }
             case "Int32":
                 VStack {
-                    pickerNum
+                    HStack {
+                        Text("Operation: ")
+                            .font(.caption)
+                        pickerNum
+                    }
                     TextField("Limit...", text: $limit)
                         .focused($isFocused)
                         .keyboardType(.numberPad)
@@ -338,7 +392,12 @@ struct AutomaticExecutionView: View {
                 }
             case "Double":
                 VStack {
-                    pickerNum
+                    HStack {
+                        Text("Operation: ")
+                            .font(.caption)
+                        
+                        pickerNum
+                    }
                     TextField("Limit...", text: $limit)
                         .focused($isFocused)
                         .keyboardType(.decimalPad)
@@ -346,8 +405,39 @@ struct AutomaticExecutionView: View {
                 }
             case "Bool":
                 VStack {
-                    pickerBool
+                    HStack {
+                        Text("Operation: ")
+                            .font(.caption)
+                        pickerBool
+                    }
+                    Picker("Select a value", selection: $limitBool) {
+                        Text("Not selected").tag(nil as String?)
+                        Text("True").tag("true" as String?)
+                        Text("False").tag("false" as String?)
+                    }
                 }
+            default:
+                Text("Unknown")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var step4Operation: some View {
+        if currentSelectedState?.nativeTypeValue != nil {
+            switch currentSelectedState!.nativeTypeValue {
+            case "String":
+                Text("\(selectedOperationString?.showValue ?? "") \(limit)")
+                    .font(.headline)
+            case "Int32":
+                Text("\(selectedOperationNum?.showValue ?? "") \(limit)")
+                    .font(.headline)
+            case "Double":
+                Text("\(selectedOperationNum?.showValue ?? "") \(limit)")
+                    .font(.headline)
+            case "Bool":
+                Text("\(selectedOperationBool?.showValue ?? "") \(limitBool ?? "")")
+                    .font(.headline)
             default:
                 Text("Unknown")
             }
@@ -581,7 +671,7 @@ struct AutomaticExecutionView: View {
                             
                             HStack {
                                 Button(action: {
-                                    currentWizardStep = 2
+                                    currentWizardStep = 1
                                 }) {
                                     Image(systemName: "chevron.left")
                                 }
@@ -589,7 +679,7 @@ struct AutomaticExecutionView: View {
                                 .glassEffect()
                                 Spacer()
                                 Button(action: {
-                                    currentWizardStep = 4
+                                    currentWizardStep = 3
                                 }) {
                                     Image(systemName: "chevron.right")
                                 }
@@ -600,8 +690,50 @@ struct AutomaticExecutionView: View {
                         }
                     }
                     Tab("Step 4", systemImage: "4.circle", value: 3) {
-                        Button("Create automatic execution") {
-                            addStateVisible.toggle()
+                        VStack {
+                            Text("Overview")
+                                .font(.title)
+                                .padding()
+                            Spacer()
+                            Text("State:")
+                                .font(.headline)
+                            Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                .font(.headline)
+                                .bold()
+                            Text("Operation:")
+                                .font(.headline)
+                            step4Operation
+                            Text("Command:")
+                                .font(.headline)
+                            Text("\(currentSelectedCommand?.device ?? "")-\(currentSelectedCommand?.id ?? "")")
+                                .font(.headline)
+                                .bold()
+                            Spacer()
+                            Button("Create automatic execution") {
+                                let stateDevice = currentSelectedState?.device ?? ""
+                                let state = currentSelectedState?.id ?? ""
+                                let commandDevice = currentSelectedCommand?.device ?? ""
+                                let command = currentSelectedCommand?.id ?? ""
+                                let operation = currentOperation ?? ""
+                                let limit = currentLimit ?? ""
+                            
+                                try? HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
+                                
+                                addStateVisible.toggle()
+                            }
+                            .buttonStyle(.glass)
+                            Spacer()
+                            HStack {
+                                Button(action: {
+                                    currentWizardStep = 2
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .padding()
+                                .glassEffect()
+                                Spacer()
+                            }
+                            .padding()
                         }
                     }
                 }
@@ -655,6 +787,10 @@ struct AutomaticExecutionView: View {
             }
         }
         .onChange(of: selectedState) {
+            selectedOperationNum = nil
+            selectedOperationBool = nil
+            selectedOperationString = nil
+            limit = ""
             Task {
                 do {
                     if currentSelectedState != nil {

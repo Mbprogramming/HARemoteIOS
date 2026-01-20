@@ -273,5 +273,21 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         }
         .resume()
     }
+    
+    func addStateChangeAutomaticExecution(stateDevice: String, state: String, commandDevice: String, command: String, operation: String, limit: String, parameter: String?) {
+        let urlString = "\(server)/api/HomeAutomation/AddStateChangeAutomaticExecution?commandDevice=\(commandDevice)&command=\(command)&stateDevice=\(stateDevice)&state=\(state)&operation=\(operation)&limit=\(limit)"
+        guard let url = URL(string: urlString) else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("\(username)", forHTTPHeaderField: "X-User")
+        request.setValue("\(application)", forHTTPHeaderField: "X-App")
+
+        let _ = URLSession.shared.dataTask(with: request){ (data, response, error) in
+            if let error = error as? URLError {
+                NSLog(error.failingURL?.absoluteString ?? "")
+            }
+        }
+        .resume()
+    }
 }
 
