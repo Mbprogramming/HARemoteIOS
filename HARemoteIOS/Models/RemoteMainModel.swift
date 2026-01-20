@@ -85,7 +85,7 @@ import Observation
         }
     }
     
-    public func deviceCommands(device: String?, group: String?) -> [Command] {
+    public func deviceCommands(device: String?, group: String?) -> [HACommand] {
         if device == nil || group == nil {
             return []
         }

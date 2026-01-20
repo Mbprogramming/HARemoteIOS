@@ -22,7 +22,7 @@ import Foundation
     let config: String?
     let autoLoad: Bool?
     let autoStart: Bool?
-    let commands: [Command]?
+    let commands: [HACommand]?
     let states: [HAState]?
     //remoteFragments    [...]
     let icon: String?
