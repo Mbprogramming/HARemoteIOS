@@ -77,9 +77,8 @@ import Observation
             return []
         }
         if let device = devices.first(where: {$0.id == device!}) {
-            let temp1 = device.commands?.filter({$0.group != nil}) ?? []
-            let temp2 = temp1.map(\.group!)
-            return Array(Set(temp2))
+            let temp2 = device.commands?.map(\.emptyGroup!) ?? []
+            return Array(Set(temp2)).sorted(by: {$0 < $1})
         } else {
             return []
         }
@@ -90,7 +89,7 @@ import Observation
             return []
         }
         if let device = devices.first(where: {$0.id == device!}) {
-            return device.commands?.filter({$0.group == group!}) ?? []
+            return device.commands?.filter({$0.emptyGroup == group!}) ?? []
         } else {
             return []
         }

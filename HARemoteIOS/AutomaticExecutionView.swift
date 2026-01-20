@@ -127,19 +127,32 @@ struct AutomaticExecutionView: View {
     @State private var addStateVisible: Bool = false
     @State private var selectedStateDevice: String? = nil
     @State private var selectedState: String? = nil
+    @State private var selectedCommandDevice: String? = nil
+    @State private var selectedCommandGroup: String? = nil
+    @State private var selectedCommand: String? = nil
 
     @State private var currentWizardStep: Int = 0
     
     @State private var currentStateValue: HAState? = nil
     
     private var devicesForState: [HABaseDevice] {
-         return mainModel.devices.filter { device in
-            !(device.states?.isEmpty ?? true)
-        }
+        return mainModel.devicesWithStates
     }
     
     private var states: [HAState] {
-        return devicesForState.first{ $0.id == selectedStateDevice }?.states ?? []
+        return mainModel.deviceStates(device: selectedStateDevice)
+    }
+    
+    private var devicesForCommands: [HABaseDevice] {
+        return mainModel.devicesWithCommands
+    }
+    
+    private var commandGroups: [String] {
+        return mainModel.deviceCommandGroups(device: selectedCommandDevice)
+    }
+    
+    private var commands: [HACommand] {
+        return mainModel.deviceCommands(device: selectedCommandDevice, group: selectedCommandGroup)
     }
     
     private var currentSelectedState: HAState? {
@@ -191,11 +204,12 @@ struct AutomaticExecutionView: View {
         Picker("Select a device for state", selection: $selectedStateDevice) {
             pickerContent
         }
-        .pickerStyle(.wheel)
+        .pickerStyle(.menu)
     }
     
     @ViewBuilder
     private var pickerContent2: some View {
+        Text("Not selected").tag(nil as String?)
         ForEach(states, id: \.id) { (state: HAState) in
             Text(state.id ?? "")
                 .tag(state.id)
@@ -207,9 +221,60 @@ struct AutomaticExecutionView: View {
         Picker("Select a state", selection: $selectedState) {
             pickerContent2
         }
-        .pickerStyle(.wheel)
+        .pickerStyle(.menu)
     }
-    
+
+    @ViewBuilder
+    private var pickerContent3: some View {
+        Text("Not selected").tag(nil as String?)
+        ForEach(devicesForCommands, id: \.id) { (device: HABaseDevice) in
+            Text(device.name ?? "")
+                .tag(device.id)
+        }
+    }
+
+    @ViewBuilder
+    private var step3: some View {
+        Picker("Select a device for command", selection: $selectedCommandDevice) {
+            pickerContent3
+        }
+        .pickerStyle(.menu)
+    }
+
+    @ViewBuilder
+    private var pickerContent4: some View {
+        Text("Not selected").tag(nil as String?)
+        ForEach(commandGroups, id: \.self) { (group: String) in
+            Text(group)
+                .tag(group)
+        }
+    }
+
+    @ViewBuilder
+    private var step31: some View {
+        Picker("Select a group for command", selection: $selectedCommandGroup) {
+            pickerContent4
+        }
+        .pickerStyle(.menu)
+    }
+
+    @ViewBuilder
+    private var pickerContent5: some View {
+        Text("Not selected").tag(nil as String?)
+        ForEach(commands, id: \.self) { (command: HACommand) in
+            Text(command.description ?? "")
+                .tag(command.id)
+        }
+    }
+
+    @ViewBuilder
+    private var step32: some View {
+        Picker("Select a command", selection: $selectedCommand) {
+            pickerContent5
+        }
+        .pickerStyle(.menu)
+    }
+
     var body: some View {
         ZStack (alignment: .bottomTrailing) {
             VStack {
@@ -312,16 +377,16 @@ struct AutomaticExecutionView: View {
                                 .font(.title)
                                 .padding()
                             Spacer()
+                            
                             Text("Device:")
                                 .font(.caption)
-                                .padding()
                             step1
                                 .padding()
                             Text("State:")
                                 .font(.caption)
-                                .padding()
                             step12
                                 .padding()
+                            
                             Spacer()
                             HStack {
                                 Text("\(currentSelectedState?.value ?? "None")")
@@ -335,6 +400,7 @@ struct AutomaticExecutionView: View {
                                     .padding()
                             }
                             .padding()
+                            
                             Spacer()
                             HStack {
                                 Spacer()
@@ -392,7 +458,64 @@ struct AutomaticExecutionView: View {
                         }
                     }
                     Tab("Step 3", systemImage: "3.circle", value: 2) {
-                        Text("Step 3")
+                        VStack {
+                            Text("Select device and command")
+                                .font(.title)
+                                .padding()
+                            Spacer()
+
+                            HStack {
+                                Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                    .font(.headline)
+                                    .bold()
+                            }
+                            HStack {
+                                Text("\(currentSelectedState?.value ?? "None")")
+                                    .font(.caption2)
+                                    .padding()
+                                Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                    .font(.caption2)
+                                    .padding()
+                                Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                    .font(.caption2)
+                                    .padding()
+                            }
+                            .padding()
+                            Spacer()
+                            
+                            Text("Device:")
+                                .font(.caption)
+                            step3
+                                .padding()
+                            Text("Command Group:")
+                                .font(.caption)
+                            step31
+                                .padding()
+                            Text("Command:")
+                                .font(.caption)
+                            step32
+                                .padding()
+                            Spacer()
+                            
+                            HStack {
+                                Button(action: {
+                                    currentWizardStep = 2
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .padding()
+                                .glassEffect()
+                                Spacer()
+                                Button(action: {
+                                    //currentWizardStep = 4
+                                }) {
+                                    Image(systemName: "chevron.right")
+                                }
+                                .padding()
+                                .glassEffect()
+                            }
+                            .padding()
+                        }
                     }
                 }
                 .tabViewStyle(.page)
@@ -454,6 +577,16 @@ struct AutomaticExecutionView: View {
                     // handle error if needed
                 }
             }
+        }
+        .onChange(of: selectedStateDevice) {
+            selectedState = nil
+        }
+        .onChange(of: selectedCommandDevice) {
+            selectedCommandGroup = nil
+            selectedCommand = nil
+        }
+        .onChange(of: selectedCommandGroup) {
+            selectedCommand = nil
         }
         .onAppear {
             Task {

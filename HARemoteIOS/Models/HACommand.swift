@@ -23,4 +23,12 @@ import Foundation
     let template: String?
     let commandType: CommandType?
     let defaultConverter: String?
+    
+    public var emptyGroup: String? {
+        if group == nil {
+            return "Empty"
+        } else {
+            return group
+        }
+    }
 }
