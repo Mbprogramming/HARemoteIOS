@@ -260,7 +260,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var step1: some View {
-        Picker("Select a device for state", selection: $selectedStateDevice) {
+        Picker("Device for state:", selection: $selectedStateDevice) {
             pickerContent
         }
         .pickerStyle(.menu)
@@ -277,7 +277,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var step12: some View {
-        Picker("Select a state", selection: $selectedState) {
+        Picker("State", selection: $selectedState) {
             pickerContent2
         }
         .pickerStyle(.menu)
@@ -294,7 +294,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var step3: some View {
-        Picker("Select a device for command", selection: $selectedCommandDevice) {
+        Picker("Device for command", selection: $selectedCommandDevice) {
             pickerContent3
         }
         .pickerStyle(.menu)
@@ -311,7 +311,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var step31: some View {
-        Picker("Select a group for command", selection: $selectedCommandGroup) {
+        Picker("Group for command", selection: $selectedCommandGroup) {
             pickerContent4
         }
         .pickerStyle(.menu)
@@ -328,7 +328,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var step32: some View {
-        Picker("Select a command", selection: $selectedCommand) {
+        Picker("Command", selection: $selectedCommand) {
             pickerContent5
         }
         .pickerStyle(.menu)
@@ -336,7 +336,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var pickerNum: some View {
-        Picker("Select a operation", selection: $selectedOperationNum) {
+        Picker("Operation", selection: $selectedOperationNum) {
             Text("Not selected").tag(nil as OperationNum?)
             ForEach(OperationNum.allCases) { operation in
                 Text(operation.showValue)
@@ -348,7 +348,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var pickerString: some View {
-        Picker("Select a operation", selection: $selectedOperationString) {
+        Picker("Operation", selection: $selectedOperationString) {
             Text("Not selected").tag(nil as OperationString?)
             ForEach(OperationString.allCases) { operation in
                 Text(operation.showValue)
@@ -360,7 +360,7 @@ struct AutomaticExecutionView: View {
 
     @ViewBuilder
     private var pickerBool: some View {
-        Picker("Select a operation", selection: $selectedOperationBool) {
+        Picker("Operation", selection: $selectedOperationBool) {
             Text("Not selected").tag(nil as OperationBool?)
             ForEach(OperationBool.allCases) { operation in
                 Text(operation.showValue)
@@ -375,55 +375,30 @@ struct AutomaticExecutionView: View {
         if currentSelectedState?.nativeTypeValue != nil {
             switch currentSelectedState!.nativeTypeValue {
             case "String":
-                VStack {
-                    HStack {
-                        Text("Operation: ")
-                            .font(.caption)
-                        pickerString
-                    }
-                    TextField("Limit...", text: $limit)
-                        .focused($isFocused)
-                        .keyboardType(.asciiCapable)
-                        .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
-                }
+                pickerString
+                TextField("Limit", text: $limit)
+                    .focused($isFocused)
+                    .keyboardType(.asciiCapable)
+                    .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
             case "Int32":
-                VStack {
-                    HStack {
-                        Text("Operation: ")
-                            .font(.caption)
-                        pickerNum
-                    }
-                    TextField("Limit...", text: $limit)
-                        .focused($isFocused)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
-                }
+                pickerNum
+                TextField("Limit", text: $limit)
+                    .focused($isFocused)
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
             case "Double":
-                VStack {
-                    HStack {
-                        Text("Operation: ")
-                            .font(.caption)
-                        
-                        pickerNum
-                    }
-                    TextField("Limit...", text: $limit)
-                        .focused($isFocused)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
-                }
+                pickerNum
+                TextField("Limit", text: $limit)
+                    .focused($isFocused)
+                    .keyboardType(.decimalPad)
+                    .textFieldStyle(.roundedBorder) // Fügt Rahmen hinzu
             case "Bool":
-                VStack {
-                    HStack {
-                        Text("Operation: ")
-                            .font(.caption)
-                        pickerBool
-                    }
-                    Picker("Select a value", selection: $limitBool) {
-                        Text("Not selected").tag(nil as String?)
-                        Text("True").tag("true" as String?)
-                        Text("False").tag("false" as String?)
-                    }
-                }
+                pickerBool
+                Picker("Select a value", selection: $limitBool) {
+                    Text("Not selected").tag(nil as String?)
+                    Text("True").tag("true" as String?)
+                    Text("False").tag("false" as String?)
+                }.pickerStyle(.segmented)
             default:
                 Text("Unknown")
             }
@@ -553,31 +528,28 @@ struct AutomaticExecutionView: View {
                             Text("Select device and state")
                                 .font(.title)
                                 .padding()
-                            Spacer()
-                            
-                            Text("Device:")
-                                .font(.caption)
-                            step1
-                                .padding()
-                            Text("State:")
-                                .font(.caption)
-                            step12
-                                .padding()
-                            
-                            Spacer()
-                            HStack {
-                                Text("\(currentSelectedState?.value ?? "None")")
-                                    .font(.caption2)
+                            Form {
+                                Section("State"){
+                                    step1
+                                        .padding()
+                                    step12
+                                        .padding()
+                                }
+                                Section ("Current State Value"){
+                                    HStack {
+                                        Text("\(currentSelectedState?.value ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                            .font(.caption2)
+                                            .padding()
+                                    }
                                     .padding()
-                                Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                    .font(.caption2)
-                                    .padding()
-                                Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                    .font(.caption2)
-                                    .padding()
+                                }.muted()
                             }
-                            .padding()
-                            
                             Spacer()
                             HStack {
                                 Spacer()
@@ -597,25 +569,29 @@ struct AutomaticExecutionView: View {
                             Text("Compare to")
                                 .font(.title)
                                 .padding()
-                            Spacer()
-                            HStack {
-                                Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
-                                    .font(.headline)
-                                    .bold()
+                            Form {
+                                Section("Current State") {
+                                    HStack {
+                                        Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                            .font(.headline)
+                                            .bold()
+                                    }
+                                    HStack {
+                                        Text("\(currentSelectedState?.value ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                            .font(.caption2)
+                                            .padding()
+                                    }
+                                }.muted()
+                                Section("Operation and Limit") {
+                                    step2.padding()
+                                }
                             }
-                            HStack {
-                                Text("\(currentSelectedState?.value ?? "None")")
-                                    .font(.caption2)
-                                    .padding()
-                                Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                    .font(.caption2)
-                                    .padding()
-                                Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                    .font(.caption2)
-                                    .padding()
-                            }
-                            Spacer()
-                            step2.padding()
                             Spacer()
                             HStack {
                                 Button(action: {
@@ -642,41 +618,41 @@ struct AutomaticExecutionView: View {
                             Text("Select device and command")
                                 .font(.title)
                                 .padding()
-                            Spacer()
 
-                            HStack {
-                                Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
-                                    .font(.headline)
-                                    .bold()
+                            Form {
+                                Section("Current state") {
+                                    HStack {
+                                        Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                            .font(.headline)
+                                            .bold()
+                                    }
+                                    HStack {
+                                        Text("\(currentSelectedState?.value ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                            .font(.caption2)
+                                            .padding()
+                                    }
+                                    .padding()
+                                }.muted()
+                                Section("Current operation") {
+                                    step4Operation
+                                }.muted()
+
+                                Section("Command") {
+                                    step3
+                                        .padding()
+                                    step31
+                                        .padding()
+                                    step32
+                                        .padding()
+                                }
                             }
-                            HStack {
-                                Text("\(currentSelectedState?.value ?? "None")")
-                                    .font(.caption2)
-                                    .padding()
-                                Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                    .font(.caption2)
-                                    .padding()
-                                Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                    .font(.caption2)
-                                    .padding()
-                            }
-                            .padding()
                             Spacer()
-                            
-                            Text("Device:")
-                                .font(.caption)
-                            step3
-                                .padding()
-                            Text("Command Group:")
-                                .font(.caption)
-                            step31
-                                .padding()
-                            Text("Command:")
-                                .font(.caption)
-                            step32
-                                .padding()
-                            Spacer()
-                            
                             HStack {
                                 Button(action: {
                                     currentWizardStep = 1
@@ -699,37 +675,60 @@ struct AutomaticExecutionView: View {
                     }
                     Tab("Step 4", systemImage: "4.circle", value: 3) {
                         VStack {
-                            Text("Overview")
+                            Text("Summary")
                                 .font(.title)
                                 .padding()
-                            Spacer()
-                            Text("State:")
-                                .font(.headline)
-                            Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
-                                .font(.headline)
-                                .bold()
-                            Text("Operation:")
-                                .font(.headline)
-                            step4Operation
-                            Text("Command:")
-                                .font(.headline)
-                            Text("\(currentSelectedCommand?.device ?? "")-\(currentSelectedCommand?.id ?? "")")
-                                .font(.headline)
-                                .bold()
-                            Spacer()
-                            Button("Create automatic execution") {
-                                let stateDevice = currentSelectedState?.device ?? ""
-                                let state = currentSelectedState?.id ?? ""
-                                let commandDevice = currentSelectedCommand?.device ?? ""
-                                let command = currentSelectedCommand?.id ?? ""
-                                let operation = currentOperation ?? ""
-                                let limit = currentLimit ?? ""
-                            
-                                try? HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
-                                
-                                addStateVisible.toggle()
+                            Form {
+                                Section("Current state") {
+                                    HStack {
+                                        Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                            .font(.headline)
+                                            .bold()
+                                    }
+                                    HStack {
+                                        Text("\(currentSelectedState?.value ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                            .font(.caption2)
+                                            .padding()
+                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                            .font(.caption2)
+                                            .padding()
+                                    }
+                                    .padding()
+                                }.muted()
+                                Section("Current operation") {
+                                    step4Operation
+                                }.muted()
+                                Section("Current command") {
+                                    Text("\(currentSelectedCommand?.device ?? "")-\(currentSelectedCommand?.id ?? "")")
+                                        .font(.headline)
+                                        .bold()
+                                }.muted()
+                                Section("Create") {
+                                    HStack {
+                                        Button("Cancel") {
+                                            addStateVisible.toggle()
+                                        }
+                                        .buttonStyle(.glass)
+                                        Spacer()
+                                        Button("Create automatic execution") {
+                                            let stateDevice = currentSelectedState?.device ?? ""
+                                            let state = currentSelectedState?.id ?? ""
+                                            let commandDevice = currentSelectedCommand?.device ?? ""
+                                            let command = currentSelectedCommand?.id ?? ""
+                                            let operation = currentOperation ?? ""
+                                            let limit = currentLimit ?? ""
+                                            
+                                            try? HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
+                                            
+                                            addStateVisible.toggle()
+                                        }
+                                        .buttonStyle(.glass)
+                                    }
+                                }
                             }
-                            .buttonStyle(.glass)
                             Spacer()
                             HStack {
                                 Button(action: {
@@ -844,6 +843,15 @@ extension View {
         } else {
             self
         }
+    }
+}
+
+extension View {
+    func muted(_ isMuted: Bool = true) -> some View {
+        self
+            .opacity(isMuted ? 0.4 : 1.0)
+            .saturation(isMuted ? 0.2 : 1.0)
+            .allowsHitTesting(!isMuted) // Verhindert Klicks im muted-Zustand
     }
 }
 
