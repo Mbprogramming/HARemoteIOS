@@ -461,14 +461,12 @@ struct ContentView: View {
                         }
                     }
                     
-                    TabSection("Automatic Execution") {
-                        Tab("AutomaticExecution", systemImage: "calendar", value: 3, role: .search){
+                    Tab("Automatic", systemImage: "calendar", value: 3){
                             NavigationView {
                                 AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
                             }
                         }
                         .badge(mainModel.automaticExecutionCount)
-                    }
                 }
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     macroSelectionListSheet
