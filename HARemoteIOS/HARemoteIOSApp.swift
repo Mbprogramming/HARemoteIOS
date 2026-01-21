@@ -20,6 +20,9 @@ struct HARemoteIOSApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: .mainCommandShortcut)) { obj in
                 showDebug.toggle()
             }
+            .onAppear {
+                requestNotificationPermission()
+            }
             .alert(isPresented: $showDebug) {
                 Alert(
                     title: Text("Please Give Us a Second Chance"),
@@ -32,5 +35,15 @@ struct HARemoteIOSApp: App {
             }
         }
         .modelContainer(for: [RemoteHistoryEntry.self, RemoteFavorite.self, HueMultiEntry.self])
+    }
+    
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if granted {
+                print("Notification permission granted")
+            } else if let error = error {
+                print("Error requesting notification permission: \(error.localizedDescription)")
+            }
+        }
     }
 }

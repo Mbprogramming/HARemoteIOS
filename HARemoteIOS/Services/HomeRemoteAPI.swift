@@ -24,6 +24,8 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     private var remotes: [Remote] = []
     private var mainCommands: [RemoteItem] = []
     private var devices: [HABaseDevice] = []
+    
+    private var banner: Dictionary<String, String> = [:]
         
     private init() {
     }
@@ -140,6 +142,20 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return uuid
     }
     
+    func sendSystemBanner(intervalInSeconds: Double, executionId: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "5 Minute Warning"
+        content.body = "The automatic execution runs in 5 minutes."
+        content.sound = .default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: intervalInSeconds, repeats: false)
+        let id = UUID().uuidString
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request)
+        self.banner[executionId] = id
+    }
+    
     func sendCommandDeferred(device: String, command: String, delay: Int, cyclic: Bool = false) -> String {
         let uuid = UUID().uuidString
         let urlString = "\(server)/api/HomeAutomation/CommandDeferred?id=\(uuid)&device=\(device)&command=\(command)&delay=\(delay)&cyclic=\((cyclic ? "true" : "false"))"
@@ -151,6 +167,9 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
 
         let _ = URLSession.shared.dataTask(with: request)
             .resume()
+        if delay > 5 * 60 {
+            sendSystemBanner(intervalInSeconds: Double(delay) - (5 * 60), executionId: uuid)
+        }
         return uuid
     }
     
@@ -166,6 +185,9 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
 
         let _ = URLSession.shared.dataTask(with: request)
             .resume()
+        if delay > 5 * 60 {
+            sendSystemBanner(intervalInSeconds: Double(delay) - (5 * 60), executionId: uuid)
+        }
         return uuid
     }
     
@@ -240,6 +262,11 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
 
         let _ = URLSession.shared.dataTask(with: request)
             .resume()
+        
+        if let bannerId = banner[id] {
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [bannerId])
+            banner.removeValue(forKey: id)
+        }
     }
     
     func automaticExecutionImmediatly(id: String) {
