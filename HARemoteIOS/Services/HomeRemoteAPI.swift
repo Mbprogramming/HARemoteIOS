@@ -142,11 +142,26 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         return uuid
     }
     
+    public func removeBanner(executionId: String) {
+        self.banner.removeValue(forKey: executionId)
+    }
+    
+    public func changeBanner(executionId: String, delay: Int) {
+        if let bannerId = banner[executionId] {
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [bannerId])
+            removeBanner(executionId: executionId)
+        }
+        if delay > 5 * 60 {
+            sendSystemBanner(intervalInSeconds: Double(delay) - (5 * 60), executionId: executionId)
+        }
+    }
+    
     func sendSystemBanner(intervalInSeconds: Double, executionId: String) {
         let content = UNMutableNotificationContent()
         content.title = "5 Minute Warning"
         content.body = "The automatic execution runs in 5 minutes."
         content.sound = .default
+        content.userInfo = ["executionId": executionId]
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: intervalInSeconds, repeats: false)
         let id = UUID().uuidString
@@ -265,7 +280,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         
         if let bannerId = banner[id] {
             UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [bannerId])
-            banner.removeValue(forKey: id)
+            removeBanner(executionId: id)
         }
     }
     
@@ -294,6 +309,12 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
         
         let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if data != nil {
+                if let str = String(data: data!, encoding: .utf8) {
+                    let delay = Int(str) ?? 0
+                    self.changeBanner(executionId: id, delay: delay * 60)
+                }
+            }
             if let error = error as? URLError {
                 NSLog(error.failingURL?.absoluteString ?? "")
             }
