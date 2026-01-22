@@ -148,7 +148,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     public func changeBanner(executionId: String, delay: Int) {
         if let bannerId = banner[executionId] {
-            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [bannerId])
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [bannerId])
             removeBanner(executionId: executionId)
         }
         if delay > 5 * 60 {
@@ -279,7 +279,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             .resume()
         
         if let bannerId = banner[id] {
-            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [bannerId])
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [bannerId])
             removeBanner(executionId: id)
         }
     }
