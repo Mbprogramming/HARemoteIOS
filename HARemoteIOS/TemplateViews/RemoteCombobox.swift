@@ -102,8 +102,8 @@ struct RemoteCombobox: View {
                             atDate = Date.now.addingTimeInterval(86400)
                             
                             deferredType = 0
-                            deferredCommand = remoteItem?.device ?? ""
-                            deferredDevice = remoteItem?.command ?? ""
+                            deferredCommand = remoteItem?.command ?? ""
+                            deferredDevice = remoteItem?.device ?? ""
                             deferredDescription = item.item2 ?? ""
                             deferredParameter = item.item1 ?? ""
                             
