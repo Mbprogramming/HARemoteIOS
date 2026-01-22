@@ -25,6 +25,8 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     private var mainCommands: [RemoteItem] = []
     private var devices: [HABaseDevice] = []
     
+    public var icons: [String] = []
+    
     private var banner: Dictionary<String, String> = [:]
         
     private init() {
@@ -336,6 +338,29 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             }
         }
         .resume()
+    }
+    
+    func getIconsWithoutCharts() async throws -> [String] {
+        if icons.count <= 0 {
+            guard let url = URL(string: "\(server)/api/homeautomation/AllBitmapsWithoutCharts") else { return [] }
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("\(username)", forHTTPHeaderField: "X-User")
+            request.setValue("\(application)", forHTTPHeaderField: "X-App")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let decoder = JSONDecoder()
+            icons = try decoder.decode([String].self, from: data)
+        }
+        return icons
+    }
+    
+    func shouldIconCached(id: String) -> Bool {
+        let index = icons.firstIndex(where: { $0.caseInsensitiveCompare(id) == .orderedSame })
+        if (index ?? -1) >= 0 {
+            return true
+        }
+        return false
     }
 }
 

@@ -534,6 +534,7 @@ struct ContentView: View {
                     mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
                     mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
                     mainModel.devices = try await HomeRemoteAPI.shared.getAll()
+                    _ = try await HomeRemoteAPI.shared.getIconsWithoutCharts()
                     orientation = UIDevice.current.orientation
                     let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
                     if let lastRemote = tempHistory.first {

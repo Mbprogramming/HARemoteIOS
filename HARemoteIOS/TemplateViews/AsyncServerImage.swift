@@ -27,38 +27,19 @@ struct AsyncServerImage: View {
     
     var body: some View {
         let iconUrl = getBackgroundUrl(currentScheme: colorScheme)
-
-        //Group {
-            if let iconUrl, let url = URL(string: iconUrl) {
+        let cache = HomeRemoteAPI.shared.shouldIconCached(id: imageId ?? "")
+        if let iconUrl, let url = URL(string: iconUrl) {
+            if cache {
                 KFImage(url)
-                    //.aspectRatio(contentMode: .fit)
                     .scaledToFit()
-                /*{ phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                    case .success(let image):
-                        if background {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .brightness(colorScheme == .light ? 0.35 : -0.35)
-                                .padding()
-                        } else {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
-                    case .failure:
-                        EmptyView()
-                    @unknown default:
-                        EmptyView()
-                    }
-                }*/
             } else {
-                EmptyView()
+                KFImage(url)
+                    .forceRefresh()
+                    .scaledToFit()
             }
-        //}
+        } else {
+            EmptyView()
+        }
     }
 }
 
