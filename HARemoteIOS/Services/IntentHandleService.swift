@@ -7,12 +7,17 @@
 
 import Foundation
 
-final class IntentHandleService {
+@Observable
+public class IntentHandleService: @unchecked Sendable {
     
+    public var intentType: String? = nil
+    public var command: String? = nil
+    public var device: String? = nil
+    public var remote: String? = nil
+    public var mainCommandId: String? = nil
+
     static let shared = IntentHandleService()
     
     private init() {
     }
-    
-    public var mainCommandId: String? = nil
 }

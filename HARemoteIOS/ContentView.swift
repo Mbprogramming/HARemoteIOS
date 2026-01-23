@@ -429,6 +429,24 @@ struct ContentView: View {
         }
     }
     
+    private func handleIntent() {
+        if IntentHandleService.shared.intentType == "RunMainCommandIntent" {
+            if IntentHandleService.shared.command != nil {
+                if mainModel.mainCommands.count <= 0 {
+                    return
+                }
+                if let mainCmd  = mainModel.mainCommands.first(where: { $0.description?.caseInsensitiveCompare(IntentHandleService.shared.command ?? "") == .orderedSame }) {
+                    let id = HomeRemoteAPI.shared.sendCommand(device: mainCmd.device!, command: mainCmd.command!)
+                    mainModel.executeCommand(id: id)
+                }
+            }
+        }
+        IntentHandleService.shared.command = nil
+        IntentHandleService.shared.device = nil
+        IntentHandleService.shared.remote = nil
+        IntentHandleService.shared.intentType = nil
+    }
+    
     var body: some View {
         GeometryReader { geo in
             if isLoading {
@@ -466,7 +484,7 @@ struct ContentView: View {
                                 AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
                             }
                         }
-                        .badge(mainModel.automaticExecutionCount)
+                    .badge(mainModel.automaticExecutionCount)
                 }
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     macroSelectionListSheet
@@ -560,6 +578,7 @@ struct ContentView: View {
                         }
                         IntentHandleService.shared.mainCommandId = nil
                     }
+                    handleIntent()
                 } catch {
                     
                 }
@@ -635,6 +654,9 @@ struct ContentView: View {
                     deleteHistory(indexSet: indexSet)
                 }
                 try? modelContext.save()
+            }
+            .onChange(of: IntentHandleService.shared.intentType) {
+                handleIntent()
             }
             .onRotate { newOrientation in
                 switch newOrientation {
