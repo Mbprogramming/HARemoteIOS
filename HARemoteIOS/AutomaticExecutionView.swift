@@ -506,6 +506,7 @@ struct AutomaticExecutionView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
                 HStack {
                     Spacer()
                     Button(action: {

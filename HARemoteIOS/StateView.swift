@@ -76,6 +76,8 @@ struct StateView: View {
                 }
                 Spacer(minLength: height)
             }
+            .scrollContentBackground(.hidden)
+            .listRowSeparator(.hidden)
             .refreshable {
                 Task {
                     do {
