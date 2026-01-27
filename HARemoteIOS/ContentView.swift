@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import SignalRClient
 import WebKit
+import NaturalLanguage
 
 private struct MainWindowSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
@@ -429,6 +430,15 @@ struct ContentView: View {
         }
     }
     
+    func findSemanticSimilarity(str1: String, str2: String) -> Double {
+        // Word Embedding laden (z.B. für Deutsch oder Englisch)
+        if let embedding = NLEmbedding.wordEmbedding(for: .german) {
+            let distance: NLDistance = embedding.distance(between: str1, and: str2)
+            return distance.rounded(toPlaces: 2)
+        }
+        return 999
+    }
+    
     private func handleIntent() {
         if IntentHandleService.shared.intentType == "RunMainCommandIntent" {
             if IntentHandleService.shared.command != nil {
@@ -440,11 +450,40 @@ struct ContentView: View {
                     mainModel.executeCommand(id: id)
                 }
             }
+            IntentHandleService.shared.command = nil
+            IntentHandleService.shared.device = nil
+            IntentHandleService.shared.remote = nil
+            IntentHandleService.shared.intentType = nil
         }
-        IntentHandleService.shared.command = nil
-        IntentHandleService.shared.device = nil
-        IntentHandleService.shared.remote = nil
-        IntentHandleService.shared.intentType = nil
+        if IntentHandleService.shared.intentType == "OpenRemoteIntent" {
+            if IntentHandleService.shared.remote != nil {
+                if mainModel.remotes.count <= 0 {
+                    return
+                }
+                let temp = IntentHandleService.shared.remote ?? ""
+                /*
+                var intArray: Dictionary<String, String> = [:]
+                for r in mainModel.remotes {
+                    intArray[r.description.phoneticCode()] = temp.phoneticCode()
+                }
+                 */
+                DispatchQueue.main.async {
+                    if let newRemote = mainModel.remotes.first(where: { $0.description.caseInsensitiveCompare(temp) == .orderedSame }) {
+                        mainModel.remoteStates = []
+                        mainModel.currentRemote = newRemote
+                        mainModel.currentRemoteItem = newRemote.remote
+                        mainModel.remoteItemStack.removeAll()
+                        Task {
+                            mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
+                        }
+                    }
+                }
+            }
+            IntentHandleService.shared.command = nil
+            IntentHandleService.shared.device = nil
+            IntentHandleService.shared.remote = nil
+            IntentHandleService.shared.intentType = nil
+        }
     }
     
     var body: some View {
@@ -717,6 +756,27 @@ struct ContentView: View {
             .environment(\.zones, mainModel.zones)
             .environment(\.remotes, mainModel.remotes)
         }
+    }
+}
+
+extension String {
+    func levenshteinDistance(to other: String) -> Int {
+        let sCount = self.count
+        let oCount = other.count
+        guard sCount > 0 else { return oCount }
+        guard oCount > 0 else { return sCount }
+        
+        var matrix = [[Int]](repeating: [Int](repeating: 0, count: oCount + 1), count: sCount + 1)
+        for i in 0...sCount { matrix[i][0] = i }
+        for j in 0...oCount { matrix[0][j] = j }
+        
+        for (i, char1) in self.enumerated() {
+            for (j, char2) in other.enumerated() {
+                let cost = char1 == char2 ? 0 : 1
+                matrix[i + 1][j + 1] = Swift.min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1, matrix[i][j] + cost)
+            }
+        }
+        return matrix[sCount][oCount]
     }
 }
 

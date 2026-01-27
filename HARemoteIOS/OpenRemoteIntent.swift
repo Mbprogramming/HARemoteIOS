@@ -18,6 +18,9 @@ struct OpenRemoteIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
+        IntentHandleService.shared.remote = remote
+        IntentHandleService.shared.intentType = "OpenRemoteIntent"
+        
         return .result(dialog: "Remote \(remote) wird geöffnet.")
     }
 }

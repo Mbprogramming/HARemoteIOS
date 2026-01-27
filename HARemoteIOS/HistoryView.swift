@@ -47,6 +47,7 @@ struct HistoryView: View {
             }
             Spacer(minLength: 100)
         }
+        .scrollContentBackground(.hidden)
     }
 }
 
