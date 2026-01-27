@@ -60,6 +60,14 @@ extension View {
     }
 }
 
+enum SearchCategory: String, CaseIterable, Identifiable {
+    case all = "All"
+    case remote = "Remotes"
+    case command = "Commands"
+    
+    var id: String{ self.rawValue }
+}
+
 struct ContentView: View {
     @State private var navigateToSettings: Bool = false
     @State private var navigateToHome: Bool = false
@@ -71,6 +79,9 @@ struct ContentView: View {
     @State private var mainModel: RemoteMainModel = RemoteMainModel()
     
     @State private var showDebug: Bool = false
+    
+    @State private var searchText: String = ""
+    @State private var selectedScope: SearchCategory = .all
     
     @Environment(\.mainWindowSize) var mainWindowSize
     @Environment(\.modelContext) var modelContext
@@ -410,6 +421,22 @@ struct ContentView: View {
     }
 
     @ViewBuilder
+    private var Search: some View {
+        NavigationView {
+            List {
+                
+            }
+        }
+        .navigationTitle("Search")
+        .searchable(text: $searchText, prompt: "Search...")
+        .searchScopes($selectedScope) {
+            ForEach(SearchCategory.allCases) { category in
+                Text(category.rawValue).tag(category)
+            }
+        }
+    }
+    
+    @ViewBuilder
     private var webViewSheet: some View {
         if let url = url {
             ZStack (alignment: .bottom){
@@ -485,6 +512,96 @@ struct ContentView: View {
             IntentHandleService.shared.intentType = nil
         }
     }
+
+    @ViewBuilder
+    private var mainTabs: some View {
+        TabView (selection: $currentTab) {
+            Tab("Remote", systemImage: "av.remote", value: 0){
+                NavigationView {
+                    if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
+                        mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
+                        RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
+                            .ignoresSafeArea()
+                    } else {
+                        RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
+                    }
+                }
+            }
+            
+            Tab("States", systemImage: "flag", value: 1){
+                NavigationView {
+                    StateView(remoteStates: $mainModel.remoteStates, currentRemote: $mainModel.currentRemote)
+                }
+            }
+            
+            Tab("History", systemImage: "checklist", value: 2){
+                NavigationView {
+                    HistoryView(mainModel: $mainModel)
+                        .ignoresSafeArea()
+                }
+            }
+            
+            Tab("Automatic", systemImage: "calendar", value: 3){
+                NavigationView {
+                    AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
+                }
+            }
+            .badge(mainModel.automaticExecutionCount)
+
+            Tab("Search", systemImage: "magnifyingglass", value: 4, role: .search) {
+                Search
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing){
+            Button("Remote History", systemImage: "list.bullet.badge.ellipsis"){
+                showSmallPopup2 = true
+            }
+            .popover(isPresented: $showSmallPopup2) {
+                RemoteHistoryView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteStates: $mainModel.remoteStates, remoteItemStack: $mainModel.remoteItemStack, isVisible: $showSmallPopup2, orientation: $orientation, remotes: mainModel.remotes)
+                    .padding()
+                    .presentationCompactAdaptation(.popover)
+            }
+        }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button("Main Commands", systemImage: "square.grid.3x3.square.badge.ellipsis") {
+                showSmallPopup = true
+            }
+            .popover(isPresented: $showSmallPopup) {
+                MainCommandsView(mainCommands: $mainModel.mainCommands,
+                                 currentRemoteItem: $mainModel.currentRemoteItem,
+                                 remoteItemStack: $mainModel.remoteItemStack,
+                                 mainModel: $mainModel,
+                                 isVisible: $showSmallPopup,
+                                 orientation: $orientation)
+                .padding()
+                .presentationCompactAdaptation(.popover)
+            }
+        }
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button("Home", systemImage: "house") {
+                showSidePane = true
+            }
+            .fullScreenCover(isPresented: $showSidePane) {
+                SidePaneView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, remoteStates: $mainModel.remoteStates, isVisible: $showSidePane)
+            }
+        }
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button("Back", systemImage: "arrow.left") {
+                if mainModel.remoteItemStack.count > 0 {
+                    mainModel.currentRemoteItem = mainModel.remoteItemStack.popLast()
+                }
+            }
+            .disabled(mainModel.remoteItemStack.count <= 0)
+        }
+        ToolbarItem(placement: .principal) {
+            Text(mainModel.currentRemote?.description ?? "Remote")
+                .font(.headline)
+        }
+    }
     
     var body: some View {
         GeometryReader { geo in
@@ -492,39 +609,7 @@ struct ContentView: View {
                 ProgressView()
             }
             NavigationStack {
-                TabView (selection: $currentTab) {
-                    Tab("Remote", systemImage: "av.remote", value: 0){
-                        NavigationView {
-                            if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
-                                mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
-                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
-                                        .ignoresSafeArea()
-                            } else {
-                                RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
-                            }
-                        }
-                    }
-                    
-                    Tab("States", systemImage: "flag", value: 1){
-                        NavigationView {
-                            StateView(remoteStates: $mainModel.remoteStates, currentRemote: $mainModel.currentRemote)
-                        }
-                    }
-
-                    Tab("History", systemImage: "checklist", value: 2){
-                        NavigationView {
-                            HistoryView(mainModel: $mainModel)
-                                .ignoresSafeArea()
-                        }
-                    }
-                    
-                    Tab("Automatic", systemImage: "calendar", value: 3){
-                            NavigationView {
-                                AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
-                            }
-                        }
-                    .badge(mainModel.automaticExecutionCount)
-                }
+                mainTabs
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     macroSelectionListSheet
                 }
@@ -534,53 +619,8 @@ struct ContentView: View {
                 .sheet(isPresented: $showWebView) { [url] in
                     webViewSheet
                 }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing){
-                        Button("Remote History", systemImage: "list.bullet.badge.ellipsis"){
-                            showSmallPopup2 = true
-                        }
-                        .popover(isPresented: $showSmallPopup2) {
-                            RemoteHistoryView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteStates: $mainModel.remoteStates, remoteItemStack: $mainModel.remoteItemStack, isVisible: $showSmallPopup2, orientation: $orientation, remotes: mainModel.remotes)
-                            .padding()
-                            .presentationCompactAdaptation(.popover)
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Main Commands", systemImage: "square.grid.3x3.square.badge.ellipsis") {
-                            showSmallPopup = true
-                        }
-                        .popover(isPresented: $showSmallPopup) {
-                            MainCommandsView(mainCommands: $mainModel.mainCommands,
-                                             currentRemoteItem: $mainModel.currentRemoteItem,
-                                             remoteItemStack: $mainModel.remoteItemStack,
-                                             mainModel: $mainModel,
-                                             isVisible: $showSmallPopup,
-                                             orientation: $orientation)
-                            .padding()
-                            .presentationCompactAdaptation(.popover)
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Home", systemImage: "house") {
-                            showSidePane = true
-                        }
-                        .fullScreenCover(isPresented: $showSidePane) {
-                            SidePaneView(currentRemote: $mainModel.currentRemote, currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, remoteStates: $mainModel.remoteStates, isVisible: $showSidePane)
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Back", systemImage: "arrow.left") {
-                            if mainModel.remoteItemStack.count > 0 {
-                                mainModel.currentRemoteItem = mainModel.remoteItemStack.popLast()
-                            }
-                        }
-                        .disabled(mainModel.remoteItemStack.count <= 0)
-                    }
-                    ToolbarItem(placement: .principal) {
-                        Text(mainModel.currentRemote?.description ?? "Remote")
-                            .font(.headline)
-                    }
-                }.ignoresSafeArea()
+                .toolbar { toolbarContent }
+                .ignoresSafeArea()
             }
             .task {
                 isLoading = true
