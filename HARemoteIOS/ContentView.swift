@@ -451,14 +451,17 @@ struct ContentView: View {
             List {
                 ForEach(searchResults) { result in
                     if result.remote != nil {
-                        ItemView(
-                            remote: result.remote!,
-                            currentRemote: $mainModel.currentRemote,
-                            currentRemoteItem: $mainModel.currentRemoteItem,
-                            remoteItemStack: $mainModel.remoteItemStack,
-                            remoteStates: $mainModel.remoteStates,
-                            isVisible: $showSidePaneDummy
-                        )
+                        HStack {
+                            Image(systemName: "av.remote")
+                            ItemView(
+                                remote: result.remote!,
+                                currentRemote: $mainModel.currentRemote,
+                                currentRemoteItem: $mainModel.currentRemoteItem,
+                                remoteItemStack: $mainModel.remoteItemStack,
+                                remoteStates: $mainModel.remoteStates,
+                                isVisible: $showSidePaneDummy
+                            )
+                        }
                     }
                 }
             }
