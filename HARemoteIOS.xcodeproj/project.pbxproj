@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C1ED8BA2F28D31800082E13 /* Fuse in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1ED8B92F28D31800082E13 /* Fuse */; };
 		2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2C57C3E92F0FE009006D05B8 /* .gitignore */; };
 		2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2C57C3F02F169DCC006D05B8 /* Kingfisher */; };
 		2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C7F207E2EE2DD8B0069E365 /* libz.tbd */; };
@@ -64,6 +65,7 @@
 				2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */,
 				2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */,
 				2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */,
+				2C1ED8BA2F28D31800082E13 /* Fuse in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +140,7 @@
 			packageProductDependencies = (
 				2C7F20802EE2DD9C0069E365 /* SignalRClient */,
 				2C57C3F02F169DCC006D05B8 /* Kingfisher */,
+				2C1ED8B92F28D31800082E13 /* Fuse */,
 			);
 			productName = HARemoteIOS;
 			productReference = 2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */;
@@ -224,6 +227,7 @@
 			packageReferences = (
 				2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */,
 				2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				2C1ED8B82F28D1C600082E13 /* XCRemoteSwiftPackageReference "fuse-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C813FD92ED0A93A00BE0709 /* Products */;
@@ -631,6 +635,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2C1ED8B82F28D1C600082E13 /* XCRemoteSwiftPackageReference "fuse-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krisk/fuse-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
 		2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -650,6 +662,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2C1ED8B92F28D31800082E13 /* Fuse */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C1ED8B82F28D1C600082E13 /* XCRemoteSwiftPackageReference "fuse-swift" */;
+			productName = Fuse;
+		};
 		2C57C3F02F169DCC006D05B8 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */;

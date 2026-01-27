@@ -10,6 +10,7 @@ import SwiftData
 import SignalRClient
 import WebKit
 import NaturalLanguage
+import Fuse
 
 private struct MainWindowSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
@@ -75,6 +76,7 @@ struct ContentView: View {
     @State private var showSmallPopup2: Bool = false
     @State private var showSidePane: Bool = false
     @State private var isLoading: Bool = false
+    @State private var showSidePaneDummy: Bool = true
     
     @State private var mainModel: RemoteMainModel = RemoteMainModel()
     
@@ -107,6 +109,8 @@ struct ContentView: View {
     @State private var currentTab: Int = 0
     
     @State private var orientation = UIDeviceOrientation.unknown
+    
+    @State private var searchResults: [SearchResult] = []
     
     @AppStorage("server") var server: String = "http://192.168.5.106:5000"
     @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
@@ -420,11 +424,49 @@ struct ContentView: View {
         .presentationDetents([.medium])
     }
 
+    private func doSearch() {
+        if searchText.lengthOfBytes(using: .utf8) <= 0 {
+            searchResults = []
+            return
+        }
+        
+        let fuse = Fuse()
+        let pattern = fuse.createPattern(from: searchText)
+
+        searchResults = []
+        
+        mainModel.remotes.forEach { remote in
+            let result = fuse.search(pattern, in: remote.description)
+            let score = result?.score
+            let range = result?.ranges
+            if result != nil && score != nil && score! < 0.3 {
+                searchResults.append(SearchResult(remote: remote, score: score, range: range))
+            }
+        }
+    }
+    
     @ViewBuilder
     private var Search: some View {
         NavigationView {
             List {
-                
+                ForEach(searchResults) { result in
+                    if result.remote != nil {
+                        ItemView(
+                            remote: result.remote!,
+                            currentRemote: $mainModel.currentRemote,
+                            currentRemoteItem: $mainModel.currentRemoteItem,
+                            remoteItemStack: $mainModel.remoteItemStack,
+                            remoteStates: $mainModel.remoteStates,
+                            isVisible: $showSidePaneDummy
+                        )
+                    }
+                }
+            }
+            .onChange(of: searchText) {
+                doSearch()
+            }
+            .onChange(of: selectedScope) {
+                doSearch()
             }
         }
         .navigationTitle("Search")
