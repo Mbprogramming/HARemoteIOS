@@ -487,26 +487,34 @@ struct ContentView: View {
                     .listRowBackground(Color.clear)
                 ForEach(searchResults) { result in
                     if result.remote != nil {
-                        HStack {
-                            Image(systemName: "av.remote")
-                            ItemView(
-                                remote: result.remote!,
-                                currentRemote: $mainModel.currentRemote,
-                                currentRemoteItem: $mainModel.currentRemoteItem,
-                                remoteItemStack: $mainModel.remoteItemStack,
-                                remoteStates: $mainModel.remoteStates,
-                                isVisible: $showSidePaneDummy
-                            )
+                        VStack (alignment: .leading) {
+                            HStack {
+                                Image(systemName: "av.remote")
+                                ItemView(
+                                    remote: result.remote!,
+                                    currentRemote: $mainModel.currentRemote,
+                                    currentRemoteItem: $mainModel.currentRemoteItem,
+                                    remoteItemStack: $mainModel.remoteItemStack,
+                                    remoteStates: $mainModel.remoteStates,
+                                    isVisible: $showSidePaneDummy
+                                )
+                            }
+                            Text("\(result.score ?? -1)")
+                                .font(.footnote)
                         }
                         .listRowBackground(Color.clear)
                     } else if result.command != nil {
-                        HStack {
-                            Image(systemName: "play.circle")
-                            Text(result.command?.description ?? "")
-                            Spacer()
-                            Image(systemName: "play")
-                                .font(.caption2)
-                                .bold()
+                        VStack (alignment: .leading) {
+                            HStack {
+                                Image(systemName: "play.circle")
+                                Text(result.command?.description ?? "")
+                                Spacer()
+                                Image(systemName: "play")
+                                    .font(.caption2)
+                                    .bold()
+                            }
+                            Text("\(result.score ?? -1)")
+                                .font(.footnote)
                         }
                         .listRowBackground(Color.clear)
                         .onTapGesture {
@@ -589,21 +597,38 @@ struct ContentView: View {
                     return
                 }
                 let temp = IntentHandleService.shared.remote ?? ""
-                /*
-                var intArray: Dictionary<String, String> = [:]
-                for r in mainModel.remotes {
-                    intArray[r.description.phoneticCode()] = temp.phoneticCode()
+
+                if temp.isEmpty {
+                    return
                 }
-                 */
+
+                let fuse = Fuse()
+                let pattern = fuse.createPattern(from: temp)
+
+                var tempSearchResults: [SearchResult] = []
+                
+                mainModel.remotes.forEach { remote in
+                    let result = fuse.search(pattern, in: remote.description)
+                    let score = result?.score
+                    let range = result?.ranges
+                    if result != nil && score != nil && score! < 0.3 {
+                        tempSearchResults.append(SearchResult(remote: remote, score: score, range: range))
+                    }
+                }
+                
+                if tempSearchResults.count <= 0 {
+                    return
+                }
+                
+                let remote = tempSearchResults[0]
+                
                 DispatchQueue.main.async {
-                    if let newRemote = mainModel.remotes.first(where: { $0.description.caseInsensitiveCompare(temp) == .orderedSame }) {
-                        mainModel.remoteStates = []
-                        mainModel.currentRemote = newRemote
-                        mainModel.currentRemoteItem = newRemote.remote
-                        mainModel.remoteItemStack.removeAll()
-                        Task {
-                            mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
-                        }
+                    mainModel.remoteStates = []
+                    mainModel.currentRemote = remote.remote!
+                    mainModel.currentRemoteItem = remote.remote!.remote
+                    mainModel.remoteItemStack.removeAll()
+                    Task {
+                        mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
                     }
                 }
             }
