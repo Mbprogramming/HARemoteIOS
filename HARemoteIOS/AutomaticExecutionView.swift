@@ -448,7 +448,7 @@ struct AutomaticExecutionView: View {
                         if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) {
                             let type = automaticExecutionEntries[sourceIndex].automaticExecutionType
                             AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[sourceIndex])
-                            
+                                .listRowBackground(Color.clear)
                                 .swipeActions(edge: .trailing) {
                                     Button("Delete", systemImage: "trash") {
                                         if let id = automaticExecutionEntries[sourceIndex].id {
@@ -507,6 +507,8 @@ struct AutomaticExecutionView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .background(.ultraThinMaterial)
+                .listStyle(.insetGrouped)
                 HStack {
                     Spacer()
                     Button(action: {

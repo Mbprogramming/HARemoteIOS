@@ -43,11 +43,14 @@ struct HistoryView: View {
                             .font(.footnote)
                     }
                 }
+                .listRowBackground(Color.clear)
                 .padding()
             }
             Spacer(minLength: 100)
         }
         .scrollContentBackground(.hidden)
+        .background(.ultraThinMaterial)
+        .listStyle(.insetGrouped)
     }
 }
 

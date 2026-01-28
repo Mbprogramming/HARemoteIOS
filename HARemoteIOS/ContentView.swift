@@ -433,22 +433,58 @@ struct ContentView: View {
         let fuse = Fuse()
         let pattern = fuse.createPattern(from: searchText)
 
-        searchResults = []
+        var tempSearchResults: [SearchResult] = []
         
-        mainModel.remotes.forEach { remote in
-            let result = fuse.search(pattern, in: remote.description)
-            let score = result?.score
-            let range = result?.ranges
-            if result != nil && score != nil && score! < 0.3 {
-                searchResults.append(SearchResult(remote: remote, score: score, range: range))
+        switch selectedScope {
+        case .all:
+            mainModel.remotes.forEach { remote in
+                let result = fuse.search(pattern, in: remote.description)
+                let score = result?.score
+                let range = result?.ranges
+                if result != nil && score != nil && score! < 0.3 {
+                    tempSearchResults.append(SearchResult(remote: remote, score: score, range: range))
+                }
+            }
+            mainModel.searchableCommands.forEach{ cmd in
+                if cmd.description != nil {
+                    let result = fuse.search(pattern, in: cmd.description ?? "")
+                    let score = result?.score
+                    let range = result?.ranges
+                    if result != nil && score != nil && score! < 0.3 {
+                        tempSearchResults.append(SearchResult(command: cmd, score: score, range: range))
+                    }
+                }
+            }
+        case .remote:
+            mainModel.remotes.forEach { remote in
+                let result = fuse.search(pattern, in: remote.description)
+                let score = result?.score
+                let range = result?.ranges
+                if result != nil && score != nil && score! < 0.3 {
+                    tempSearchResults.append(SearchResult(remote: remote, score: score, range: range))
+                }
+            }
+        case .command:
+            mainModel.searchableCommands.forEach{ cmd in
+                if cmd.description != nil {
+                    let result = fuse.search(pattern, in: cmd.description ?? "")
+                    let score = result?.score
+                    let range = result?.ranges
+                    if result != nil && score != nil && score! < 0.3 {
+                        tempSearchResults.append(SearchResult(command: cmd, score: score, range: range))
+                    }
+                }
             }
         }
+        searchResults = tempSearchResults.sorted(by: { ($0.score ?? 1) < ($1.score ?? 1)})
     }
     
     @ViewBuilder
     private var Search: some View {
-        NavigationView {
+        NavigationStack {
             List {
+                Spacer(minLength: 100)
+                    .listRowBackground(Color.clear)
                 ForEach(searchResults) { result in
                     if result.remote != nil {
                         HStack {
@@ -462,8 +498,25 @@ struct ContentView: View {
                                 isVisible: $showSidePaneDummy
                             )
                         }
+                        .listRowBackground(Color.clear)
+                    } else if result.command != nil {
+                        HStack {
+                            Image(systemName: "play.circle")
+                            Text(result.command?.description ?? "")
+                            Spacer()
+                            Image(systemName: "play")
+                                .font(.caption2)
+                                .bold()
+                        }
+                        .listRowBackground(Color.clear)
+                        .onTapGesture {
+                            let id = HomeRemoteAPI.shared.sendCommand(device: result.command?.device ?? "", command: result.command?.command ?? "")
+                            mainModel.executeCommand(id: id)
+                        }
                     }
                 }
+                Spacer(minLength: 100)
+                    .listRowBackground(Color.clear)
             }
             .onChange(of: searchText) {
                 doSearch()
@@ -471,9 +524,12 @@ struct ContentView: View {
             .onChange(of: selectedScope) {
                 doSearch()
             }
+            .navigationTitle("Search")
+            .scrollContentBackground(.hidden)
+            .listStyle(.insetGrouped)
+            .background(.ultraThinMaterial)
         }
-        .navigationTitle("Search")
-        .searchable(text: $searchText, prompt: "Search...")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
         .searchScopes($selectedScope) {
             ForEach(SearchCategory.allCases) { category in
                 Text(category.rawValue).tag(category)
@@ -562,32 +618,34 @@ struct ContentView: View {
     private var mainTabs: some View {
         TabView (selection: $currentTab) {
             Tab("Remote", systemImage: "av.remote", value: 0){
-                NavigationView {
+                NavigationStack {
                     if mainModel.currentRemoteItem?.template == RemoteTemplate.List ||
                         mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
                         RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
+                            .toolbar { toolbarContent }
                             .ignoresSafeArea()
                     } else {
                         RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
+                            .toolbar { toolbarContent }
                     }
-                }
+                }                
             }
             
             Tab("States", systemImage: "flag", value: 1){
-                NavigationView {
+                NavigationStack {
                     StateView(remoteStates: $mainModel.remoteStates, currentRemote: $mainModel.currentRemote)
                 }
             }
             
             Tab("History", systemImage: "checklist", value: 2){
-                NavigationView {
+                NavigationStack {
                     HistoryView(mainModel: $mainModel)
                         .ignoresSafeArea()
                 }
             }
             
             Tab("Automatic", systemImage: "calendar", value: 3){
-                NavigationView {
+                NavigationStack {
                     AutomaticExecutionView(automaticExecutionEntries: $mainModel.automaticExecutions, mainModel: $mainModel)
                 }
             }
@@ -653,8 +711,8 @@ struct ContentView: View {
             if isLoading {
                 ProgressView()
             }
-            NavigationStack {
                 mainTabs
+                .ignoresSafeArea()
                 .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
                     macroSelectionListSheet
                 }
@@ -664,9 +722,6 @@ struct ContentView: View {
                 .sheet(isPresented: $showWebView) { [url] in
                     webViewSheet
                 }
-                .toolbar { toolbarContent }
-                .ignoresSafeArea()
-            }
             .task {
                 isLoading = true
                 UIDevice.current.beginGeneratingDeviceOrientationNotifications()
@@ -676,6 +731,7 @@ struct ContentView: View {
                     mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
                     mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
                     mainModel.devices = try await HomeRemoteAPI.shared.getAll()
+                    mainModel.buildSearchableCommands()
                     _ = try await HomeRemoteAPI.shared.getIconsWithoutCharts()
                     orientation = UIDevice.current.orientation
                     let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }

@@ -16,6 +16,7 @@ import Observation
     var zones: [Zone] = []
     var remotes : [Remote] = []
     var devices: [HABaseDevice] = []
+    var searchableCommands: [SearchableCommand] = []
     var mainCommands: [RemoteItem] = []
     var commandIds: [CommandExecutionEntry] = []
     var remoteStates: [HAState] = []
@@ -98,6 +99,24 @@ import Observation
             return device.commands?.filter({$0.emptyGroup == group!}) ?? []
         } else {
             return []
+        }
+    }
+    
+    public func buildSearchableCommands() {
+        searchableCommands = []
+        for device in devices {
+            for cmd in device.commands ?? [] {
+                if cmd.commandType == .Push {
+                    var name = device.name ?? " "
+                    name += " "
+                    if cmd.description != nil {
+                        name += cmd.description!
+                    } else {
+                        name += cmd.id!
+                    }
+                    searchableCommands.append(SearchableCommand(device: device.id, command: cmd.id, commandType: .Push, description: name))
+                }
+            }
         }
     }
 }
