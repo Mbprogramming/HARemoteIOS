@@ -455,6 +455,17 @@ struct ContentView: View {
                     }
                 }
             }
+            mainModel.mainCommands.forEach{ cmd in
+                if cmd.description != nil {
+                    let result = fuse.search(pattern, in: cmd.description ?? "")
+                    let score = result?.score
+                    let range = result?.ranges
+                    let sc = SearchableCommand(device: cmd.device, command: cmd.command, commandType: .Push, description: cmd.description)
+                    if result != nil && score != nil && score! < 0.3 {
+                        tempSearchResults.append(SearchResult(command: sc, score: score, range: range, isMainCommand: true))
+                    }
+                }
+            }
         case .remote:
             mainModel.remotes.forEach { remote in
                 let result = fuse.search(pattern, in: remote.description)
@@ -472,6 +483,17 @@ struct ContentView: View {
                     let range = result?.ranges
                     if result != nil && score != nil && score! < 0.3 {
                         tempSearchResults.append(SearchResult(command: cmd, score: score, range: range))
+                    }
+                }
+            }
+            mainModel.mainCommands.forEach{ cmd in
+                if cmd.description != nil {
+                    let result = fuse.search(pattern, in: cmd.description ?? "")
+                    let score = result?.score
+                    let range = result?.ranges
+                    let sc = SearchableCommand(device: cmd.device, command: cmd.command, commandType: .Push, description: cmd.description)
+                    if result != nil && score != nil && score! < 0.3 {
+                        tempSearchResults.append(SearchResult(command: sc, score: score, range: range, isMainCommand: true))
                     }
                 }
             }
@@ -518,6 +540,24 @@ struct ContentView: View {
                             .listRowBackground(Color.clear)
                             .onTapGesture {
                                 let id = HomeRemoteAPI.shared.sendCommand(device: result.command?.device ?? "", command: result.command?.command ?? "")
+                                mainModel.executeCommand(id: id)
+                            }
+                        } else if result.mainCommand != nil {
+                            VStack (alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "play.circle.fill")
+                                    Text(result.mainCommand?.description ?? "")
+                                    Spacer()
+                                    Image(systemName: "play")
+                                        .font(.caption2)
+                                        .bold()
+                                }
+                                Text("\(result.score ?? -1)")
+                                    .font(.footnote)
+                            }
+                            .listRowBackground(Color.clear)
+                            .onTapGesture {
+                                let id = HomeRemoteAPI.shared.sendCommand(device: result.mainCommand?.device ?? "", command: result.mainCommand?.command ?? "")
                                 mainModel.executeCommand(id: id)
                             }
                         }

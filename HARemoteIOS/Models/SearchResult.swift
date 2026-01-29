@@ -11,6 +11,7 @@ import Foundation
 final class SearchResult : Identifiable {
     var remote: Remote?
     var command: SearchableCommand?
+    var mainCommand: SearchableCommand?
     var score: Double?
     var range: [ClosedRange<Int>]?
     var id: String {
@@ -23,9 +24,15 @@ final class SearchResult : Identifiable {
         self.range = range
     }
     
-    init(command: SearchableCommand? = nil, score: Double? = nil, range: [ClosedRange<Int>]? = nil) {
-        self.command = command
-        self.score = score
-        self.range = range
+    init(command: SearchableCommand? = nil, score: Double? = nil, range: [ClosedRange<Int>]? = nil, isMainCommand: Bool = false) {
+        if isMainCommand {
+            self.mainCommand = command
+            self.score = score
+            self.range = range
+        } else {
+            self.command = command
+            self.score = score
+            self.range = range
+        }
     }
 }
