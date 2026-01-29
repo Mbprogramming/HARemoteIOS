@@ -63,11 +63,6 @@ struct StateView: View {
     
     var body: some View {
         VStack {
-            Picker("Filter", selection: $currentFilter) {
-                Text("Date ").tag(0)
-                Text("Device").tag(1)
-            }
-            .pickerStyle(.segmented)
             List {
                 let height = mainWindowSize.height * 0.2
                 let sortedStates = currentFilter == 0 ? remoteStates.sorted { $0.lastChangeDate ?? Date.now > $1.lastChangeDate ?? Date.now } : remoteStates.sorted { $0.device ?? "" < $1.device ?? "" }
@@ -90,6 +85,15 @@ struct StateView: View {
                     }
                 }
             }
+            .ignoresSafeArea()
+        }
+        .safeAreaInset(edge: .top) {
+            Picker("Filter", selection: $currentFilter) {
+                Text("Date ").tag(0)
+                Text("Device").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .background(.ultraThinMaterial)
         }
     }
 }
