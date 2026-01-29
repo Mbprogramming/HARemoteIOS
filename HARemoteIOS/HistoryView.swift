@@ -12,7 +12,11 @@ struct HistoryView: View {
     
     var body: some View {
         List {
-            Spacer(minLength: 100)
+            if mainModel.commandIds.count > 0 {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+            }
             ForEach(mainModel.commandIds, id: \.id) { id in
                 VStack {
                     HStack {
@@ -46,11 +50,15 @@ struct HistoryView: View {
                 .listRowBackground(Color.clear)
                 .padding()
             }
-            Spacer(minLength: 100)
+            if mainModel.commandIds.count > 0 {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+            }
         }
         .scrollContentBackground(.hidden)
-        .background(.ultraThinMaterial)
         .listStyle(.insetGrouped)
+        .ignoresSafeArea()
     }
 }
 

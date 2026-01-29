@@ -427,375 +427,381 @@ struct AutomaticExecutionView: View {
         }
     }
     
-    var body: some View {
-        ZStack (alignment: .bottomTrailing) {
-            VStack {
-                Picker("Filter", selection: $currentFilter) {
-                    Text("Automatic (\(filter1.count))")
-                        .tag(0)
-                    Text("State Change (\(filter2.count))")
-                        .tag(1)
-                    Text("All (\(automaticExecutionEntries.count))")
-                        .tag(2)
-               }
-                .pickerStyle(.segmented)
-                .controlSize(.large)
-                Spacer()
-                
-                List {
-                    let entries = filterEntries()
-                    ForEach(entries) { entry in
-                        if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) {
-                            let type = automaticExecutionEntries[sourceIndex].automaticExecutionType
-                            AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[sourceIndex])
-                                .listRowBackground(Color.clear)
-                                .swipeActions(edge: .trailing) {
-                                    Button("Delete", systemImage: "trash") {
-                                        if let id = automaticExecutionEntries[sourceIndex].id {
-                                            // Run off the main actor if you want to avoid blocking UI
-                                            Task {
-                                                HomeRemoteAPI.shared.deleteAutomaticExecution(id: id)
-                                            }
-                                        }
-                                    }
-                                    .tint(.red)
-                                }
-                                .if(type == .executeAt) { view in
-                                    view.swipeActions(edge: .leading) {
-                                        Button("Run", systemImage: "play") {
-                                            if let id = automaticExecutionEntries[sourceIndex].id {
-                                                // Run off the main actor if you want to avoid blocking UI
-                                                Task {
-                                                    HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
-                                                }
-                                            }
-                                        }
-                                        .tint(.blue)
-                                    }
-                                }
-                                .if(type == .deferred) { view in
-                                    view.swipeActions(edge: .leading) {
-                                        Button("Run", systemImage: "play") {
-                                            if let id = automaticExecutionEntries[sourceIndex].id {
-                                                // Run off the main actor if you want to avoid blocking UI
-                                                Task {
-                                                    HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
-                                                }
-                                            }
-                                        }
-                                        .tint(.blue)
-                                    }
-                                    .swipeActions(edge: .leading) {
-                                        Button("Add", systemImage: "plus") {
-                                            if let id = automaticExecutionEntries[sourceIndex].id {
-                                                var components = DateComponents()
-                                                components.hour = 0
-                                                components.minute = 5
-                                                
-                                                deferredDate = Calendar.current.date(from: components) ?? .now
-                                                deferredAddId = id
-                                                addVisible.toggle()
-                                            }
-                                        }
-                                        .tint(.orange)
-                                    }
-                                }
-                        } else {
-                            // Fallback: render read-only if the item is no longer in the source array
-                            AutomaticExecutionEntryView(automaticExecutionEntry: .constant(entry))
-                        }
-                    }
-                }
-                .scrollContentBackground(.hidden)
-                .background(.ultraThinMaterial)
-                .listStyle(.insetGrouped)
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        selectedStateDevice = nil
-                        addStateVisible.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                    }
-                    .padding()
-                    .glassEffect()
-                }
-                .padding()
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing){
+            Button("Add State Execution", systemImage: "plus"){
+                selectedStateDevice = nil
+                addStateVisible.toggle()
             }
-            .sheet(isPresented: $addStateVisible) {
-                // Build list of devices that have states
-              
-                TabView(selection: $currentWizardStep){
-                    Tab("Step 1", systemImage: "1.circle", value: 0) {
-                        VStack {
-                            Text("Select device and state")
-                                .font(.title)
-                                .padding()
-                            Form {
-                                Section("State"){
-                                    step1
-                                        .padding()
-                                    step12
-                                        .padding()
-                                }
-                                Section ("Current State Value"){
-                                    HStack {
-                                        Text("\(currentSelectedState?.value ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                            .font(.caption2)
-                                            .padding()
+        }
+    }
+    
+    var body: some View {
+        List {
+            let entries = filterEntries()
+            if entries.count > 0 {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+            }
+            ForEach(entries) { entry in
+                if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) {
+                    let type = automaticExecutionEntries[sourceIndex].automaticExecutionType
+                    AutomaticExecutionEntryView(automaticExecutionEntry: $automaticExecutionEntries[sourceIndex])
+                        .listRowBackground(Color.clear)
+                        .swipeActions(edge: .trailing) {
+                            Button("Delete", systemImage: "trash") {
+                                if let id = automaticExecutionEntries[sourceIndex].id {
+                                    // Run off the main actor if you want to avoid blocking UI
+                                    Task {
+                                        HomeRemoteAPI.shared.deleteAutomaticExecution(id: id)
                                     }
-                                    .padding()
-                                }.muted()
+                                }
                             }
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                Button(action: {
-                                    currentWizardStep = 1
-                                }) {
-                                    Image(systemName: "chevron.right")
+                            .tint(.red)
+                        }
+                        .if(type == .executeAt) { view in
+                            view.swipeActions(edge: .leading) {
+                                Button("Run", systemImage: "play") {
+                                    if let id = automaticExecutionEntries[sourceIndex].id {
+                                        // Run off the main actor if you want to avoid blocking UI
+                                        Task {
+                                            HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                        }
+                                    }
+                                }
+                                .tint(.blue)
+                            }
+                        }
+                        .if(type == .deferred) { view in
+                            view.swipeActions(edge: .leading) {
+                                Button("Run", systemImage: "play") {
+                                    if let id = automaticExecutionEntries[sourceIndex].id {
+                                        // Run off the main actor if you want to avoid blocking UI
+                                        Task {
+                                            HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                        }
+                                    }
+                                }
+                                .tint(.blue)
+                            }
+                            .swipeActions(edge: .leading) {
+                                Button("Add", systemImage: "plus") {
+                                    if let id = automaticExecutionEntries[sourceIndex].id {
+                                        var components = DateComponents()
+                                        components.hour = 0
+                                        components.minute = 5
+                                        
+                                        deferredDate = Calendar.current.date(from: components) ?? .now
+                                        deferredAddId = id
+                                        addVisible.toggle()
+                                    }
+                                }
+                                .tint(.orange)
+                            }
+                        }
+                } else {
+                    // Fallback: render read-only if the item is no longer in the source array
+                    AutomaticExecutionEntryView(automaticExecutionEntry: .constant(entry))
+                }
+            }
+            if entries.count > 0 {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .listStyle(.insetGrouped)
+        .ignoresSafeArea()
+        .safeAreaInset(edge: .top) {
+            Picker("Filter", selection: $currentFilter) {
+                Text("Automatic (\(filter1.count))")
+                    .tag(0)
+                Text("State Change (\(filter2.count))")
+                    .tag(1)
+                Text("All (\(automaticExecutionEntries.count))")
+                    .tag(2)
+           }
+            .pickerStyle(.segmented)
+            .padding()
+            .background(.ultraThinMaterial)
+        }
+        .sheet(isPresented: $addStateVisible) {
+            // Build list of devices that have states
+          
+            TabView(selection: $currentWizardStep){
+                Tab("Step 1", systemImage: "1.circle", value: 0) {
+                    VStack {
+                        Text("Select device and state")
+                            .font(.title)
+                            .padding()
+                        Form {
+                            Section("State"){
+                                step1
+                                    .padding()
+                                step12
+                                    .padding()
+                            }
+                            Section ("Current State Value"){
+                                HStack {
+                                    Text("\(currentSelectedState?.value ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                        .font(.caption2)
+                                        .padding()
                                 }
                                 .padding()
-                                .glassEffect()
+                            }.muted()
+                        }
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                currentWizardStep = 1
+                            }) {
+                                Image(systemName: "chevron.right")
                             }
                             .padding()
+                            .glassEffect()
                         }
+                        .padding()
                     }
-                    Tab("Step 2", systemImage: "2.circle", value: 1) {
-                        VStack {
-                            Text("Compare to")
-                                .font(.title)
-                                .padding()
-                            Form {
-                                Section("Current State") {
-                                    HStack {
-                                        Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
-                                            .font(.headline)
-                                            .bold()
-                                    }
-                                    HStack {
-                                        Text("\(currentSelectedState?.value ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                            .font(.caption2)
-                                            .padding()
-                                    }
-                                }.muted()
-                                Section("Operation and Limit") {
-                                    step2.padding()
-                                }
-                            }
-                            Spacer()
-                            HStack {
-                                Button(action: {
-                                    currentWizardStep = 0
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                }
-                                .padding()
-                                .glassEffect()
-                                Spacer()
-                                Button(action: {
-                                    currentWizardStep = 2
-                                }) {
-                                    Image(systemName: "chevron.right")
-                                }
-                                .padding()
-                                .glassEffect()
-                            }
+                }
+                Tab("Step 2", systemImage: "2.circle", value: 1) {
+                    VStack {
+                        Text("Compare to")
+                            .font(.title)
                             .padding()
-                        }
-                    }
-                    Tab("Step 3", systemImage: "3.circle", value: 2) {
-                        VStack {
-                            Text("Select device and command")
-                                .font(.title)
-                                .padding()
-
-                            Form {
-                                Section("Current state") {
-                                    HStack {
-                                        Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
-                                            .font(.headline)
-                                            .bold()
-                                    }
-                                    HStack {
-                                        Text("\(currentSelectedState?.value ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                            .font(.caption2)
-                                            .padding()
-                                    }
-                                    .padding()
-                                }.muted()
-                                Section("Current operation") {
-                                    step4Operation
-                                }.muted()
-
-                                Section("Command") {
-                                    step3
-                                        .padding()
-                                    step31
-                                        .padding()
-                                    step32
-                                        .padding()
-                                }
-                            }
-                            Spacer()
-                            HStack {
-                                Button(action: {
-                                    currentWizardStep = 1
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                }
-                                .padding()
-                                .glassEffect()
-                                Spacer()
-                                Button(action: {
-                                    currentWizardStep = 3
-                                }) {
-                                    Image(systemName: "chevron.right")
-                                }
-                                .padding()
-                                .glassEffect()
-                            }
-                            .padding()
-                        }
-                    }
-                    Tab("Step 4", systemImage: "4.circle", value: 3) {
-                        VStack {
-                            Text("Summary")
-                                .font(.title)
-                                .padding()
-                            Form {
-                                Section("Current state") {
-                                    HStack {
-                                        Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
-                                            .font(.headline)
-                                            .bold()
-                                    }
-                                    HStack {
-                                        Text("\(currentSelectedState?.value ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("\(currentSelectedState?.convertedValue ?? "None")")
-                                            .font(.caption2)
-                                            .padding()
-                                        Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
-                                            .font(.caption2)
-                                            .padding()
-                                    }
-                                    .padding()
-                                }.muted()
-                                Section("Current operation") {
-                                    step4Operation
-                                }.muted()
-                                Section("Current command") {
-                                    Text("\(currentSelectedCommand?.device ?? "")-\(currentSelectedCommand?.id ?? "")")
+                        Form {
+                            Section("Current State") {
+                                HStack {
+                                    Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
                                         .font(.headline)
                                         .bold()
-                                }.muted()
-                                Section("Create") {
-                                    HStack {
-                                        Button("Cancel") {
-                                            addStateVisible.toggle()
-                                        }
-                                        .buttonStyle(.glass)
-                                        Spacer()
-                                        Button("Create automatic execution") {
-                                            let stateDevice = currentSelectedState?.device ?? ""
-                                            let state = currentSelectedState?.id ?? ""
-                                            let commandDevice = currentSelectedCommand?.device ?? ""
-                                            let command = currentSelectedCommand?.id ?? ""
-                                            let operation = currentOperation ?? ""
-                                            let limit = currentLimit ?? ""
-                                            
-                                            try? HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
-                                            
-                                            addStateVisible.toggle()
-                                        }
-                                        .buttonStyle(.glass)
-                                    }
                                 }
+                                HStack {
+                                    Text("\(currentSelectedState?.value ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                        .font(.caption2)
+                                        .padding()
+                                }
+                            }.muted()
+                            Section("Operation and Limit") {
+                                step2.padding()
                             }
-                            Spacer()
-                            HStack {
-                                Button(action: {
-                                    currentWizardStep = 2
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                }
-                                .padding()
-                                .glassEffect()
-                                Spacer()
+                        }
+                        Spacer()
+                        HStack {
+                            Button(action: {
+                                currentWizardStep = 0
+                            }) {
+                                Image(systemName: "chevron.left")
                             }
                             .padding()
-                        }
-                    }
-                }
-                .tabViewStyle(.page)
-                .indexViewStyle(.page(backgroundDisplayMode: .always))
-            }
-            .sheet(isPresented: $addVisible) {
-                VStack{
-                    DatePicker(
-                        "",
-                        selection: $deferredDate,
-                        displayedComponents: [.hourAndMinute]
-                    )
-                    .datePickerStyle(.wheel)
-                    .padding()
-                    HStack {
-                        Button("Cancel", systemImage: "xmark.circle") {
-                            addVisible.toggle()
+                            .glassEffect()
+                            Spacer()
+                            Button(action: {
+                                currentWizardStep = 2
+                            }) {
+                                Image(systemName: "chevron.right")
+                            }
+                            .padding()
+                            .glassEffect()
                         }
                         .padding()
-                        Spacer()
-                        Button("OK", systemImage: "checkmark.circle") {
-                            
-                            let hour = Calendar.current.component(.hour, from: deferredDate)
-                            let minute = Calendar.current.component(.minute, from: deferredDate)
-                            let delay = (hour * 60) + minute
-                            
-                            addVisible.toggle()
-                            
-                            Task {
-                                HomeRemoteAPI.shared.automaticExecutionAddMinutes(id: deferredAddId, minutes: delay)
+                    }
+                }
+                Tab("Step 3", systemImage: "3.circle", value: 2) {
+                    VStack {
+                        Text("Select device and command")
+                            .font(.title)
+                            .padding()
+
+                        Form {
+                            Section("Current state") {
+                                HStack {
+                                    Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                        .font(.headline)
+                                        .bold()
+                                }
+                                HStack {
+                                    Text("\(currentSelectedState?.value ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                        .font(.caption2)
+                                        .padding()
+                                }
+                                .padding()
+                            }.muted()
+                            Section("Current operation") {
+                                step4Operation
+                            }.muted()
+
+                            Section("Command") {
+                                step3
+                                    .padding()
+                                step31
+                                    .padding()
+                                step32
+                                    .padding()
                             }
                         }
+                        Spacer()
+                        HStack {
+                            Button(action: {
+                                currentWizardStep = 1
+                            }) {
+                                Image(systemName: "chevron.left")
+                            }
+                            .padding()
+                            .glassEffect()
+                            Spacer()
+                            Button(action: {
+                                currentWizardStep = 3
+                            }) {
+                                Image(systemName: "chevron.right")
+                            }
+                            .padding()
+                            .glassEffect()
+                        }
                         .padding()
                     }
                 }
-                .padding()
-                .presentationDetents([.medium])
-            }
-            .refreshable {
-                Task {
-                    do {
-                        let entries = try await HomeRemoteAPI.shared.getAutomaticExecutions()
-                        await MainActor.run {
-                            automaticExecutionEntries = entries
+                Tab("Step 4", systemImage: "4.circle", value: 3) {
+                    VStack {
+                        Text("Summary")
+                            .font(.title)
+                            .padding()
+                        Form {
+                            Section("Current state") {
+                                HStack {
+                                    Text("\(currentSelectedDevice?.name ?? "")-\(currentSelectedState?.id ?? "")")
+                                        .font(.headline)
+                                        .bold()
+                                }
+                                HStack {
+                                    Text("\(currentSelectedState?.value ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("\(currentSelectedState?.convertedValue ?? "None")")
+                                        .font(.caption2)
+                                        .padding()
+                                    Text("(\(currentSelectedState?.nativeTypeValue ?? "None"))")
+                                        .font(.caption2)
+                                        .padding()
+                                }
+                                .padding()
+                            }.muted()
+                            Section("Current operation") {
+                                step4Operation
+                            }.muted()
+                            Section("Current command") {
+                                Text("\(currentSelectedCommand?.device ?? "")-\(currentSelectedCommand?.id ?? "")")
+                                    .font(.headline)
+                                    .bold()
+                            }.muted()
+                            Section("Create") {
+                                HStack {
+                                    Button("Cancel") {
+                                        addStateVisible.toggle()
+                                    }
+                                    .buttonStyle(.glass)
+                                    Spacer()
+                                    Button("Create automatic execution") {
+                                        let stateDevice = currentSelectedState?.device ?? ""
+                                        let state = currentSelectedState?.id ?? ""
+                                        let commandDevice = currentSelectedCommand?.device ?? ""
+                                        let command = currentSelectedCommand?.id ?? ""
+                                        let operation = currentOperation ?? ""
+                                        let limit = currentLimit ?? ""
+                                        
+                                        try? HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
+                                        
+                                        addStateVisible.toggle()
+                                    }
+                                    .buttonStyle(.glass)
+                                }
+                            }
                         }
-                    } catch {
-                        // handle error if needed
+                        Spacer()
+                        HStack {
+                            Button(action: {
+                                currentWizardStep = 2
+                            }) {
+                                Image(systemName: "chevron.left")
+                            }
+                            .padding()
+                            .glassEffect()
+                            Spacer()
+                        }
+                        .padding()
                     }
+                }
+            }
+            .tabViewStyle(.page)
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
+        }
+        .sheet(isPresented: $addVisible) {
+            VStack{
+                DatePicker(
+                    "",
+                    selection: $deferredDate,
+                    displayedComponents: [.hourAndMinute]
+                )
+                .datePickerStyle(.wheel)
+                .padding()
+                HStack {
+                    Button("Cancel", systemImage: "xmark.circle") {
+                        addVisible.toggle()
+                    }
+                    .padding()
+                    Spacer()
+                    Button("OK", systemImage: "checkmark.circle") {
+                        
+                        let hour = Calendar.current.component(.hour, from: deferredDate)
+                        let minute = Calendar.current.component(.minute, from: deferredDate)
+                        let delay = (hour * 60) + minute
+                        
+                        addVisible.toggle()
+                        
+                        Task {
+                            HomeRemoteAPI.shared.automaticExecutionAddMinutes(id: deferredAddId, minutes: delay)
+                        }
+                    }
+                    .padding()
+                }
+            }
+            .padding()
+            .presentationDetents([.medium])
+        }
+        .refreshable {
+            Task {
+                do {
+                    let entries = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                    await MainActor.run {
+                        automaticExecutionEntries = entries
+                    }
+                } catch {
+                    // handle error if needed
                 }
             }
         }
+        .toolbar { toolbarContent }
         .onChange(of: selectedState) {
             selectedOperationNum = nil
             selectedOperationBool = nil

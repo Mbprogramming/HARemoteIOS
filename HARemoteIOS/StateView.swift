@@ -64,12 +64,20 @@ struct StateView: View {
     var body: some View {
         VStack {
             List {
-                let height = mainWindowSize.height * 0.2
                 let sortedStates = currentFilter == 0 ? remoteStates.sorted { $0.lastChangeDate ?? Date.now > $1.lastChangeDate ?? Date.now } : remoteStates.sorted { $0.device ?? "" < $1.device ?? "" }
+                if sortedStates.count > 0 {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 150)
+                }
                 ForEach(sortedStates){state in
                     StateItemView(state: state)
                 }
-                Spacer(minLength: height)
+                if sortedStates.count > 0 {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 150)
+                }
             }
             .scrollContentBackground(.hidden)
             .listRowSeparator(.hidden)
@@ -93,6 +101,7 @@ struct StateView: View {
                 Text("Device").tag(1)
             }
             .pickerStyle(.segmented)
+            .padding()
             .background(.ultraThinMaterial)
         }
     }
