@@ -483,48 +483,65 @@ struct ContentView: View {
     private var Search: some View {
         NavigationStack {
             List {
-                Spacer(minLength: 100)
-                    .listRowBackground(Color.clear)
-                ForEach(searchResults) { result in
-                    if result.remote != nil {
-                        VStack (alignment: .leading) {
-                            HStack {
-                                Image(systemName: "av.remote")
-                                ItemView(
-                                    remote: result.remote!,
-                                    currentRemote: $mainModel.currentRemote,
-                                    currentRemoteItem: $mainModel.currentRemoteItem,
-                                    remoteItemStack: $mainModel.remoteItemStack,
-                                    remoteStates: $mainModel.remoteStates,
-                                    isVisible: $showSidePaneDummy
-                                )
+                if searchResults.count > 0 {
+                    ForEach(searchResults) { result in
+                        if result.remote != nil {
+                            VStack (alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "av.remote")
+                                    ItemView(
+                                        remote: result.remote!,
+                                        currentRemote: $mainModel.currentRemote,
+                                        currentRemoteItem: $mainModel.currentRemoteItem,
+                                        remoteItemStack: $mainModel.remoteItemStack,
+                                        remoteStates: $mainModel.remoteStates,
+                                        isVisible: $showSidePaneDummy
+                                    )
+                                }
+                                Text("\(result.score ?? -1)")
+                                    .font(.footnote)
                             }
-                            Text("\(result.score ?? -1)")
-                                .font(.footnote)
-                        }
-                        .listRowBackground(Color.clear)
-                    } else if result.command != nil {
-                        VStack (alignment: .leading) {
-                            HStack {
-                                Image(systemName: "play.circle")
-                                Text(result.command?.description ?? "")
-                                Spacer()
-                                Image(systemName: "play")
-                                    .font(.caption2)
-                                    .bold()
+                            .listRowBackground(Color.clear)
+                        } else if result.command != nil {
+                            VStack (alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "play.circle")
+                                    Text(result.command?.description ?? "")
+                                    Spacer()
+                                    Image(systemName: "play")
+                                        .font(.caption2)
+                                        .bold()
+                                }
+                                Text("\(result.score ?? -1)")
+                                    .font(.footnote)
                             }
-                            Text("\(result.score ?? -1)")
-                                .font(.footnote)
-                        }
-                        .listRowBackground(Color.clear)
-                        .onTapGesture {
-                            let id = HomeRemoteAPI.shared.sendCommand(device: result.command?.device ?? "", command: result.command?.command ?? "")
-                            mainModel.executeCommand(id: id)
+                            .listRowBackground(Color.clear)
+                            .onTapGesture {
+                                let id = HomeRemoteAPI.shared.sendCommand(device: result.command?.device ?? "", command: result.command?.command ?? "")
+                                mainModel.executeCommand(id: id)
+                            }
                         }
                     }
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 150)
+                } else {
+                    ForEach(mainModel.remotes) {remote in
+                        ItemView(
+                            remote: remote,
+                            currentRemote: $mainModel.currentRemote,
+                            currentRemoteItem: $mainModel.currentRemoteItem,
+                            remoteItemStack: $mainModel.remoteItemStack,
+                            remoteStates: $mainModel.remoteStates,
+                            isVisible: $showSidePaneDummy
+                        )
+                    }
+                    if mainModel.remotes.count > 0 {
+                        Rectangle()
+                            .fill(Color.clear)
+                            .frame(height: 150)
+                    }
                 }
-                Spacer(minLength: 100)
-                    .listRowBackground(Color.clear)
             }
             .onChange(of: searchText) {
                 doSearch()
@@ -535,7 +552,6 @@ struct ContentView: View {
             .navigationTitle("Search")
             .scrollContentBackground(.hidden)
             .listStyle(.insetGrouped)
-            .background(.ultraThinMaterial)
         }
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
         .searchScopes($selectedScope) {
