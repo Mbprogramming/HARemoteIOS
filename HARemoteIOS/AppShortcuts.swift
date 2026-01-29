@@ -13,9 +13,10 @@ struct AppShortcuts: AppShortcutsProvider {
             intent: RunCommandIntent(),
             phrases: [
                 "Starte Befehl mit \(.applicationName)",
+                "Starte mit \(.applicationName)"
             ],
             shortTitle: "Befehl starten",
-            systemImageName: "av.remote"
+            systemImageName: "play.circle"
         )
         AppShortcut(
             intent: OpenRemoteIntent(),
@@ -24,15 +25,6 @@ struct AppShortcuts: AppShortcutsProvider {
                 "Öffne mit \(.applicationName)"
             ],
             shortTitle: "Öffne Fernbedienung",
-            systemImageName: "av.remote"
-        )
-        AppShortcut(
-            intent: RunMainCommandIntent(),
-            phrases: [
-                "Starte Hauptbefehl mit \(.applicationName)",
-                "Ausführen mit \(.applicationName)"
-            ],
-            shortTitle: "Hauptbefehl starten",
             systemImageName: "av.remote"
         )
     }

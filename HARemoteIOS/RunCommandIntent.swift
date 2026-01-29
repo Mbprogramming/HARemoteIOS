@@ -13,14 +13,14 @@ struct RunCommandIntent: AppIntent {
     static var description = IntentDescription("Führe einen bestimmten Befehl aus")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Gerät")
-    var device: String
-
     @Parameter(title: "Befehl")
     var command: String
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        return .result(dialog: "Befehl \(command) für \(device) wurde gesendet.")
+        IntentHandleService.shared.command = command
+        IntentHandleService.shared.intentType = "RunCommandIntent"
+        
+        return .result(dialog: "Befehl \(command) wurde gesendet.")
     }
 }

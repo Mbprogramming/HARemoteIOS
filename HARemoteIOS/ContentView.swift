@@ -632,13 +632,55 @@ struct ContentView: View {
     }
     
     private func handleIntent() {
-        if IntentHandleService.shared.intentType == "RunMainCommandIntent" {
+        if IntentHandleService.shared.intentType == "RunCommandIntent" {
             if IntentHandleService.shared.command != nil {
-                if mainModel.mainCommands.count <= 0 {
+                if mainModel.mainCommands.count <= 0 || mainModel.searchableCommands.count <= 0 {
                     return
                 }
-                if let mainCmd  = mainModel.mainCommands.first(where: { $0.description?.caseInsensitiveCompare(IntentHandleService.shared.command ?? "") == .orderedSame }) {
-                    let id = HomeRemoteAPI.shared.sendCommand(device: mainCmd.device!, command: mainCmd.command!)
+                
+                let temp = IntentHandleService.shared.command ?? ""
+
+                if temp.isEmpty {
+                    return
+                }
+                
+                let fuse = Fuse()
+                let pattern = fuse.createPattern(from: temp)
+
+                var tempSearchResults: [SearchResult] = []
+                
+                mainModel.mainCommands.forEach { cmd in
+                    let result = fuse.search(pattern, in: cmd.description!)
+                    let score = result?.score
+                    let range = result?.ranges
+                    if result != nil && score != nil && score! < 0.3 {
+                        let sc = SearchableCommand(device: cmd.device, command: cmd.command, commandType: .Push, description: cmd.description)
+                        tempSearchResults.append(SearchResult(command: sc, score: score, range: range, isMainCommand: true))
+                    }
+                }
+                mainModel.searchableCommands.forEach { cmd in
+                    let result = fuse.search(pattern, in: cmd.description!)
+                    let score = result?.score
+                    let range = result?.ranges
+                    if result != nil && score != nil && score! < 0.3 {
+                        tempSearchResults.append(SearchResult(command: cmd, score: score, range: range, isMainCommand: false))
+                    }
+                }
+                
+                if tempSearchResults.count <= 0 {
+                    IntentHandleService.shared.command = nil
+                    IntentHandleService.shared.device = nil
+                    IntentHandleService.shared.remote = nil
+                    IntentHandleService.shared.intentType = nil
+                    return
+                }
+                
+                let command = tempSearchResults[0]
+                if command.mainCommand != nil {
+                    let id = HomeRemoteAPI.shared.sendCommand(device: command.mainCommand?.device ?? "", command: command.mainCommand?.command ?? "")
+                    mainModel.executeCommand(id: id)
+                } else if command.command != nil {
+                    let id = HomeRemoteAPI.shared.sendCommand(device: command.command?.device ?? "", command: command.command?.command ?? "")
                     mainModel.executeCommand(id: id)
                 }
             }
@@ -673,6 +715,10 @@ struct ContentView: View {
                 }
                 
                 if tempSearchResults.count <= 0 {
+                    IntentHandleService.shared.command = nil
+                    IntentHandleService.shared.device = nil
+                    IntentHandleService.shared.remote = nil
+                    IntentHandleService.shared.intentType = nil
                     return
                 }
                 
