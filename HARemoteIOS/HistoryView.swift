@@ -16,6 +16,7 @@ struct HistoryView: View {
                 Rectangle()
                     .fill(Color.clear)
                     .frame(height: 150)
+                    .listRowBackground(Color.clear)
             }
             ForEach(mainModel.commandIds, id: \.id) { id in
                 VStack {
@@ -54,6 +55,7 @@ struct HistoryView: View {
                 Rectangle()
                     .fill(Color.clear)
                     .frame(height: 150)
+                    .listRowBackground(Color.clear)
             }
         }
         .scrollContentBackground(.hidden)

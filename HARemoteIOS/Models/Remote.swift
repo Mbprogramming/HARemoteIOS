@@ -22,7 +22,7 @@ import Observation
     let landscapeRemote: RemoteItem?
     let remoteConfig: String?
     let lastChange: String?
-    //defaultState    [...]
+    let defaultState: [StringStringTuple]?
     
     var lastChangeDate: Date? {
         if let ls = lastChange {

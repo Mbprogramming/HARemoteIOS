@@ -505,7 +505,7 @@ struct ContentView: View {
     private var Search: some View {
         NavigationStack {
             List {
-                if searchResults.count > 0 {
+                if searchResults.count > 0 || !searchText.isEmpty {
                     ForEach(searchResults) { result in
                         if result.remote != nil {
                             VStack (alignment: .leading) {
@@ -565,6 +565,7 @@ struct ContentView: View {
                     Rectangle()
                         .fill(Color.clear)
                         .frame(height: 150)
+                        .listRowBackground(Color.clear)
                 } else {
                     ForEach(mainModel.remotes) {remote in
                         ItemView(
@@ -750,10 +751,28 @@ struct ContentView: View {
                         mainModel.currentRemoteItem?.template == RemoteTemplate.Wrap {
                         RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
                             .toolbar { toolbarContent }
+                            .navigationBarTitleDisplayMode(.inline)
                             .ignoresSafeArea()
-                    } else {
+                            .if(mainModel.currentRemote?.defaultState != nil) { remoteView in
+                                remoteView.safeAreaInset(edge: .top) {
+                                    RemoteStateView(mainModel: $mainModel)
+                                        .frame(height: 50)
+                                        .background(.ultraThinMaterial)
+                                }
+                            }
+                     } else {
                         RemoteView(currentRemoteItem: $mainModel.currentRemoteItem, remoteItemStack: $mainModel.remoteItemStack, mainModel: $mainModel, remoteStates: $mainModel.remoteStates, orientation: $orientation, disableScroll: $disableScroll)
-                            .toolbar { toolbarContent }
+                             .if(mainModel.currentRemote?.defaultState != nil) { remoteView in
+                                 remoteView.safeAreaInset(edge: .top) {
+                                     RemoteStateView(mainModel: $mainModel)
+                                         .frame(height: 50)
+                                         .background(.ultraThinMaterial)
+                                 }
+                             }
+                             .if(!(mainModel.currentRemote?.defaultState != nil)) { remoteView in
+                                     remoteView.navigationBarTitleDisplayMode(.inline)
+                             }
+                             .toolbar { toolbarContent }
                     }
                 }                
             }
@@ -835,194 +854,204 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { geo in
-            if isLoading {
-                ProgressView()
-            }
+            ZStack {
                 mainTabs
-                .ignoresSafeArea()
-                .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
-                    macroSelectionListSheet
-                }
-                .sheet(isPresented: $showMacroQuestion) { [macroQuestion, macroYesOption, macroNoOption, macroDefaultOption] in
-                    macroQuestionSheet
-                }
-                .sheet(isPresented: $showWebView) { [url] in
-                    webViewSheet
-                }
-            .task {
-                isLoading = true
-                UIDevice.current.beginGeneratingDeviceOrientationNotifications()
-                do {
-                    mainModel.zones = try await HomeRemoteAPI.shared.getZonesComplete()
-                    mainModel.remotes = try await HomeRemoteAPI.shared.getRemotes()
-                    mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
-                    mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
-                    mainModel.devices = try await HomeRemoteAPI.shared.getAll()
-                    mainModel.buildSearchableCommands()
-                    _ = try await HomeRemoteAPI.shared.getIconsWithoutCharts()
-                    orientation = UIDevice.current.orientation
-                    let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
-                    if let lastRemote = tempHistory.first {
-                        if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
-                            mainModel.remoteStates = []
-                            mainModel.currentRemote = lastRemoteItem
+                    .ignoresSafeArea()
+                    .sheet(isPresented: $showMacroSelectionList) { [macroQuestion, macroOptions, macroDefaultOption] in
+                        macroSelectionListSheet
+                    }
+                    .sheet(isPresented: $showMacroQuestion) { [macroQuestion, macroYesOption, macroNoOption, macroDefaultOption] in
+                        macroQuestionSheet
+                    }
+                    .sheet(isPresented: $showWebView) { [url] in
+                        webViewSheet
+                    }
+                    .task {
+                        isLoading = true
+                        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+                        do {
+                            mainModel.zones = try await HomeRemoteAPI.shared.getZonesComplete()
+                            mainModel.remotes = try await HomeRemoteAPI.shared.getRemotes()
+                            mainModel.mainCommands = try await HomeRemoteAPI.shared.getMainCommands()
+                            mainModel.automaticExecutions = try await HomeRemoteAPI.shared.getAutomaticExecutions()
+                            mainModel.devices = try await HomeRemoteAPI.shared.getAll()
+                            mainModel.buildSearchableCommands()
+                            _ = try await HomeRemoteAPI.shared.getIconsWithoutCharts()
+                            orientation = UIDevice.current.orientation
+                            let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
+                            if let lastRemote = tempHistory.first {
+                                if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
+                                    mainModel.remoteStates = []
+                                    mainModel.currentRemote = lastRemoteItem
+                                    
+                                    let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
+                                    if itemToUpdate != nil {
+                                        itemToUpdate?.lastUsed = Date()
+                                    }
+                                    mainModel.remoteItemStack.removeAll()
+                                    Task {
+                                        mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
+                                    }
+                                }
+                            }
+                            try await setupConnection()
+                            if let mainCmd = IntentHandleService.shared.mainCommandId {
+                                if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
+                                    let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
+                                    mainModel.executeCommand(id: id)
+                                }
+                                IntentHandleService.shared.mainCommandId = nil
+                            }
+                            handleIntent()
+                        } catch {
                             
-                            let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
-                            if itemToUpdate != nil {
-                                itemToUpdate?.lastUsed = Date()
+                        }
+                        isLoading = false;
+                    }
+                    .onChange(of: mainModel.currentRemote) {
+                        DispatchQueue.main.async {
+                            currentTab = 0
+                            switch orientation {
+                            case .unknown:
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            case .portrait:
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            case .portraitUpsideDown:
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            case .landscapeLeft:
+                                if mainModel.currentRemote?.landscapeRemote != nil {
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                                } else {
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                                }
+                            case .landscapeRight:
+                                if mainModel.currentRemote?.landscapeRemote != nil {
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                                } else {
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                                }
+                            case .faceUp:
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            case .faceDown:
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            @unknown default:
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
                             }
-                            mainModel.remoteItemStack.removeAll()
-                            Task {
-                                mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
+                        }
+                    }
+                    .onChange(of: IntentHandleService.shared.mainCommandId) {
+                        if let mainCmd = IntentHandleService.shared.mainCommandId {
+                            if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
+                                let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
+                                mainModel.executeCommand(id: id)
                             }
+                            IntentHandleService.shared.mainCommandId = nil
                         }
                     }
-                    try await setupConnection()
-                    if let mainCmd = IntentHandleService.shared.mainCommandId {
-                        if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
-                            let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
-                            mainModel.executeCommand(id: id)
+                    .onChange(of: scenePhase) { oldPhase, newPhase in
+                        if newPhase == .background {
+                            var items: [UIApplicationShortcutItem] = []
+                            for cmd in mainModel.mainCommands {
+                                let icon = UIApplicationShortcutIcon(systemImageName: cmd.clientIcon ?? "bolt.fill")
+                                let item = UIApplicationShortcutItem(
+                                    type: "seeb.HARemoteIOS.mainCommand",
+                                    localizedTitle: cmd.description ?? "Command",
+                                    localizedSubtitle: nil,
+                                    icon: icon,
+                                    userInfo: ["id": (cmd.id ?? "") as NSString]
+                                )
+                                items.append(item)
+                            }
+                            UIApplication.shared.shortcutItems = items
                         }
-                        IntentHandleService.shared.mainCommandId = nil
                     }
-                    handleIntent()
-                } catch {
-                    
-                }
-                isLoading = false;
-            }
-            .onChange(of: mainModel.currentRemote) {
-                DispatchQueue.main.async {
-                    currentTab = 0
-                    switch orientation {
-                    case .unknown:
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                    case .portrait:
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                    case .portraitUpsideDown:
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                    case .landscapeLeft:
-                        if mainModel.currentRemote?.landscapeRemote != nil {
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                    .onChange(of: mainModel.currentRemote) {
+                        let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
+                        if itemToUpdate != nil {
+                            itemToUpdate?.lastUsed = Date()
                         } else {
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                            modelContext.insert(RemoteHistoryEntry(remoteId: mainModel.currentRemote?.id ?? ""))
                         }
-                    case .landscapeRight:
-                        if mainModel.currentRemote?.landscapeRemote != nil {
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
-                        } else {
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        try? modelContext.save()
+                        if remoteHistory.count > 6 {
+                            let indexSet = IndexSet(integersIn: 6...remoteHistory.count - 1)
+                            deleteHistory(indexSet: indexSet)
                         }
-                    case .faceUp:
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                    case .faceDown:
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                    @unknown default:
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                        try? modelContext.save()
+                    }
+                    .onChange(of: IntentHandleService.shared.intentType) {
+                        handleIntent()
+                    }
+                    .onRotate { newOrientation in
+                        switch newOrientation {
+                        case .unknown:
+                            print("rotation unknown")
+                        case .portrait:
+                            if orientation != .portraitUpsideDown && orientation != .portrait {
+                                print("set to portrait")
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                                orientation = .portrait
+                            }
+                        case .portraitUpsideDown:
+                            if orientation != .portraitUpsideDown && orientation != .portrait {
+                                print("set to portrait")
+                                mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                                orientation = .portrait
+                            }
+                        case .landscapeLeft:
+                            if mainModel.currentRemote?.landscapeRemote != nil {
+                                if orientation != .landscapeLeft && orientation != .landscapeRight {
+                                    print("set to landscape")
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                                    orientation = .landscapeLeft
+                                }
+                            } else {
+                                if orientation != .portraitUpsideDown && orientation != .portrait
+                                    && orientation != .landscapeLeft && orientation != .landscapeRight {
+                                    print("set to portrait")
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                                    orientation = .portrait
+                                }
+                            }
+                        case .landscapeRight:
+                            if mainModel.currentRemote?.landscapeRemote != nil {
+                                if orientation != .landscapeLeft && orientation != .landscapeRight {
+                                    print("set to landscape")
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
+                                    orientation = .landscapeLeft
+                                }
+                            } else {
+                                if orientation != .portraitUpsideDown && orientation != .portrait
+                                    && orientation != .landscapeLeft && orientation != .landscapeRight {
+                                    print("set to portrait")
+                                    mainModel.currentRemoteItem = mainModel.currentRemote?.remote
+                                    orientation = .portrait
+                                }
+                            }
+                        case .faceUp:
+                            print("rotation faceUp")
+                        case .faceDown:
+                            print("rotation faceDown")
+                        @unknown default:
+                            print("rotation unknown default")
+                        }
+                    }
+                // Provide window size via environment
+                    .environment(\.mainWindowSize, geo.size)
+                    .environment(\.zones, mainModel.zones)
+                    .environment(\.remotes, mainModel.remotes)
+                if isLoading {
+                    VStack {
+                        Image("Remote-transparent")
+                            .renderingMode(.original)
+                            .resizable() // Macht das Bild skalierbar
+                            .scaledToFit() // Behält das Seitenverhältnis bei
+                            .frame(width: 300, height: 300)
+                            .padding()
+                        ProgressView()
                     }
                 }
             }
-            .onChange(of: IntentHandleService.shared.mainCommandId) {
-                if let mainCmd = IntentHandleService.shared.mainCommandId {
-                    if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
-                        let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
-                        mainModel.executeCommand(id: id)
-                    }
-                    IntentHandleService.shared.mainCommandId = nil
-                }
-            }
-            .onChange(of: scenePhase) { oldPhase, newPhase in
-                if newPhase == .background {
-                    var items: [UIApplicationShortcutItem] = []
-                    for cmd in mainModel.mainCommands {
-                        let icon = UIApplicationShortcutIcon(systemImageName: cmd.clientIcon ?? "bolt.fill")
-                        let item = UIApplicationShortcutItem(
-                            type: "seeb.HARemoteIOS.mainCommand",
-                            localizedTitle: cmd.description ?? "Command",
-                            localizedSubtitle: nil,
-                            icon: icon,
-                            userInfo: ["id": (cmd.id ?? "") as NSString]
-                        )
-                        items.append(item)
-                    }
-                    UIApplication.shared.shortcutItems = items
-                }
-            }
-            .onChange(of: mainModel.currentRemote) {
-                let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
-                if itemToUpdate != nil {
-                    itemToUpdate?.lastUsed = Date()
-                } else {
-                    modelContext.insert(RemoteHistoryEntry(remoteId: mainModel.currentRemote?.id ?? ""))
-                }
-                try? modelContext.save()
-                if remoteHistory.count > 6 {
-                    let indexSet = IndexSet(integersIn: 6...remoteHistory.count - 1)
-                    deleteHistory(indexSet: indexSet)
-                }
-                try? modelContext.save()
-            }
-            .onChange(of: IntentHandleService.shared.intentType) {
-                handleIntent()
-            }
-            .onRotate { newOrientation in
-                switch newOrientation {
-                case .unknown:
-                    print("rotation unknown")
-                case .portrait:
-                    if orientation != .portraitUpsideDown && orientation != .portrait {
-                        print("set to portrait")
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                        orientation = .portrait
-                    }
-                case .portraitUpsideDown:
-                    if orientation != .portraitUpsideDown && orientation != .portrait {
-                        print("set to portrait")
-                        mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                        orientation = .portrait
-                    }
-                case .landscapeLeft:
-                    if mainModel.currentRemote?.landscapeRemote != nil {
-                        if orientation != .landscapeLeft && orientation != .landscapeRight {
-                            print("set to landscape")
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
-                            orientation = .landscapeLeft
-                        }
-                    } else {
-                        if orientation != .portraitUpsideDown && orientation != .portrait
-                            && orientation != .landscapeLeft && orientation != .landscapeRight {
-                            print("set to portrait")
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                            orientation = .portrait
-                        }
-                    }
-                case .landscapeRight:
-                    if mainModel.currentRemote?.landscapeRemote != nil {
-                        if orientation != .landscapeLeft && orientation != .landscapeRight {
-                            print("set to landscape")
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.landscapeRemote
-                            orientation = .landscapeLeft
-                        }
-                    } else {
-                        if orientation != .portraitUpsideDown && orientation != .portrait
-                            && orientation != .landscapeLeft && orientation != .landscapeRight {
-                            print("set to portrait")
-                            mainModel.currentRemoteItem = mainModel.currentRemote?.remote
-                            orientation = .portrait
-                        }
-                    }
-                case .faceUp:
-                    print("rotation faceUp")
-                case .faceDown:
-                    print("rotation faceDown")
-                @unknown default:
-                    print("rotation unknown default")
-                }
-            }
-            // Provide window size via environment
-            .environment(\.mainWindowSize, geo.size)
-            .environment(\.zones, mainModel.zones)
-            .environment(\.remotes, mainModel.remotes)
         }
     }
 }

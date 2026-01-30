@@ -69,6 +69,7 @@ struct StateView: View {
                     Rectangle()
                         .fill(Color.clear)
                         .frame(height: 150)
+                        .listRowBackground(Color.clear)
                 }
                 ForEach(sortedStates){state in
                     StateItemView(state: state)
@@ -77,6 +78,7 @@ struct StateView: View {
                     Rectangle()
                         .fill(Color.clear)
                         .frame(height: 150)
+                        .listRowBackground(Color.clear)
                 }
             }
             .scrollContentBackground(.hidden)

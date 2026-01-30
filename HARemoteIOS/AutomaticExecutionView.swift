@@ -444,6 +444,7 @@ struct AutomaticExecutionView: View {
                 Rectangle()
                     .fill(Color.clear)
                     .frame(height: 150)
+                    .listRowBackground(Color.clear)
             }
             ForEach(entries) { entry in
                 if let sourceIndex = automaticExecutionEntries.firstIndex(where: { $0.id == entry.id }) {
@@ -510,6 +511,7 @@ struct AutomaticExecutionView: View {
                 Rectangle()
                     .fill(Color.clear)
                     .frame(height: 150)
+                    .listRowBackground(Color.clear)
             }
         }
         .scrollContentBackground(.hidden)
