@@ -15,6 +15,7 @@ protocol HomeRemoteAPIProtocol {
 
 final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     @AppStorage("server") var server: String = "http://192.168.5.106:5000"
+    @AppStorage("webserver") var webserver: String = "https://haalexa.azurewebsites.net"
     @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
     @AppStorage("application") var application: String = "HARemoteIOS"
     
@@ -338,6 +339,18 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
             }
         }
         .resume()
+    }
+    
+    func getWebStateGroups() async throws -> [String] {
+        let urlString = "\(webserver)/stategroup"
+        guard let url = URL(string: urlString) else { return [] }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("\(username)", forHTTPHeaderField: "user")
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let decoder = JSONDecoder()
+        return try decoder.decode([String].self, from: data)
     }
     
     func getIconsWithoutCharts() async throws -> [String] {

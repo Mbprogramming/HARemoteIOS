@@ -11,6 +11,7 @@ import Kingfisher
 
 struct UserSettings: View {
     @AppStorage("server") var server: String = "http://192.168.5.106:5000"
+    @AppStorage("webserver") var webserver: String = "https://haalexa.azurewebsites.net"
     @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
     @AppStorage("application") var application: String = "HARemoteIOS"
     
@@ -32,6 +33,11 @@ struct UserSettings: View {
                         .disableAutocorrection(true)
                     TextField("Application:", text: $application)
                         .disabled(true)
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
+                }
+                Section("Webserver") {
+                    TextField("Web Service URL:", text: $webserver)
                         .textInputAutocapitalization(.never)
                         .disableAutocorrection(true)
                 }

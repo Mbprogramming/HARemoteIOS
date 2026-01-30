@@ -141,21 +141,22 @@ struct SidePaneView: View {
         let visibleZones: [Zone] = zones.filter { $0.isVisible == true }
         NavigationView {
             TabView {
-                    List {
-                        ForEach(remotes) { remote in
-                            let favorite = isFavorite(remoteId: remote.id)
-                            if favorite {
-                                ItemView(
-                                    remote: remote,
-                                    currentRemote: $currentRemote,
-                                    currentRemoteItem: $currentRemoteItem,
-                                    remoteItemStack: $remoteItemStack,
-                                    remoteStates: $remoteStates,
-                                    isVisible: $isVisible
-                                )
-                            }
+                List {
+                    ForEach(remotes) { remote in
+                        let favorite = isFavorite(remoteId: remote.id)
+                        if favorite {
+                            ItemView(
+                                remote: remote,
+                                currentRemote: $currentRemote,
+                                currentRemoteItem: $currentRemoteItem,
+                                remoteItemStack: $remoteItemStack,
+                                remoteStates: $remoteStates,
+                                isVisible: $isVisible
+                            )
                         }
-                }.tabItem {
+                    }
+                }
+                .tabItem {
                     Label("Favorites", systemImage: "star.fill")
                 }
                 List {
@@ -198,8 +199,12 @@ struct SidePaneView: View {
                     Label("Zones", systemImage: "square.split.bottomrightquarter.fill")
                 }
                 UserSettings()
-                    .tabItem{
+                    .tabItem {
                         Label("Settings", systemImage: "gear")
+                    }
+                WebStates()
+                    .tabItem {
+                        Label("Web States", systemImage: "network")
                     }
             }
             .toolbar {
