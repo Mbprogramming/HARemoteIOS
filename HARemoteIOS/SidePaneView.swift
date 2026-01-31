@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HeaderView: View {
     private var zoneContent: Zone?
@@ -19,10 +20,8 @@ struct HeaderView: View {
             Text("Unknown zone")
         } else {
             HStack {
-                if zoneContent?.icon != nil {
-                    let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + (zoneContent?.icon ?? "")
-                    
-                    AsyncImage(url: URL(string: iconUrl))
+                if let iconId = zoneContent?.icon {
+                    AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: iconId)
                         .frame(width: 40, height: 40)
                 }
                 Text(zoneContent?.description ?? "Unknown zone")
@@ -33,65 +32,204 @@ struct HeaderView: View {
 
 struct ItemView: View {
     @Environment(\.dismiss) var dismiss
-    private var remoteContent: Remote?
+    @Environment(\.modelContext) var modelContext
+        
+    public var remote: Remote
     
-    init(remote: Remote?) {
-        remoteContent = remote
+    @Binding var currentRemote: Remote?
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
+    @Binding var remoteStates: [HAState]
+    @Binding var isVisible: Bool
+    
+    private func isFavorite(remoteId: String) -> Bool {
+        let descriptor = FetchDescriptor<RemoteFavorite>(
+            predicate: #Predicate { $0.remoteId == remoteId }
+        )
+        do {
+            let favorites = try modelContext.fetch(descriptor)
+            return favorites.isEmpty == false
+        } catch {
+            return false
+        }
+    }
+    
+    private func toggleFavorite(remoteId: String) {
+        let descriptor = FetchDescriptor<RemoteFavorite>(
+            predicate: #Predicate { $0.remoteId == remoteId }
+        )
+        do {
+            let favorites = try modelContext.fetch(descriptor)
+            if let existing = favorites.first {
+                modelContext.delete(existing)
+            } else {
+                modelContext.insert(RemoteFavorite(remoteId: remoteId))
+            }
+            try? modelContext.save()
+        } catch {
+            // Swallow errors for now; you might add logging/UI later.
+        }
     }
     
     var body: some View {
-        if remoteContent == nil {
-            Text("Unknown remote")
-        } else {
-            HStack {
-                if remoteContent?.icon != nil {
-                    let iconUrl: String = "http://192.168.5.106:5000/api/homeautomation/Bitmap?width=40&height=40&id=" + (remoteContent?.icon ?? "")
-                    
-                    AsyncImage(url: URL(string: iconUrl))
-                        .frame(width: 40, height: 40)
-                }
-                Text(remoteContent?.description ?? "Unknown zone")
-                Spacer()
-                Image(systemName: "chevron.right")
+        let favorite = isFavorite(remoteId: remote.id)
+        
+        HStack {
+            if let iconId = remote.icon {
+                AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: iconId)
+                    .frame(width: 40, height: 40)
             }
-            .gesture(TapGesture(count: 1).onEnded({ _ in
-                if remoteContent != nil {
-                    HomeRemoteAPI.shared.currentRemote = remoteContent
-                }
-                dismiss()
-            }))
+            Text(remote.description)
+            Spacer()
+            if favorite {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(.yellow)
+                    .font(.caption2)
+                    .bold()
+            }
+            Image(systemName: "chevron.right")
+                .font(.caption2)
+                .bold()
+        }
+        .contentShape(Rectangle())
+        .swipeActions(edge: .leading) {
+            Button("Favorite", systemImage: favorite ? "star" : "star.fill") {
+                toggleFavorite(remoteId: remote.id)
+            }
+            .tint(favorite ? Color.gray : Color.yellow)
+        }
+        .onTapGesture {
+            remoteStates = []
+            currentRemote = remote
+            remoteItemStack.removeAll()
+            Task {
+                remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+            }
+            try? modelContext.save()
+            isVisible = false
         }
     }
 }
 
 struct SidePaneView: View {
-    @State public var zoneViewModel = ZoneViewModel()
+    @Environment(\.remotes) var remotes
+    @Environment(\.zones) var zones
+    @Environment(\.modelContext) var modelContext
+
+    @Binding var currentRemote: Remote?
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
+    @Binding var remoteStates: [HAState]
+    @Binding var isVisible: Bool
+    
+    @State private var expandedZones: Set<String> = []
+
+    private func isFavorite(remoteId: String) -> Bool {
+        let descriptor = FetchDescriptor<RemoteFavorite>(
+            predicate: #Predicate { $0.remoteId == remoteId }
+        )
+        do {
+            let favorites = try modelContext.fetch(descriptor)
+            return favorites.isEmpty == false
+        } catch {
+            return false
+        }
+    }
     
     var body: some View {
-        List {
-            ForEach(zoneViewModel.zones) { zone in
-                if zone.isVisible ?? false {
-                    Section(header: HeaderView(zone: zone)) {
-                        if let remoteIds = zone.remoteIds {
-                            ForEach(remoteIds, id: \.self){ remote in
-                                let remote = zoneViewModel.remotes.first(where: { $0.id == remote })
-                                if remote != nil {
-                                    ItemView(remote: remote)
-                                }
-                            }
+        // Precompute visible zones to keep the builder simple
+        let visibleZones: [Zone] = zones.filter { $0.isVisible == true }
+        NavigationView {
+            TabView {
+                List {
+                    ForEach(remotes) { remote in
+                        let favorite = isFavorite(remoteId: remote.id)
+                        if favorite {
+                            ItemView(
+                                remote: remote,
+                                currentRemote: $currentRemote,
+                                currentRemoteItem: $currentRemoteItem,
+                                remoteItemStack: $remoteItemStack,
+                                remoteStates: $remoteStates,
+                                isVisible: $isVisible
+                            )
                         }
+                    }
+                }
+                .tabItem {
+                    Label("Favorites", systemImage: "star.fill")
+                }
+                List {
+                    ForEach(visibleZones) { zone in
+                        // Map zone.remoteIds to concrete Remote models up front
+                        let zoneRemotes: [Remote] = {
+                            guard let ids = zone.remoteIds else { return [] }
+                            let set = Set(ids)
+                            return remotes.filter { set.contains($0.id) }
+                        }()
+                        
+                        DisclosureGroup(
+                            isExpanded: Binding(
+                                get: { expandedZones.contains(zone.id) },
+                                set: { newValue in
+                                    if newValue {
+                                        expandedZones.insert(zone.id)
+                                    } else {
+                                        expandedZones.remove(zone.id)
+                                    }
+                                }
+                            )
+                        ) {
+                            ForEach(zoneRemotes) { remote in
+                                ItemView(
+                                    remote: remote,
+                                    currentRemote: $currentRemote,
+                                    currentRemoteItem: $currentRemoteItem,
+                                    remoteItemStack: $remoteItemStack,
+                                    remoteStates: $remoteStates,
+                                    isVisible: $isVisible
+                                )
+                            }
+                        } label: {
+                            HeaderView(zone: zone)
+                        }
+                    }
+                }
+                .tabItem {
+                    Label("Zones", systemImage: "square.split.bottomrightquarter.fill")
+                }
+                UserSettings()
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+                WebStates()
+                    .tabItem {
+                        Label("Web States", systemImage: "network")
+                    }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing){
+                    Button("Back", systemImage: "chevron.down"){
+                        isVisible = false
                     }
                 }
             }
         }
-        .task {
-            await zoneViewModel.loadRemotes()
-            await zoneViewModel.loadZones()
-        }
     }
 }
 
-
 #Preview {
-    SidePaneView()
+    @Previewable @State var currentRemote: Remote? = nil
+    @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    @Previewable @State var remoteItemStack: [RemoteItem] = []
+    @Previewable @State var remoteStates: [HAState] = []
+    @Previewable @State var isVisible: Bool = true
+    
+    SidePaneView(
+        currentRemote: $currentRemote,
+        currentRemoteItem: $currentRemoteItem,
+        remoteItemStack: $remoteItemStack,
+        remoteStates: $remoteStates,
+        isVisible: $isVisible
+    )
 }

@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import Observation
 
-struct Zone: Decodable, Identifiable {
+@Observable class Zone: Decodable, Identifiable {
     let description: String
     let icon: String?
     let background: String?

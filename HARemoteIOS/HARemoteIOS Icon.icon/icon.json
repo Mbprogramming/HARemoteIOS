@@ -1,0 +1,120 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.16910,0.26963,0.39254,1.00000"
+  },
+  "groups" : [
+    {
+      "blur-material" : null,
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:1.00000,1.00000,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "extended-gray:1.00000,1.00000"
+              }
+            }
+          ],
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "Element 3.svg",
+          "name" : "Element 3",
+          "position" : {
+            "scale" : 1.5,
+            "translation-in-points" : [
+              21.809762525306382,
+              187.84984997785637
+            ]
+          }
+        }
+      ],
+      "lighting" : "individual",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : false,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "automatic-gradient" : "srgb:0.00000,0.58980,1.00000,1.00000"
+          },
+          "hidden" : false,
+          "image-name" : "Element 4.svg",
+          "name" : "Element 4",
+          "position" : {
+            "scale" : 1.5,
+            "translation-in-points" : [
+              53.74243374924538,
+              -125.21682150983531
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "blur-material" : null,
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "srgb:0.00000,0.58980,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.00000,0.58980,1.00000,1.00000"
+              }
+            }
+          ],
+          "hidden" : false,
+          "image-name" : "Element 5.svg",
+          "name" : "Element 5",
+          "position" : {
+            "scale" : 1.5,
+            "translation-in-points" : [
+              -0.001671394177719776,
+              -70.8359375
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "none",
+        "opacity" : 0.5
+      },
+      "specular" : false,
+      "translucency" : {
+        "enabled" : false,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

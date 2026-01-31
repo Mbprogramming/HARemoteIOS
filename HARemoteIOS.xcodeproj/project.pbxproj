@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2C1ED8BA2F28D31800082E13 /* Fuse in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1ED8B92F28D31800082E13 /* Fuse */; };
+		2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2C57C3E92F0FE009006D05B8 /* .gitignore */; };
+		2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2C57C3F02F169DCC006D05B8 /* Kingfisher */; };
+		2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C7F207E2EE2DD8B0069E365 /* libz.tbd */; };
+		2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7F20802EE2DD9C0069E365 /* SignalRClient */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2C813FE62ED0A93E00BE0709 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C57C3E92F0FE009006D05B8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		2C7F207E2EE2DD8B0069E365 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HARemoteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HARemoteIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C813FEF2ED0A93F00BE0709 /* HARemoteIOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HARemoteIOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +62,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */,
+				2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */,
+				2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */,
+				2C1ED8BA2F28D31800082E13 /* Fuse in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +86,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C7F207D2EE2DD8A0069E365 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2C7F207E2EE2DD8B0069E365 /* libz.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2C813FCF2ED0A93A00BE0709 = {
 			isa = PBXGroup;
 			children = (
+				2C57C3E92F0FE009006D05B8 /* .gitignore */,
 				2C813FDA2ED0A93A00BE0709 /* HARemoteIOS */,
 				2C813FE82ED0A93F00BE0709 /* HARemoteIOSTests */,
 				2C813FF22ED0A93F00BE0709 /* HARemoteIOSUITests */,
+				2C7F207D2EE2DD8A0069E365 /* Frameworks */,
 				2C813FD92ED0A93A00BE0709 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -106,12 +130,17 @@
 			buildRules = (
 			);
 			dependencies = (
+				2C57C3F32F169E23006D05B8 /* PBXTargetDependency */,
+				2CCF9A0A2EE2DA7C00F861E1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2C813FDA2ED0A93A00BE0709 /* HARemoteIOS */,
 			);
 			name = HARemoteIOS;
 			packageProductDependencies = (
+				2C7F20802EE2DD9C0069E365 /* SignalRClient */,
+				2C57C3F02F169DCC006D05B8 /* Kingfisher */,
+				2C1ED8B92F28D31800082E13 /* Fuse */,
 			);
 			productName = HARemoteIOS;
 			productReference = 2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */;
@@ -195,6 +224,11 @@
 			);
 			mainGroup = 2C813FCF2ED0A93A00BE0709;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */,
+				2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				2C1ED8B82F28D1C600082E13 /* XCRemoteSwiftPackageReference "fuse-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C813FD92ED0A93A00BE0709 /* Products */;
 			projectDirPath = "";
@@ -212,6 +246,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +291,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2C57C3F32F169E23006D05B8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2C57C3F22F169E23006D05B8 /* Kingfisher */;
+		};
 		2C813FE72ED0A93E00BE0709 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2C813FD72ED0A93A00BE0709 /* HARemoteIOS */;
@@ -265,6 +304,10 @@
 			isa = PBXTargetDependency;
 			target = 2C813FD72ED0A93A00BE0709 /* HARemoteIOS */;
 			targetProxy = 2C813FF02ED0A93F00BE0709 /* PBXContainerItemProxy */;
+		};
+		2CCF9A0A2EE2DA7C00F861E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2CCF9A092EE2DA7C00F861E1 /* SignalRClient */;
 		};
 /* End PBXTargetDependency section */
 
@@ -393,18 +436,21 @@
 		2C813FFA2ED0A93F00BE0709 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "HARemoteIOS Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = T6GQG5B92T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SEEB Remote";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -413,6 +459,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = seeb.HARemoteIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -425,18 +474,21 @@
 		2C813FFB2ED0A93F00BE0709 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "HARemoteIOS Icon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = T6GQG5B92T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SEEB Remote";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -445,6 +497,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = seeb.HARemoteIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -578,6 +633,61 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2C1ED8B82F28D1C600082E13 /* XCRemoteSwiftPackageReference "fuse-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krisk/fuse-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
+		2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = exactVersion;
+				version = 8.6.2;
+			};
+		};
+		2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dotnet/signalr-client-swift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2C1ED8B92F28D31800082E13 /* Fuse */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C1ED8B82F28D1C600082E13 /* XCRemoteSwiftPackageReference "fuse-swift" */;
+			productName = Fuse;
+		};
+		2C57C3F02F169DCC006D05B8 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		2C57C3F22F169E23006D05B8 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C57C3EF2F169DCC006D05B8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		2C7F20802EE2DD9C0069E365 /* SignalRClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */;
+			productName = SignalRClient;
+		};
+		2CCF9A092EE2DA7C00F861E1 /* SignalRClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C714EDA2EE2D19F0025AE02 /* XCRemoteSwiftPackageReference "signalr-client-swift" */;
+			productName = SignalRClient;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C813FD02ED0A93A00BE0709 /* Project object */;
 }

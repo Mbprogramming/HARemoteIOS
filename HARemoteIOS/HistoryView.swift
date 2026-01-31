@@ -8,11 +8,63 @@
 import SwiftUI
 
 struct HistoryView: View {
+    @Binding var mainModel: RemoteMainModel
+    
     var body: some View {
-        Text("History")
+        List {
+            if mainModel.commandIds.count > 0 {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+                    .listRowBackground(Color.clear)
+            }
+            ForEach(mainModel.commandIds, id: \.id) { id in
+                VStack {
+                    HStack {
+                        Text(id.id)
+                            .font(.subheadline)
+                        Spacer()
+                    }
+                    HStack {
+                        Text("Send:")
+                            .font(.footnote)
+                        Spacer()
+                        Text("\(id.sendStr)")
+                            .font(.footnote)
+                        
+                    }
+                    HStack {
+                        Text("Received:")
+                            .font(.footnote)
+                        Spacer()
+                        Text("\(id.receivedStr)")
+                            .font(.footnote)
+                    }
+                    HStack {
+                        Text("Finished:")
+                            .font(.footnote)
+                        Spacer()
+                        Text("\(id.finishedStr)")
+                            .font(.footnote)
+                    }
+                }
+                .listRowBackground(Color.clear)
+                .padding()
+            }
+            if mainModel.commandIds.count > 0 {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+                    .listRowBackground(Color.clear)
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .listStyle(.insetGrouped)
+        .ignoresSafeArea()
     }
 }
 
 #Preview {
-    HistoryView()
+    @Previewable @State var mainModel = RemoteMainModel()
+    HistoryView(mainModel: $mainModel)
 }

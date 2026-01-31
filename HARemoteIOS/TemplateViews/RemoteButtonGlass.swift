@@ -1,0 +1,78 @@
+//
+//  RemoteButtonGlass.swift
+//  HARemoteIOS
+//
+//  Created by Markus Bach on 01.12.25.
+//
+
+import SwiftUI
+
+struct RemoteButtonGlass: View {
+    var remoteItem: RemoteItem?
+    var height: CGFloat = 150
+    
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteItemStack: [RemoteItem]
+    @Binding var mainModel: RemoteMainModel
+    @Binding var isVisible: Bool
+    @State private var parentHeight: CGFloat = 60.0
+    
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
+    var body: some View {
+        Button(action: {
+            if remoteItem?.template == RemoteTemplate.List
+                || remoteItem?.template == RemoteTemplate.Wrap
+                || remoteItem?.template == RemoteTemplate.Grid3X4
+                || remoteItem?.template == RemoteTemplate.Grid4X5
+                || remoteItem?.template == RemoteTemplate.Grid5x3 {
+                guard let children = remoteItem?.children else { return }
+                if children.count > 0 {
+                    // Do not shadow the binding; unwrap into a different name
+                    guard let current = currentRemoteItem else { return }
+                    remoteItemStack.append(current)
+                    guard let next = remoteItem else { return }
+                    currentRemoteItem = next
+                }
+            }
+            if remoteItem?.template == RemoteTemplate.Command {
+                let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
+                mainModel.executeCommand(id: id)
+            }
+            isVisible = false
+            }){
+            HStack {
+                ButtonTextAndIcon(currentRemoteItem: remoteItem, parentHeight: $parentHeight)
+                if remoteItem?.template == RemoteTemplate.List
+                    || remoteItem?.template == RemoteTemplate.Wrap
+                    || remoteItem?.template == RemoteTemplate.Grid3X4
+                    || remoteItem?.template == RemoteTemplate.Grid4X5
+                    || remoteItem?.template == RemoteTemplate.Grid5x3 {
+                    Spacer()
+                    Image(systemName: "ellipsis")
+                        .font(.footnote)
+                }
+            }
+            .onGeometryChange(for: CGSize.self) { proxy in
+                            proxy.size
+                        } action: {
+                            parentHeight = $0.height
+                        }
+            .frame(maxWidth: .infinity, maxHeight: height)
+        }
+            .buttonStyle(.borderless)
+            .foregroundColor(colorScheme == .dark ? .white : .black)
+        //.glassEffect(.regular, in: .capsule)
+        //.buttonStyle(.glass)
+    }
+}
+
+#Preview {
+    @Previewable @State var remoteItemStack: [RemoteItem] = []
+    @Previewable @State var currentRemoteItem: RemoteItem? = nil
+    @Previewable @State var mainModel = RemoteMainModel()
+    @Previewable @State var isVisible: Bool = true
+    var remoteItem: RemoteItem? = nil
+    
+    RemoteButtonGlass(remoteItem: remoteItem, currentRemoteItem: $currentRemoteItem, remoteItemStack: $remoteItemStack, mainModel: $mainModel, isVisible: $isVisible)
+}

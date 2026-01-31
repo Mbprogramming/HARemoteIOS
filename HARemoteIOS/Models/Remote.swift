@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import Observation
 
-struct Remote: Decodable, Identifiable {
+@Observable class Remote: Decodable, Identifiable, Equatable {
+    static func == (lhs: Remote, rhs: Remote) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     let id: String
     let device: String?
     let zone: Zone?
@@ -16,6 +21,17 @@ struct Remote: Decodable, Identifiable {
     let remote: RemoteItem?
     let landscapeRemote: RemoteItem?
     let remoteConfig: String?
-    //lastChange    [...]
-    //defaultState    [...]
+    let lastChange: String?
+    let defaultState: [StringStringTuple]?
+    
+    var lastChangeDate: Date? {
+        if let ls = lastChange {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = formatter.date(from: ls) {
+                return date
+            }
+        }
+        return nil
+    }
 }

@@ -1,0 +1,33 @@
+{
+  "originHash" : "da98bc531b3a2a95bc873fe596a831bc7ca5a723eb691839fa0421d0b883fb65",
+  "pins" : [
+    {
+      "identity" : "fuse-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krisk/fuse-swift",
+      "state" : {
+        "revision" : "26ba868691b2d8b7bf2b1322951eb591be70ccca",
+        "version" : "1.4.0"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "d30a5fad881137e2267f96a8e3fc35c58999bb94",
+        "version" : "8.6.2"
+      }
+    },
+    {
+      "identity" : "signalr-client-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dotnet/signalr-client-swift",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1a27323e478ad75dc8383a11f0c5d5cce62afc6e"
+      }
+    }
+  ],
+  "version" : 3
+}
