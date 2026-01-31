@@ -4,6 +4,7 @@
 //
 //  Created by Markus Bach on 09.12.25.
 //
+// Maybe use a generic Tuple class in the future
 
 import Foundation
 import Observation
