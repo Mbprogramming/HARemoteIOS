@@ -18,12 +18,10 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
 
     // if application not runs
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        print("\(connectionOptions)") 
         if let shortcutItem = connectionOptions.shortcutItem {
             handleShortcutItem(shortcutItem)
         }
     }
-
     func handleShortcutItem(_ shortcutItem: UIApplicationShortcutItem) {
         switch shortcutItem.type {
         case "seeb.HARemoteIOS.mainCommand":

@@ -26,7 +26,8 @@ struct RemoteStateItemView: View {
             if state.showImage == true, let icon = state.icon {
                 AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: icon)
                     .frame(width: 40, height: 40)
-            }            if state.showText == true {
+            }
+            if state.showText == true {                
                 Text(state.completeValue)
                     .truncationMode(.middle)
                     .allowsTightening(true)

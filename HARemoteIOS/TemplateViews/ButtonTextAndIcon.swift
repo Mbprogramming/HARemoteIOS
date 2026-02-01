@@ -29,7 +29,6 @@ struct ButtonTextAndIcon: View {
                             .frame(width: targetHeight >= 50.0 ? 40 : 20, height: targetHeight >= 50.0 ? 40 : 20)
                     }
                 }                
-                }
                 if currentState?.showText == true {
                     Text(currentState?.completeValue ?? "")
                         .truncationMode(.middle)

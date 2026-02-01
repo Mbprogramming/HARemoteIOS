@@ -21,8 +21,7 @@ struct HueSatBriMulti: View {
     @State private var listVisible: Bool = false
     
     @State private var hueSatBriModel: HueSatBriTempModel = HueSatBriTempModel()
-    @State var selection = Set<StringStringTuple>()
-    @State private var editMode: EditMode = .active
+    @State private var selection = Set<StringStringTuple>()    @State private var editMode: EditMode = .active
     
     @State private var delay: Date? = nil
     @State private var delayType: Int? = nil

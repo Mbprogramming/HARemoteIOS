@@ -16,7 +16,7 @@ struct RemoteItemView: View {
     
     @Binding var currentRemoteItem: RemoteItem?
     @Binding var remoteItemStack: [RemoteItem]
-    @Binding var mainModel: RemoteMainModel
+    @Bindable var mainModel: RemoteMainModel    
     @Binding var remoteStates: [HAState]
     @Binding var orientation: UIDeviceOrientation
     @Binding var disableScroll: Bool

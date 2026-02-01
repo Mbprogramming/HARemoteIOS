@@ -1,10 +1,9 @@
 //
-//  Grid3x4.swift
+//  HAGrid.swift
 //  HARemoteIOS
 //
 //  Created by Markus Bach on 27.11.25.
 //
-
 import SwiftUI
 
 struct HAGrid: View {

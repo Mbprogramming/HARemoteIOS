@@ -14,8 +14,9 @@ final class SearchResult : Identifiable {
     var mainCommand: SearchableCommand?
     var score: Double?
     var range: [ClosedRange<Int>]?
+    private let fallbackId = UUID().uuidString
     var id: String {
-        remote?.id ?? command?.id ?? UUID().uuidString
+        remote?.id ?? command?.id ?? fallbackId
     }
 
     init(remote: Remote? = nil, score: Double? = nil, range: [ClosedRange<Int>]? = nil) {
