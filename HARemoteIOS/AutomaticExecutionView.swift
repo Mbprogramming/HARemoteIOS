@@ -824,7 +824,10 @@ struct AutomaticExecutionView: View {
                         automaticExecutionEntries = entries
                     }
                 } catch {
-                    // handle error if needed
+                    await MainActor.run {
+                        apiErrorMessage = "Failed to refresh automatic executions: \(error.localizedDescription)"
+                        showAPIError = true
+                    }
                 }
             }
         }
@@ -843,7 +846,10 @@ struct AutomaticExecutionView: View {
                         currentStateValue = try await HomeRemoteAPI.shared.getSpecificState(device: currentSelectedState!.device, id: currentSelectedState!.id)
                     }
                 } catch {
-                    // handle error if needed
+                    await MainActor.run {
+                        apiErrorMessage = "Failed to load current state: \(error.localizedDescription)"
+                        showAPIError = true
+                    }
                 }
             }
         }
@@ -868,7 +874,10 @@ struct AutomaticExecutionView: View {
                         automaticExecutionEntries = entries
                     }
                 } catch {
-                    // handle error if needed
+                    await MainActor.run {
+                        apiErrorMessage = "Failed to load automatic executions: \(error.localizedDescription)"
+                        showAPIError = true
+                    }
                 }
             }
         }

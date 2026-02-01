@@ -13,8 +13,8 @@ class ContinueMacroParameter: Decodable, Encodable, Identifiable {
 
     var id: String { currentTaskId }
 
-    init(currentTaskId: String = "", currentAnswer: Int = -1) {
-        self.currentTaskId = currentTaskId
+    init(currentTaskId: String? = nil, currentAnswer: Int = -1) {
+        self.currentTaskId = currentTaskId ?? UUID().uuidString
         self.currentAnswer = currentAnswer
     }
 

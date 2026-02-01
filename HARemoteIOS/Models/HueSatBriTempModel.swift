@@ -246,7 +246,7 @@ import Observation
     
     var tempComplete: String {
         get {
-            return "Temperature:\(temperature)"
+            return "ColorTemperature:\(temperature)"
         }
     }
     

@@ -21,7 +21,7 @@ import Observation
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(item1 ?? "")
-        hasher.combine(item2 ?? "")
+        hasher.combine(item1)
+        hasher.combine(item2)
     }
 }

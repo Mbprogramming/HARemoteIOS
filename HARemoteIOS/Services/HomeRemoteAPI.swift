@@ -127,7 +127,9 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     }
     
     func getRemoteStates(remoteId: String) async throws -> [HAState] {
-        guard let url = URL(string: "\(server)/api/homeautomation/allremotestates?remoteId=" + remoteId) else { return [] }
+        guard var components = URLComponents(string: "\(server)/api/homeautomation/allremotestates") else { return [] }
+        components.queryItems = [URLQueryItem(name: "remoteId", value: remoteId)]
+        guard let url = components.url else { return [] }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
@@ -265,9 +267,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         iso8601.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let atStr = iso8601.string(from: at)
         let repeatStr = repeatValue.description
-        let encodedAt = atStr.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "\(server)/api/HomeAutomation/CommandAt?id=\(uuid)&device=\(device)&command=\(command)&at=\(encodedAt)&cycle=\(repeatStr)"
-        guard let url = URL(string: urlString) else { return "" }
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/CommandAt") else { return "" }
+        components.queryItems = [
+            URLQueryItem(name: "id", value: uuid),
+            URLQueryItem(name: "device", value: device),
+            URLQueryItem(name: "command", value: command),
+            URLQueryItem(name: "at", value: atStr),
+            URLQueryItem(name: "cycle", value: repeatStr)
+        ]
+        guard let url = components.url else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")

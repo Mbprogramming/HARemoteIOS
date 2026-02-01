@@ -1,5 +1,5 @@
 //
-//  IBaseDevice.swift
+//  HABaseDevice.swift
 //  HARemoteIOS
 //
 //  Created by Markus Bach on 19.01.26.
