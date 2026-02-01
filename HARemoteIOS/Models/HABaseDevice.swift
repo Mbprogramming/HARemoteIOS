@@ -9,8 +9,10 @@ import Foundation
 import Observation
 @Observable class HABaseDevice: Decodable, Identifiable, Equatable, Hashable {
     static func == (lhs: HABaseDevice, rhs: HABaseDevice) -> Bool {
-        guard lhs.id != nil || rhs.id != nil else { return false }
-        return lhs.id == rhs.id
+        if let lid = lhs.id, let rid = rhs.id {
+            return lid == rid
+        }
+        return lhs === rhs
     }
     
     func hash(into hasher: inout Hasher) {

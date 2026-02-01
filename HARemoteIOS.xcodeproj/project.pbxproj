@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2C1ED8BA2F28D31800082E13 /* Fuse in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1ED8B92F28D31800082E13 /* Fuse */; };
-		2C57C3EA2F0FE009006D05B8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2C57C3E92F0FE009006D05B8 /* .gitignore */; };
-		2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2C57C3F02F169DCC006D05B8 /* Kingfisher */; };
+	2C1ED8BA2F28D31800082E13 /* Fuse in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1ED8B92F28D31800082E13 /* Fuse */; };
+	2C57C3F12F169DCC006D05B8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2C57C3F02F169DCC006D05B8 /* Kingfisher */; };
 		2C7F207F2EE2DD8B0069E365 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C7F207E2EE2DD8B0069E365 /* libz.tbd */; };
 		2C7F20812EE2DD9C0069E365 /* SignalRClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2C7F20802EE2DD9C0069E365 /* SignalRClient */; };
 /* End PBXBuildFile section */
@@ -32,7 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2C57C3E92F0FE009006D05B8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+        
 		2C7F207E2EE2DD8B0069E365 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HARemoteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HARemoteIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,16 +108,17 @@
 		2C813FD92ED0A93A00BE0709 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2C813FD82ED0A93A00BE0709 /* HARemoteIOS.app */,
+        };
 				2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */,
 				2C813FEF2ED0A93F00BE0709 /* HARemoteIOSUITests.xctest */,
 			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+			);
+			sourceTree = "<group>";
 		2C813FD72ED0A93A00BE0709 /* HARemoteIOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2C813FF92ED0A93F00BE0709 /* Build configuration list for PBXNativeTarget "HARemoteIOS" */;

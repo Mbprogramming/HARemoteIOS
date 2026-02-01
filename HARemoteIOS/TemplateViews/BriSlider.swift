@@ -58,7 +58,12 @@ struct BriSlider: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.briComplete)
+                        guard let device = remoteItem?.device, !device.isEmpty,
+                              let command = remoteItem?.command, !command.isEmpty else {
+                            sliderVisible.toggle()
+                            return
+                        }
+                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: device, command: command, parameter: hueSatBriModel.briComplete)
                         mainModel.executeCommand(id: id)
                         sliderVisible.toggle()
                     }

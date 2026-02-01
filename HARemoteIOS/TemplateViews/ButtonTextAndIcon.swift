@@ -49,6 +49,11 @@ struct ButtonTextAndIcon: View {
                 }
             }
             .frame(height: targetHeight)
+            .background(GeometryReader { geo in
+                Color.clear.onAppear {
+                    parentHeight = geo.size.height
+                }
+            })
         } else {
             if currentRemoteItem?.icon != nil {
                 VStack{
@@ -62,6 +67,11 @@ struct ButtonTextAndIcon: View {
                     }
                 }
                 .frame(height: targetHeight)
+                .background(GeometryReader { geo in
+                    Color.clear.onAppear {
+                        parentHeight = geo.size.height
+                    }
+                })
             } else {
                 Text(currentRemoteItem?.description ?? "Unknown")
                     .truncationMode(.middle)
@@ -69,6 +79,11 @@ struct ButtonTextAndIcon: View {
                     .minimumScaleFactor(0.3)
                     .font(.title)
                     .frame(height: targetHeight)
+                    .background(GeometryReader { geo in
+                        Color.clear.onAppear {
+                            parentHeight = geo.size.height
+                        }
+                    })
             }
         }
     }

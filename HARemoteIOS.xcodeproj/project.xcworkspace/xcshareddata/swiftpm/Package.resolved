@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dotnet/signalr-client-swift",
       "state" : {
-        "branch" : "main",
-        "revision" : "1a27323e478ad75dc8383a11f0c5d5cce62afc6e"
+        "revision" : "1a27323e478ad75dc8383a11f0c5d5cce62afc6e",
+        "version" : "1.0.0-preview.4"
       }
     }
   ],

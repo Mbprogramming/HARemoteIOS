@@ -19,7 +19,7 @@ struct HueOnOffMulti: View {
     
     @State private var listVisible: Bool = false
     
-    @State var selection = Set<StringStringTuple>()
+    @State private var selection = Set<StringStringTuple>()
     @State private var editMode: EditMode = .active
     
     @State private var delay: Date? = nil

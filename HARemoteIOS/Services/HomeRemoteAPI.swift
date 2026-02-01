@@ -14,6 +14,8 @@ protocol HomeRemoteAPIProtocol {
 }
 
 final class HomeRemoteAPI: HomeRemoteAPIProtocol {
+    // Optional repository-wide default server (configurable)
+    static var defaultServer: String? = nil
     @AppStorage("server") var server: String = ""
     @AppStorage("webserver") var webserver: String = ""
     @AppStorage("username") var username: String = ""
@@ -138,19 +140,27 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     func sendCommand(device: String, command: String) -> String {
         let uuid = UUID().uuidString
-        guard let url = URL(string: "\(server)/api/HomeAutomation?id=" + uuid + "&device=" + device + "&command=" + command) else { return "" }
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation") else { return "" }
+        components.queryItems = [
+            URLQueryItem(name: "id", value: uuid),
+            URLQueryItem(name: "device", value: device),
+            URLQueryItem(name: "command", value: command)
+        ]
+        guard let url = components.url else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
-
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                NSLog("sendCommand error: \(error.localizedDescription)")
+                NSLog("sendCommand error: \(error.localizedDescription) for \(request.url?.absoluteString ?? "")")
                 return
             }
             if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
                 NSLog("sendCommand HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+                if let d = data, let body = String(data: d, encoding: .utf8) {
+                    NSLog("sendCommand response body: \(body)")
+                }
             }
         }.resume()
         return uuid
@@ -294,59 +304,68 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     func sendCommandParameter(device: String, command: String, parameter: String) -> String {
         let uuid = UUID().uuidString
         let myParameter = escapingUrl(url: parameter)
-        let urlString = "\(server)/api/HomeAutomation/CommandParameter?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter ?? "")"
-        guard let url = URL(string: urlString) else { return "" }
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/CommandParameter") else { return "" }
+        components.queryItems = [
+            URLQueryItem(name: "id", value: uuid),
+            URLQueryItem(name: "device", value: device),
+            URLQueryItem(name: "command", value: command),
+            URLQueryItem(name: "parameter", value: myParameter ?? "")
+        ]
+        guard let url = components.url else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
         
         let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error as? URLError {
-                NSLog(error.failingURL?.absoluteString ?? "")
+            if let error = error {
+                NSLog("sendCommandParameter error: \(error.localizedDescription) for \(request.url?.absoluteString ?? "")")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("sendCommandParameter HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+                if let d = data, let body = String(data: d, encoding: .utf8) {
+                    NSLog("sendCommandParameter response body: \(body)")
+                }
             }
         }
         .resume()
         return uuid
     }
     
-    func deleteAutomaticExecution(id: String) {
-        guard let url = URL(string: "\(server)/api/HomeAutomation/AutomaticExecutions?id=" + id) else { return }
+    func deleteAutomaticExecution(id: String) async throws {
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/AutomaticExecutions") else { return }
+        components.queryItems = [URLQueryItem(name: "id", value: id)]
+        guard let url = components.url else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                NSLog("deleteAutomaticExecution error: \(error.localizedDescription)")
-                return
-            }
-            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-                NSLog("deleteAutomaticExecution HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
-            }
-        }.resume()
-        
+        let (_, response) = try await URLSession.shared.data(for: request)
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            throw NSError(domain: "HomeRemoteAPI", code: http.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP status \(http.statusCode)"])
+        }
+
         if let bannerId = banner[id] {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [bannerId])
             removeBanner(executionId: id)
         }
     }
     
-    func automaticExecutionImmediatly(id: String) {
-        let urlString = "\(server)/api/HomeAutomation/AutomaticExecutionsImmediatly?id=\(id)"
-        guard let url = URL(string: urlString) else { return }
+    func automaticExecutionImmediatly(id: String) async throws {
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/AutomaticExecutionsImmediatly") else { return }
+        components.queryItems = [URLQueryItem(name: "id", value: id)]
+        guard let url = components.url else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
-        
-        let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error as? URLError {
-                NSLog(error.failingURL?.absoluteString ?? "")
-            }
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            throw NSError(domain: "HomeRemoteAPI", code: http.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP status \(http.statusCode)"])
         }
-        .resume()
     }
     
     func automaticExecutionAddMinutes(id: String, minutes: Int) {
@@ -371,20 +390,26 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         .resume()
     }
     
-    func addStateChangeAutomaticExecution(stateDevice: String, state: String, commandDevice: String, command: String, operation: String, limit: String, parameter: String?) {
-        let urlString = "\(server)/api/HomeAutomation/AddStateChangeAutomaticExecution?commandDevice=\(commandDevice)&command=\(command)&stateDevice=\(stateDevice)&state=\(state)&operation=\(operation)&limit=\(limit)"
-        guard let url = URL(string: urlString) else { return }
+    func addStateChangeAutomaticExecution(stateDevice: String, state: String, commandDevice: String, command: String, operation: String, limit: String, parameter: String?) async throws {
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/AddStateChangeAutomaticExecution") else { return }
+        components.queryItems = [
+            URLQueryItem(name: "commandDevice", value: commandDevice),
+            URLQueryItem(name: "command", value: command),
+            URLQueryItem(name: "stateDevice", value: stateDevice),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "operation", value: operation),
+            URLQueryItem(name: "limit", value: limit)
+        ]
+        guard let url = components.url else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request){ (data, response, error) in
-            if let error = error as? URLError {
-                NSLog(error.failingURL?.absoluteString ?? "")
-            }
+        let (_, response) = try await URLSession.shared.data(for: request)
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            throw NSError(domain: "HomeRemoteAPI", code: http.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP status \(http.statusCode)"])
         }
-        .resume()
     }
     
     func getWebStateGroups() async throws -> [String] {

@@ -721,14 +721,27 @@ struct ContentView: View {
                 }
                 
                 let remote = tempSearchResults[0]
-                
+
+                guard let selectedRemote = remote.remote else {
+                    // remote missing, clear intent and return
+                    IntentHandleService.shared.command = nil
+                    IntentHandleService.shared.device = nil
+                    IntentHandleService.shared.remote = nil
+                    IntentHandleService.shared.intentType = nil
+                    return
+                }
+
                 DispatchQueue.main.async {
                     mainModel.remoteStates = []
-                    mainModel.currentRemote = remote.remote!
-                    mainModel.currentRemoteItem = remote.remote!.remote
+                    mainModel.currentRemote = selectedRemote
+                    mainModel.currentRemoteItem = selectedRemote.remote
                     mainModel.remoteItemStack.removeAll()
                     Task {
-                        mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
+                        do {
+                            mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: selectedRemote.id ?? "")
+                        } catch {
+                            NSLog("Failed to fetch remote states for intent open: \(error)")
+                        }
                     }
                 }
             }

@@ -36,6 +36,11 @@ import Observation
     public func executeCommand(id: String) {
         let cmd = CommandExecutionEntry(id: id)
         commandIds.append(cmd)
+        // Cap the list to avoid unbounded growth
+        let maxCount = 500
+        if commandIds.count > maxCount {
+            commandIds.removeFirst(commandIds.count - maxCount)
+        }
     }
     
     public func receiveExecution(id: String) {
@@ -46,6 +51,8 @@ import Observation
     public func finishExecution(id: String) {
         if let item = commandIds.first(where: { id.starts(with: $0.id)}){
             item.finished = Date()
+            // Remove completed entry to prevent unbounded growth
+            commandIds.removeAll { $0.id == item.id }
         }
     }
     

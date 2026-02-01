@@ -125,6 +125,8 @@ struct AutomaticExecutionView: View {
     @State private var deferredDate: Date = Date()
     @State private var deferredAddId: String = ""
     @State private var addStateVisible: Bool = false
+    @State private var apiErrorMessage: String = ""
+    @State private var showAPIError: Bool = false
     @State private var selectedStateDevice: String? = nil
     @State private var selectedState: String? = nil
     @State private var selectedCommandDevice: String? = nil
@@ -454,9 +456,16 @@ struct AutomaticExecutionView: View {
                         .swipeActions(edge: .trailing) {
                             Button("Delete", systemImage: "trash") {
                                 if let id = automaticExecutionEntries[sourceIndex].id {
-                                    // Run off the main actor if you want to avoid blocking UI
                                     Task {
-                                        HomeRemoteAPI.shared.deleteAutomaticExecution(id: id)
+                                        do {
+                                            try await HomeRemoteAPI.shared.deleteAutomaticExecution(id: id)
+                                            await MainActor.run {
+                                                automaticExecutionEntries.removeAll { $0.id == id }
+                                            }
+                                        } catch {
+                                            apiErrorMessage = "Failed to delete automatic execution: \(error.localizedDescription)"
+                                            showAPIError = true
+                                        }
                                     }
                                 }
                             }
@@ -466,9 +475,13 @@ struct AutomaticExecutionView: View {
                             view.swipeActions(edge: .leading) {
                                 Button("Run", systemImage: "play") {
                                     if let id = automaticExecutionEntries[sourceIndex].id {
-                                        // Run off the main actor if you want to avoid blocking UI
                                         Task {
-                                            HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                            do {
+                                                try await HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                            } catch {
+                                                apiErrorMessage = "Failed to run automatic execution: \(error.localizedDescription)"
+                                                showAPIError = true
+                                            }
                                         }
                                     }
                                 }
@@ -479,9 +492,13 @@ struct AutomaticExecutionView: View {
                             view.swipeActions(edge: .leading) {
                                 Button("Run", systemImage: "play") {
                                     if let id = automaticExecutionEntries[sourceIndex].id {
-                                        // Run off the main actor if you want to avoid blocking UI
                                         Task {
-                                            HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                            do {
+                                                try await HomeRemoteAPI.shared.automaticExecutionImmediatly(id: id)
+                                            } catch {
+                                                apiErrorMessage = "Failed to run automatic execution: \(error.localizedDescription)"
+                                                showAPIError = true
+                                            }
                                         }
                                     }
                                 }
@@ -732,9 +749,17 @@ struct AutomaticExecutionView: View {
                                         let operation = currentOperation ?? ""
                                         let limit = currentLimit ?? ""
                                         
-                                        try? HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
-                                        
-                                        addStateVisible.toggle()
+                                        Task {
+                                            do {
+                                                try await HomeRemoteAPI.shared.addStateChangeAutomaticExecution(stateDevice: stateDevice, state: state, commandDevice: commandDevice, command: command, operation: operation, limit: limit, parameter: "")
+                                                await MainActor.run {
+                                                    addStateVisible.toggle()
+                                                }
+                                            } catch {
+                                                apiErrorMessage = "Failed to create automatic execution: \(error.localizedDescription)"
+                                                showAPIError = true
+                                            }
+                                        }
                                     }
                                     .buttonStyle(.glass)
                                 }
@@ -804,6 +829,9 @@ struct AutomaticExecutionView: View {
             }
         }
         .toolbar { toolbarContent }
+        .alert(isPresented: $showAPIError) {
+            Alert(title: Text("Error"), message: Text(apiErrorMessage), dismissButton: .default(Text("OK")))
+        }
         .onChange(of: selectedState) {
             selectedOperationNum = nil
             selectedOperationBool = nil

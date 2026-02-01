@@ -19,7 +19,7 @@ struct HARemoteIOSApp: App {
         WindowGroup {
             ContentView()
                 .onReceive(NotificationCenter.default.publisher(for: .mainCommandShortcut)) { obj in
-                    showFeedbackAlert.toggle()
+                    showFeedbackAlert = true
                 }
             .onAppear {
                 requestNotificationPermission()
@@ -29,7 +29,12 @@ struct HARemoteIOSApp: App {
                     title: Text("Please Give Us a Second Chance"),
                     message: Text("We’d love your feedback before you uninstall."),
                     primaryButton: .default(Text("Send Feedback")) {
-                        // perform feedback navigation/action here
+                        if let mailUrl = URL(string: "mailto:feedback@seeb.example?subject=HARemoteIOS%20Feedback") {
+                            UIApplication.shared.open(mailUrl, options: [:], completionHandler: nil)
+                        } else {
+                            NSLog("Feedback action: mailto URL invalid")
+                        }
+                        // TODO: JIRA-1234 - Replace mailto with FeedbackCoordinator when available
                     },
                     secondaryButton: .cancel(Text("Maybe Later"))
                 )

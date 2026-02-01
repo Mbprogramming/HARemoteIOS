@@ -14,9 +14,9 @@ enum RemoteTemplate: String, Decodable {
     case State
     case List
     case Wrap
-    case Grid3X4
+    case Grid3x4
     case Grid3x4Inline
-    case Grid4X5
+    case Grid4x5
     case Grid4x5Inline
     case Slider
     case Combobox

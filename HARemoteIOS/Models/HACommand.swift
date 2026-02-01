@@ -11,7 +11,7 @@ import Foundation
         if let lid = lhs.id, let rid = rhs.id {
             return lid == rid
         }
-        return false
+        return lhs === rhs
     }
     
     func hash(into hasher: inout Hasher) {

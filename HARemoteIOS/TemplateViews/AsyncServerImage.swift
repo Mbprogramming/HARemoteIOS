@@ -18,11 +18,13 @@ struct AsyncServerImage: View {
         
     func getBackgroundUrl(currentScheme: ColorScheme) -> String? {
         guard let icon = imageId else { return nil }
-        let base = HomeRemoteAPI.shared.server.isEmpty ? "http://192.168.5.106:5000" : HomeRemoteAPI.shared.server
+        let baseCandidate = !HomeRemoteAPI.shared.server.isEmpty ? HomeRemoteAPI.shared.server : (HomeRemoteAPI.defaultServer ?? "")
+        let base = baseCandidate.isEmpty ? nil : baseCandidate
+        guard let baseUrl = base else { return nil }
         if currentScheme == .light {
-            return "\(base)/api/homeautomation/Bitmap?width=\(imageWidth)&height=\(imageHeight)&id=\(icon)"
+            return "\(baseUrl)/api/homeautomation/Bitmap?width=\(imageWidth)&height=\(imageHeight)&id=\(icon)"
         } else {
-            return "\(base)/api/homeautomation/Bitmap?inverted=true&width=\(imageWidth)&height=\(imageHeight)&id=\(icon)"
+            return "\(baseUrl)/api/homeautomation/Bitmap?inverted=true&width=\(imageWidth)&height=\(imageHeight)&id=\(icon)"
         }
     }
     

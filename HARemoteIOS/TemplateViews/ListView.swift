@@ -73,7 +73,7 @@ struct ListView: View {
     
     private func buildRow(row: ListViewRow) -> some View {
         return HStack {
-            ForEach(row.items.compactMap { $0 as? RemoteItem }) { item in                
+            ForEach(row.items.compactMap { $0 }) { item in                
                 if item.template == RemoteTemplate.Grid3x4Inline ||
                     item.template == RemoteTemplate.Grid4x5Inline ||
                     item.template == RemoteTemplate.Grid5x3Inline ||

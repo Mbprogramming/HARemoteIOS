@@ -102,6 +102,12 @@ import Observation
             if let date = formatter.date(from: ls) {
                 return date
             }
+            // Fallback: try without fractional seconds
+            let fallback = ISO8601DateFormatter()
+            fallback.formatOptions = [.withInternetDateTime]
+            if let date = fallback.date(from: ls) {
+                return date
+            }
         }
         return nil
     }

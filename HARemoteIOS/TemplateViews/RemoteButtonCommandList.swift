@@ -28,40 +28,28 @@ struct RemoteButtonCommandList: View {
     @State private var deferredDescription: String = ""
     
     private func actionDeferred(date: Date, type: Int) {
-        if type == 0 {
+        switch type {
+        case 0, 1:
             let hour = Calendar.current.component(.hour, from: date)
             let minute = Calendar.current.component(.minute, from: date)
             let delay = (hour * 60 * 60) + (minute * 60)
-            let id = HomeRemoteAPI.shared.sendCommandDeferred(device: deferredDevice, command: deferredCommand, delay: delay, cyclic: false)
+            let cyclic = (type == 1)
+            let id = HomeRemoteAPI.shared.sendCommandDeferred(device: deferredDevice, command: deferredCommand, delay: delay, cyclic: cyclic)
             mainModel.executeCommand(id: id)
-        } else {
-            if type == 1 {
-                let hour = Calendar.current.component(.hour, from: date)
-                let minute = Calendar.current.component(.minute, from: date)
-                let delay = (hour * 60 * 60) + (minute * 60)
-                let id = HomeRemoteAPI.shared.sendCommandDeferred(device: deferredDevice, command: deferredCommand, delay: delay, cyclic: true)
-                mainModel.executeCommand(id: id)
-            } else {
-                if type == 2 {
-                    let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .none)
-                    mainModel.executeCommand(id: id)
-                } else {
-                    if type == 3 {
-                        let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .daily)
-                        mainModel.executeCommand(id: id)
-                    } else {
-                        if type == 4 {
-                            let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .weekly)
-                            mainModel.executeCommand(id: id)
-                        } else {
-                            if type == 5 {
-                                let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .monthly)
-                                mainModel.executeCommand(id: id)
-                            }
-                        }
-                    }
-                }
-            }
+        case 2:
+            let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .none)
+            mainModel.executeCommand(id: id)
+        case 3:
+            let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .daily)
+            mainModel.executeCommand(id: id)
+        case 4:
+            let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .weekly)
+            mainModel.executeCommand(id: id)
+        case 5:
+            let id = HomeRemoteAPI.shared.sendCommandAt(device: deferredDevice, command: deferredCommand, at: date, repeatValue: .monthly)
+            mainModel.executeCommand(id: id)
+        default:
+            break
         }
     }
     
