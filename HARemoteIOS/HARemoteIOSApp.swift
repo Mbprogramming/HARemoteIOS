@@ -7,28 +7,29 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct HARemoteIOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    @State private var showDebug: Bool = false
+    @State private var showFeedbackAlert: Bool = false
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .onReceive(NotificationCenter.default.publisher(for: .mainCommandShortcut)) { obj in
-                showDebug.toggle()
-            }
+                    showFeedbackAlert.toggle()
+                }
             .onAppear {
                 requestNotificationPermission()
             }
-            .alert(isPresented: $showDebug) {
+            .alert(isPresented: $showFeedbackAlert) {
                 Alert(
                     title: Text("Please Give Us a Second Chance"),
                     message: Text("We’d love your feedback before you uninstall."),
                     primaryButton: .default(Text("Send Feedback")) {
-                        showDebug.toggle()
+                        // perform feedback navigation/action here
                     },
                     secondaryButton: .cancel(Text("Maybe Later"))
                 )

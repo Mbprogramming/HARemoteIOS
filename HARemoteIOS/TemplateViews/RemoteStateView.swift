@@ -40,8 +40,8 @@ struct RemoteStateView: View {
     
     var body: some View {
         Group {
-            if let remote = mainModel.currentRemote, let states = remote.defaultState {
-                let width = mainWindowSize.width / CGFloat(states.count)
+            if let remote = mainModel.currentRemote, let states = remote.defaultState, states.count > 0 {
+                let width = mainWindowSize.width / CGFloat(max(1, states.count))
                 HStack {
                     ForEach(states.indices, id: \.self) { i in
                         let state = states[i]

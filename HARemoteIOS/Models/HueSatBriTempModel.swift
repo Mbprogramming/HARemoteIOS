@@ -134,25 +134,41 @@ import Observation
     
     var hueDouble: Double {
         get {
-            return Double(hue - hueMin) / Double(hueMax - hueMin)
+            let denom = hueMax - hueMin
+            guard denom != 0 else { return 0.0 }
+            return Double(hue - hueMin) / Double(denom)
         }
         set {
-            hue = Int(newValue * Double(hueMax - hueMin)) + hueMin
+            let denom = hueMax - hueMin
+            if denom == 0 {
+                hue = hueMin
+            } else {
+                hue = Int(newValue * Double(denom)) + hueMin
+            }
         }
     }
     
     var hueString: String {
         get {
-            return "\((Double(hue - hueMin) * 360.0 / Double(hueMax - hueMin)).rounded())°"
+            let denom = hueMax - hueMin
+            guard denom != 0 else { return "0°" }
+            return "\((Double(hue - hueMin) * 360.0 / Double(denom)).rounded())°"
         }
     }
     
     var temperatureDouble: Double {
         get {
-            return Double(temperature - temperatureMin) / Double(temperatureMax - temperatureMin)
+            let denom = temperatureMax - temperatureMin
+            guard denom != 0 else { return 0.0 }
+            return Double(temperature - temperatureMin) / Double(denom)
         }
         set {
-            temperature = Int(newValue * Double(temperatureMax - temperatureMin)) + temperatureMin
+            let denom = temperatureMax - temperatureMin
+            if denom == 0 {
+                temperature = temperatureMin
+            } else {
+                temperature = Int(newValue * Double(denom)) + temperatureMin
+            }
         }
     }
     
@@ -164,31 +180,49 @@ import Observation
     }    
     var saturationDouble: Double {
         get {
-            return Double(saturation - saturationMin) / Double(saturationMax - saturationMin)
+            let denom = saturationMax - saturationMin
+            guard denom != 0 else { return 0.0 }
+            return Double(saturation - saturationMin) / Double(denom)
         }
         set {
-            saturation = Int(newValue * Double(saturationMax - saturationMin)) + saturationMin
+            let denom = saturationMax - saturationMin
+            if denom == 0 {
+                saturation = saturationMin
+            } else {
+                saturation = Int(newValue * Double(denom)) + saturationMin
+            }
         }
     }
     
     var saturationString: String {
         get {
-            return "\((Double(saturation - saturationMin) * 100.0 / Double(saturationMax - saturationMin)).rounded())%"
+            let denom = saturationMax - saturationMin
+            guard denom != 0 else { return "0%" }
+            return "\((Double(saturation - saturationMin) * 100.0 / Double(denom)).rounded())%"
         }
     }
     
     var brightnessDouble: Double {
         get {
-            return Double(brightness - brightnessMin) / Double(brightnessMax - brightnessMin)
+            let denom = brightnessMax - brightnessMin
+            guard denom != 0 else { return 0.0 }
+            return Double(brightness - brightnessMin) / Double(denom)
         }
         set {
-            brightness = Int(newValue * Double(brightnessMax - brightnessMin)) + brightnessMin
+            let denom = brightnessMax - brightnessMin
+            if denom == 0 {
+                brightness = brightnessMin
+            } else {
+                brightness = Int(newValue * Double(denom)) + brightnessMin
+            }
         }
     }
     
     var brightnessString: String {
         get {
-            return "\((Double(brightness - brightnessMin) * 100.0 / Double(brightnessMax - brightnessMin)).rounded())%"
+            let denom = brightnessMax - brightnessMin
+            guard denom != 0 else { return "0%" }
+            return "\((Double(brightness - brightnessMin) * 100.0 / Double(denom)).rounded())%"
         }
     }
     

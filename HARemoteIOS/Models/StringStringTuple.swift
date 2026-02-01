@@ -12,15 +12,18 @@ import Observation
 @Observable class StringStringTuple: Decodable, Identifiable, Hashable, Equatable {
     let item1: String?
     let item2: String?
-    
-    // Use item1 as the identity
-    var id: String? { item1 }
-    
+
+    private let uuid = UUID()
+
+    // Provide a stable non-optional id
+    var id: String { item1 ?? uuid.uuidString }
+
     static func == (lhs: StringStringTuple, rhs: StringStringTuple) -> Bool {
-        return lhs.item1 == rhs.item1
+        return lhs.item1 == rhs.item1 && lhs.item2 == rhs.item2
     }
-    
+
     func hash(into hasher: inout Hasher) {
-        hasher.combine(item1)
+        hasher.combine(item1 ?? "")
+        hasher.combine(item2 ?? "")
     }
 }

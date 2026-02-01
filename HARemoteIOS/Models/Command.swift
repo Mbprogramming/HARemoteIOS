@@ -1,5 +1,5 @@
 //
-//  ICommand.swift
+//  Command.swift
 //  HARemoteIOS
 //
 //  Created by Markus Bach on 20.01.26.
@@ -9,11 +9,18 @@ import Foundation
 
 @Observable class Command: Decodable, Identifiable, Equatable, Hashable {
     static func == (lhs: Command, rhs: Command) -> Bool {
-        return lhs.id == rhs.id
+        if let lid = lhs.id, let rid = rhs.id {
+            return lid == rid
+        }
+        return false
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        if let id = id {
+            hasher.combine(id)
+        } else {
+            hasher.combine(ObjectIdentifier(self))
+        }
     }
     
     let id: String?

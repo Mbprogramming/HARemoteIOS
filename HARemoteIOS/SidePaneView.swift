@@ -65,7 +65,6 @@ struct ItemView: View {
             } else {
                 modelContext.insert(RemoteFavorite(remoteId: remoteId))
             }
-            try? modelContext.save()
         } catch {
             // Swallow errors for now; you might add logging/UI later.
         }
@@ -93,19 +92,23 @@ struct ItemView: View {
         }
         .contentShape(Rectangle())
         .swipeActions(edge: .leading) {
-            Button("Favorite", systemImage: favorite ? "star" : "star.fill") {
+            Button("Favorite", systemImage: favorite ? "star.fill" : "star") {
                 toggleFavorite(remoteId: remote.id)
             }
-            .tint(favorite ? Color.gray : Color.yellow)
+            .tint(favorite ? Color.yellow : Color.gray)
         }
         .onTapGesture {
             remoteStates = []
             currentRemote = remote
             remoteItemStack.removeAll()
             Task {
-                remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                do {
+                    let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                    remoteStates = entries
+                } catch {
+                    NSLog("Failed to load remote states: \(error)")
+                }
             }
-            try? modelContext.save()
             isVisible = false
         }
     }

@@ -31,7 +31,12 @@ struct RemoteHistoryViewLine: View {
                 currentRemoteItem = remote1.remote
                 remoteItemStack.removeAll()
                 Task {
-                    remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                    do {
+                        let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                        remoteStates = entries
+                    } catch {
+                        NSLog("Failed to load remote states: \(error)")
+                    }
                 }
                 isVisible = false
             }){
@@ -61,7 +66,12 @@ struct RemoteHistoryViewLine: View {
                     currentRemoteItem = remote2.remote
                                         remoteItemStack.removeAll()
                     Task {
-                        remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                        do {
+                            let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                            remoteStates = entries
+                        } catch {
+                            NSLog("Failed to load remote states: \(error)")
+                        }
                     }
                     isVisible = false
                 }){
@@ -93,7 +103,12 @@ struct RemoteHistoryViewLine: View {
                         currentRemoteItem = remote3.remote
                         remoteItemStack.removeAll()
                         Task {
-                            remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                            do {
+                                let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                                remoteStates = entries
+                            } catch {
+                                NSLog("Failed to load remote states: \(error)")
+                            }
                         }
                         isVisible = false
                     }){

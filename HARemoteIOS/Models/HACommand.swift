@@ -8,11 +8,18 @@ import Foundation
 
 @Observable class HACommand: Decodable, Identifiable, Equatable, Hashable {
     static func == (lhs: HACommand, rhs: HACommand) -> Bool {
-        return lhs.id == rhs.id
+        if let lid = lhs.id, let rid = rhs.id {
+            return lid == rid
+        }
+        return false
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        if let id = id {
+            hasher.combine(id)
+        } else {
+            hasher.combine(ObjectIdentifier(self))
+        }
     }
     
     let id: String?

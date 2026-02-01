@@ -53,7 +53,7 @@ enum AutomaticExecutionAtCycle: Decodable, Equatable {
         case .daily: return "Daily"
         case .weekly: return "Weekly"
         case .monthly: return "Monthly"
-        case .unknown(value: let value):
+        case .unknown(_):
             return ""
         }
       }
@@ -142,7 +142,7 @@ enum CheckStateOperationEnum: Decodable {
                     return "!*"
                 case .boolEqual:
                     return "=="
-                case .unknown( _):
+                case .unknown(_):
                     return ""
                 }
             }

@@ -14,9 +14,9 @@ protocol HomeRemoteAPIProtocol {
 }
 
 final class HomeRemoteAPI: HomeRemoteAPIProtocol {
-    @AppStorage("server") var server: String = "http://192.168.5.106:5000"
-    @AppStorage("webserver") var webserver: String = "https://haalexa.azurewebsites.net"
-    @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
+    @AppStorage("server") var server: String = ""
+    @AppStorage("webserver") var webserver: String = ""
+    @AppStorage("username") var username: String = ""
     @AppStorage("application") var application: String = "HARemoteIOS"
     
     static let shared = HomeRemoteAPI()
@@ -144,8 +144,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                NSLog("sendCommand error: \(error.localizedDescription)")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("sendCommand HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+            }
+        }.resume()
         return uuid
     }
     
@@ -187,8 +194,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                NSLog("sendCommandDeferred error: \(error.localizedDescription)")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("sendCommandDeferred HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+            }
+        }.resume()
         if delay > 5 * 60 {
             sendSystemBanner(intervalInSeconds: Double(delay) - (5 * 60), executionId: uuid)
         }
@@ -205,8 +219,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                NSLog("sendCommandDeferredParameter error: \(error.localizedDescription)")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("sendCommandDeferredParameter HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+            }
+        }.resume()
         if delay > 5 * 60 {
             sendSystemBanner(intervalInSeconds: Double(delay) - (5 * 60), executionId: uuid)
         }
@@ -227,8 +248,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                NSLog("sendCommandAt error: \(error.localizedDescription)")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("sendCommandAt HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+            }
+        }.resume()
         return uuid
     }    
     func sendCommandAtParameter(device: String, command: String, parameter: String, at: Date, repeatValue: AutomaticExecutionAtCycle) -> String {
@@ -245,8 +273,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                NSLog("sendCommandAtParameter error: \(error.localizedDescription)")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("sendCommandAtParameter HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+            }
+        }.resume()
         return uuid
     }
     
@@ -282,8 +317,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
         request.setValue("\(application)", forHTTPHeaderField: "X-App")
 
-        let _ = URLSession.shared.dataTask(with: request)
-            .resume()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                NSLog("deleteAutomaticExecution error: \(error.localizedDescription)")
+                return
+            }
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                NSLog("deleteAutomaticExecution HTTP status \(http.statusCode) for \(request.url?.absoluteString ?? "")")
+            }
+        }.resume()
         
         if let bannerId = banner[id] {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [bannerId])

@@ -13,10 +13,10 @@ struct StateItemView: View {
     var body: some View {
         VStack {
             HStack {
-                if state.showImage {
-                    AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: state.icon!)
-                        .frame(width: 40, height: 40)
-                }
+                    if state.showImage, let icon = state.icon {
+                        AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: icon)
+                            .frame(width: 40, height: 40)
+                    }
                 Spacer()
                 VStack {
                     HStack {
@@ -84,15 +84,11 @@ struct StateView: View {
             .scrollContentBackground(.hidden)
             .listRowSeparator(.hidden)
             .refreshable {
-                Task {
-                    do {
-                        let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                        await MainActor.run {
-                            remoteStates = entries
-                        }
-                    } catch {
-                        // handle error if needed
-                    }
+                do {
+                    let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                    remoteStates = entries
+                } catch {
+                    NSLog("Failed refreshing remote states: \(error)")
                 }
             }
             .ignoresSafeArea()

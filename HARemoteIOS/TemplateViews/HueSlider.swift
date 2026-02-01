@@ -57,7 +57,11 @@ struct HueSlider: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.hueComplete)
+                        guard let remoteItem = remoteItem, let device = remoteItem.device, let command = remoteItem.command else {
+                            // Missing remote info; no-op
+                            return
+                        }
+                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: device, command: command, parameter: hueSatBriModel.hueComplete)
                         mainModel.executeCommand(id: id)
                         sliderVisible.toggle()
                     }

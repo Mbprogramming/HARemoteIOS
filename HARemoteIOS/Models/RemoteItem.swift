@@ -10,7 +10,10 @@ import Observation
 
 @Observable class RemoteItem : Decodable, Identifiable, Equatable {
     static func == (lhs: RemoteItem, rhs: RemoteItem) -> Bool {
-        return lhs.id == rhs.id
+        if let lid = lhs.id, let rid = rhs.id {
+            return lid == rid
+        }
+        return lhs === rhs
     }
     
     enum CodingKeys: CodingKey {
@@ -40,7 +43,6 @@ import Observation
         case gridHalfHeight
         case commandMenuItems
         case backgroundImage
-        case _$observationRegistrar
     }
     
     required init(from decoder: any Decoder) throws {

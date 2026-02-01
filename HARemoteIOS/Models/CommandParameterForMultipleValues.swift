@@ -8,7 +8,14 @@
 import Foundation
 
 class CommandParameterForMultipleValues: Decodable, Encodable, Identifiable {
+    var id: UUID = UUID()
     var Ids: [String] = []
     var Descriptions: [String] = []
     var Parameter: String = ""
+
+    private enum CodingKeys: String, CodingKey {
+        case Ids
+        case Descriptions
+        case Parameter
+    }
 }

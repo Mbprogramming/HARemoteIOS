@@ -9,6 +9,7 @@ import Foundation
 import Observation
 
 @Observable class ListViewRow : Identifiable {
+    var id: UUID = UUID()
     var items: [RemoteItem?] = []
     
     var count: Int {

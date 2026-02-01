@@ -83,9 +83,9 @@ import Observation
         if device == nil {
             return []
         }
-        if let device = devices.first(where: {$0.id == device!}) {
-            let temp2 = device.commands?.map(\.emptyGroup!) ?? []
-            return Array(Set(temp2)).sorted(by: {$0 < $1})
+        if let deviceId = device, let device = devices.first(where: { $0.id == deviceId }) {
+            let temp2 = device.commands?.compactMap { $0.emptyGroup } ?? []
+            return Array(Set(temp2)).sorted(by: { $0 < $1 })
         } else {
             return []
         }
@@ -95,8 +95,8 @@ import Observation
         if device == nil || group == nil {
             return []
         }
-        if let device = devices.first(where: {$0.id == device!}) {
-            return device.commands?.filter({$0.emptyGroup == group!}) ?? []
+        if let deviceId = device, let group = group, let device = devices.first(where: { $0.id == deviceId }) {
+            return device.commands?.filter({ $0.emptyGroup == group }) ?? []
         } else {
             return []
         }
@@ -109,10 +109,10 @@ import Observation
                 if cmd.commandType == .Push {
                     var name = device.name ?? " "
                     name += " "
-                    if cmd.description != nil {
-                        name += cmd.description!
-                    } else {
-                        name += cmd.id!
+                    if let desc = cmd.description, !desc.isEmpty {
+                        name += desc
+                    } else if let cid = cmd.id {
+                        name += cid
                     }
                     searchableCommands.append(SearchableCommand(device: device.id, command: cmd.id, commandType: .Push, description: name))
                 }

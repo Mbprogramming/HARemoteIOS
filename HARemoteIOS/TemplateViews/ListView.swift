@@ -65,6 +65,9 @@ struct ListView: View {
                     }
                 }
             }
+            if current.items.count > 0 {
+                rows.append(current)
+            }
         }
     }
     

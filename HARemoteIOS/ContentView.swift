@@ -131,19 +131,16 @@ struct ContentView: View {
     }
     
     private func showChart(id: String?, device: String?, command: String?, url: String?) async {
-        if mainModel.existId(id: id!) {
-            if let url {
-                var newUrl = url.removingPercentEncoding ?? ""
-                if colorScheme == .dark {
-                    newUrl = newUrl + "?forceDark=true"
-                } else {
-                    newUrl = newUrl + "?forceDark=false"
-                }
-                self.url = URL(string: newUrl)
-                DispatchQueue.main.async {
-                    showWebView = true
-                }
-            }
+        guard let id = id, mainModel.existId(id: id), let url = url else { return }
+        var newUrl = url.removingPercentEncoding ?? ""
+        if colorScheme == .dark {
+            newUrl = newUrl + "?forceDark=true"
+        } else {
+            newUrl = newUrl + "?forceDark=false"
+        }
+        self.url = URL(string: newUrl)
+        DispatchQueue.main.async {
+            showWebView = true
         }
     }
     
@@ -195,14 +192,13 @@ struct ContentView: View {
         }
     }    
     private func macroSelectionList(id: String?, question: String, options: [String]?, defaultOption: Int, timeout: Int) async {
-        if mainModel.existId(id: id!) {
-            macroQuestionId = id ?? ""
-            macroQuestion = question
-            macroOptions = options ?? []
-            macroDefaultOption = defaultOption
-            DispatchQueue.main.async {
-                showMacroSelectionList  = true
-            }
+        guard let id = id, mainModel.existId(id: id) else { return }
+        macroQuestionId = id
+        macroQuestion = question
+        macroOptions = options ?? []
+        macroDefaultOption = defaultOption
+        DispatchQueue.main.async {
+            showMacroSelectionList  = true
         }
     }
     
@@ -660,7 +656,8 @@ struct ContentView: View {
                     }
                 }
                 mainModel.searchableCommands.forEach { cmd in
-                    let result = fuse.search(pattern, in: cmd.description!)
+                    guard let desc = cmd.description else { return }
+                    let result = fuse.search(pattern, in: desc)
                     let score = result?.score
                     let range = result?.ranges
                     if result != nil && score != nil && score! < 0.3 {
@@ -865,6 +862,7 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $showWebView) { [url] in
                         webViewSheet
+                    }
                     .task {
                         isLoading = true
                         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
@@ -877,37 +875,43 @@ struct ContentView: View {
                             mainModel.buildSearchableCommands()
                             _ = try await HomeRemoteAPI.shared.getIconsWithoutCharts()
                             orientation = UIDevice.current.orientation
+
                             let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
                             if let lastRemote = tempHistory.first {
-                                if let lastRemoteItem = mainModel.remotes.first(where: {$0.id == lastRemote.remoteId}){
+                                if let lastRemoteItem = mainModel.remotes.first(where: { $0.id == lastRemote.remoteId }) {
                                     mainModel.remoteStates = []
                                     mainModel.currentRemote = lastRemoteItem
-                                    
-                                    let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" })
-                                    if itemToUpdate != nil {
-                                        itemToUpdate?.lastUsed = Date()
+
+                                    if let itemToUpdate = remoteHistory.first(where: { $0.remoteId == mainModel.currentRemote?.id ?? "" }) {
+                                        itemToUpdate.lastUsed = Date()
                                     }
                                     mainModel.remoteItemStack.removeAll()
-                                    Task {
-                                        mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
-                                    }
+                                    mainModel.remoteStates = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: mainModel.currentRemote?.id ?? "")
                                 }
                             }
+
                             try await setupConnection()
+
                             if let mainCmd = IntentHandleService.shared.mainCommandId {
                                 if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
-                                    let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
-                                    mainModel.executeCommand(id: id)
-                                if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
-                                    guard let device = cmd.device, let command = cmd.command else { continue }
-                                    let id = HomeRemoteAPI.shared.sendCommand(device: device, command: command)
-                                    mainModel.executeCommand(id: id)                            }
+                                    if let device = cmd.device, let command = cmd.command {
+                                        let id = HomeRemoteAPI.shared.sendCommand(device: device, command: command)
+                                        mainModel.executeCommand(id: id)
+                                    } else {
+                                        // Missing device/command; clear to avoid retrying
+                                        IntentHandleService.shared.mainCommandId = nil
+                                    }
+                                }
+                                IntentHandleService.shared.mainCommandId = nil
+                            }
+
                             handleIntent()
                         } catch {
                             NSLog("Failed to initialize: \(error)")
                         }
-                        isLoading = false;
-                    }                        DispatchQueue.main.async {
+                        isLoading = false
+
+                        DispatchQueue.main.async {
                             currentTab = 0
                             switch orientation {
                             case .unknown:
@@ -937,10 +941,15 @@ struct ContentView: View {
                             }
                         }
                     }
+                    }
                     .onChange(of: IntentHandleService.shared.mainCommandId) {
                         if let mainCmd = IntentHandleService.shared.mainCommandId {
                             if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
-                                let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
+                                guard let device = cmd.device, let command = cmd.command else {
+                                    IntentHandleService.shared.mainCommandId = nil
+                                    return
+                                }
+                                let id = HomeRemoteAPI.shared.sendCommand(device: device, command: command)
                                 mainModel.executeCommand(id: id)
                             }
                             IntentHandleService.shared.mainCommandId = nil

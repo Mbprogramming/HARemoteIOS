@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Observation
 
 @Observable
 final class SearchableCommand : Identifiable {
@@ -13,8 +14,14 @@ final class SearchableCommand : Identifiable {
     var command: String?
     var commandType: CommandType?
     var description: String?
+    private let uuid = UUID()
     var id: String {
-        (device ?? "") + "-" + (command ?? "")
+        let dev = device ?? ""
+        let cmd = command ?? ""
+        if dev.isEmpty && cmd.isEmpty {
+            return uuid.uuidString
+        }
+        return "\(dev)-\(cmd)"
     }
 
     init(device: String? = nil, command: String? = nil, commandType: CommandType? = nil, description: String? = nil) {

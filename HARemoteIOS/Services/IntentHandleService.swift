@@ -7,7 +7,7 @@
 
 import Foundation
 
-@Observable
+@MainActor @Observable
 public class IntentHandleService: @unchecked Sendable {
     
     public var intentType: String? = nil

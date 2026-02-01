@@ -14,9 +14,9 @@ final class RemoteFavorite {
     var user: String
     var server: String
     
-    init(remoteId: String = "") {
+    init(remoteId: String = "", user: String = "", server: String = "") {
         self.remoteId = remoteId
-        self.user = "mbprogramming@googlemail.com"
-        self.server = "192.168.5.106:5000"
+        self.user = user
+        self.server = server
     }
 }
