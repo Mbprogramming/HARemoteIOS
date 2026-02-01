@@ -158,10 +158,10 @@ import Observation
     
     var temperatureString: String {
         get {
+            guard temperature != 0 else { return "N/A" }
             return "\((1000000 / Double(temperature)).rounded())K"
         }
-    }
-    
+    }    
     var saturationDouble: Double {
         get {
             return Double(saturation - saturationMin) / Double(saturationMax - saturationMin)

@@ -66,7 +66,12 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     }
     
     func getSpecificState(device: String?, id: String?) async throws -> HAState? {
-        guard let url = URL(string: "\(server)/api/homeautomation/specificstate?device=\(device ?? "")&id=\(id ?? "")") else { return nil }
+        guard var components = URLComponents(string: "\(server)/api/homeautomation/specificstate") else { return nil }
+        components.queryItems = [
+            URLQueryItem(name: "device", value: device ?? ""),
+            URLQueryItem(name: "id", value: id ?? "")
+        ]
+        guard let url = components.url else { return nil }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
@@ -76,8 +81,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         
         let decoder = JSONDecoder()
         return try decoder.decode(HAState.self, from: data)
-    }
-    
+    }    
     func getRemotes() async throws -> [Remote] {
         if remotes.count <= 0 {
             guard let url = URL(string: "\(server)/api/homeautomation/remotes") else { return [] }
@@ -215,7 +219,8 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         iso8601.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let atStr = iso8601.string(from: at)
         let repeatStr = repeatValue.description
-        let urlString = "\(server)/api/HomeAutomation/CommandAt?id=\(uuid)&device=\(device)&command=\(command)&at=\(atStr)&cycle=\(repeatStr)"
+        let encodedAt = atStr.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlString = "\(server)/api/HomeAutomation/CommandAt?id=\(uuid)&device=\(device)&command=\(command)&at=\(encodedAt)&cycle=\(repeatStr)"
         guard let url = URL(string: urlString) else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -225,8 +230,7 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         let _ = URLSession.shared.dataTask(with: request)
             .resume()
         return uuid
-    }
-    
+    }    
     func sendCommandAtParameter(device: String, command: String, parameter: String, at: Date, repeatValue: AutomaticExecutionAtCycle) -> String {
         let uuid = UUID().uuidString
         let iso8601 = ISO8601DateFormatter()

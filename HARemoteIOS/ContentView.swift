@@ -184,18 +184,16 @@ struct ContentView: View {
     }
     
     private func macroQuestion(id: String?, question: String?, yesOption: String?, noOption: String?, defaultOption: Int, timeout: Int) async {
-        if mainModel.existId(id: id!) {
-            macroQuestionId = id ?? ""
-            macroQuestion = question ?? ""
-            macroYesOption = yesOption ?? ""
-            macroNoOption = noOption ?? ""
-            macroDefaultOption = defaultOption
-            DispatchQueue.main.async {
-                showMacroQuestion = true
-            }
+        guard let id = id, mainModel.existId(id: id) else { return }
+        macroQuestionId = id
+        macroQuestion = question ?? ""
+        macroYesOption = yesOption ?? ""
+        macroNoOption = noOption ?? ""
+        macroDefaultOption = defaultOption
+        DispatchQueue.main.async {
+            showMacroQuestion = true
         }
-    }
-    
+    }    
     private func macroSelectionList(id: String?, question: String, options: [String]?, defaultOption: Int, timeout: Int) async {
         if mainModel.existId(id: id!) {
             macroQuestionId = id ?? ""
@@ -652,8 +650,9 @@ struct ContentView: View {
                 var tempSearchResults: [SearchResult] = []
                 
                 mainModel.mainCommands.forEach { cmd in
-                    let result = fuse.search(pattern, in: cmd.description!)
-                    let score = result?.score
+                guard let description = cmd.description else { return }
+                let result = fuse.search(pattern, in: description)
+                let score = result?.score
                     let range = result?.ranges
                     if result != nil && score != nil && score! < 0.3 {
                         let sc = SearchableCommand(device: cmd.device, command: cmd.command, commandType: .Push, description: cmd.description)
@@ -866,7 +865,6 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $showWebView) { [url] in
                         webViewSheet
-                    }
                     .task {
                         isLoading = true
                         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
@@ -900,17 +898,16 @@ struct ContentView: View {
                                 if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
                                     let id = HomeRemoteAPI.shared.sendCommand(device: cmd.device!, command: cmd.command!)
                                     mainModel.executeCommand(id: id)
-                                }
-                                IntentHandleService.shared.mainCommandId = nil
-                            }
+                                if let cmd = mainModel.mainCommands.first(where: { $0.id == mainCmd }) {
+                                    guard let device = cmd.device, let command = cmd.command else { continue }
+                                    let id = HomeRemoteAPI.shared.sendCommand(device: device, command: command)
+                                    mainModel.executeCommand(id: id)                            }
                             handleIntent()
                         } catch {
-                            
+                            NSLog("Failed to initialize: \(error)")
                         }
                         isLoading = false;
-                    }
-                    .onChange(of: mainModel.currentRemote) {
-                        DispatchQueue.main.async {
+                    }                        DispatchQueue.main.async {
                             currentTab = 0
                             switch orientation {
                             case .unknown:
