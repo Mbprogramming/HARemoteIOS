@@ -143,16 +143,21 @@ struct TempBriSlider: View {
                 endPoint: .trailing
             )
             
+            // Safely compute color for brightness gradient, avoiding division by zero
+            let tempKelvinForBrightness: Double
+            if hueSatBriModel.temperature == 0 {
+                tempKelvinForBrightness = 2000.0
+            } else {
+                tempKelvinForBrightness = 1000000.0 / max(1.0, Double(hueSatBriModel.temperature))
+            }
             let brightnessGradient = LinearGradient(
-                        gradient: Gradient(stops: [
-                            // Startpunkt (0% Helligkeit = Schwarz, da brightness 0.0 ist)
-                            Gradient.Stop(color: Color(hue: 0.0, saturation: 0.0, brightness: 0.0), location: 0.0),
-                            // Endpunkt (100% Helligkeit der Basisfarbe)
-                            Gradient.Stop(color: colorTemperatureToRGB((1000000 / Double(hueSatBriModel.temperature))), location: 1.0)
-                        ]),
-                        startPoint: .leading, // Beginnt links
-                        endPoint: .trailing   // Endet rechts
-                    )
+                gradient: Gradient(stops: [
+                    Gradient.Stop(color: Color(hue: 0.0, saturation: 0.0, brightness: 0.0), location: 0.0),
+                    Gradient.Stop(color: colorTemperatureToRGB(tempKelvinForBrightness), location: 1.0)
+                ]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
             
             VStack {
                 Text("Temperature")

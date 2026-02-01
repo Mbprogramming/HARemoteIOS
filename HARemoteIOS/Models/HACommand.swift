@@ -1,6 +1,7 @@
 //
 //  HACommand.swift
-//  HARemoteIOS//
+//  HARemoteIOS
+//
 //  Created by Markus Bach on 20.01.26.
 //
 

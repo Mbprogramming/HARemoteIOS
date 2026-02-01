@@ -125,150 +125,42 @@ struct RemoteBaseButton: View {
                 }
                 .padding()
             Divider()
-                VStack {
-                    if deferredType == 0 {
-                        DatePicker(
-                            "Delay",
-                            selection: $deferredDate,
-                            displayedComponents: [.hourAndMinute]
-                        )
+                @ViewBuilder
+                func deferredPicker(_ date: Binding<Date>, label: String, components: DatePickerComponents, tag: Int) -> some View {
+                    DatePicker(label, selection: date, displayedComponents: components)
                         .padding()
-                        Spacer()
-                        HStack {
-                            Button("Cancel", systemImage: "xmark.circle") {
-                                showDeferred.toggle()
-                            }
-                            .padding()
-                            Spacer()
-                            Button("OK", systemImage: "checkmark.circle") {
-                                showDeferred = false
-                                if actionDeferred != nil {
-                                    actionDeferred!(deferredDate, 0)
-                                }
-                            }
+                    Spacer()
+                    HStack {
+                        Button("Cancel", systemImage: "xmark.circle") {
+                            showDeferred.toggle()
                         }
                         .padding()
-                    } else {
-                        if deferredType == 1 {
-                            DatePicker(
-                                "Delay",
-                                selection: $deferredDate,
-                                displayedComponents: [.hourAndMinute]
-                            )
-                            .padding()
-                            Spacer()
-                            HStack {
-                                Button("Cancel", systemImage: "xmark.circle") {
-                                    showDeferred.toggle()
-                                }
-                                .padding()
-                                Spacer()
-                                Button("OK", systemImage: "checkmark.circle") {
-                                    showDeferred = false
-                                    if actionDeferred != nil {
-                                        actionDeferred!(deferredDate, 1)
-                                    }
-                                }
-                            }
-                            .padding()
-                        } else {
-                            if deferredType == 2 {
-                                DatePicker(
-                                    "At",
-                                    selection: $atDate,
-                                    displayedComponents: [.date, .hourAndMinute]
-                                )
-                                .padding()
-                                Spacer()
-                                HStack {
-                                    Button("Cancel", systemImage: "xmark.circle") {
-                                        showDeferred.toggle()
-                                    }
-                                    .padding()
-                                    Spacer()
-                                    Button("OK", systemImage: "checkmark.circle") {
-                                        showDeferred = false
-                                        if actionDeferred != nil {
-                                            actionDeferred!(atDate, 2)
-                                        }
-                                    }
-                                }
-                                .padding()
-                            } else {
-                                if deferredType == 3 {
-                                    DatePicker(
-                                        "At",
-                                        selection: $atDate,
-                                        displayedComponents: [.date, .hourAndMinute]
-                                    )
-                                    .padding()
-                                    Spacer()
-                                    HStack {
-                                        Button("Cancel", systemImage: "xmark.circle") {
-                                            showDeferred.toggle()
-                                        }
-                                        .padding()
-                                        Spacer()
-                                        Button("OK", systemImage: "checkmark.circle") {
-                                            showDeferred = false
-                                            if actionDeferred != nil {
-                                                actionDeferred!(atDate, 3)
-                                            }
-                                        }
-                                    }
-                                    .padding()
-                                } else {
-                                    if deferredType == 4 {
-                                        DatePicker(
-                                            "At",
-                                            selection: $atDate,
-                                            displayedComponents: [.date, .hourAndMinute]
-                                        )
-                                        .padding()
-                                        Spacer()
-                                        HStack {
-                                            Button("Cancel", systemImage: "xmark.circle") {
-                                                showDeferred.toggle()
-                                            }
-                                            .padding()
-                                            Spacer()
-                                            Button("OK", systemImage: "checkmark.circle") {
-                                                showDeferred = false
-                                                if actionDeferred != nil {
-                                                    actionDeferred!(atDate, 4)
-                                                }
-                                            }
-                                        }
-                                        .padding()
-                                    } else {
-                                        if deferredType == 5 {
-                                            DatePicker(
-                                                "At",
-                                                selection: $atDate,
-                                                displayedComponents: [.date, .hourAndMinute]
-                                            )
-                                            .padding()
-                                            Spacer()
-                                            HStack {
-                                                Button("Cancel", systemImage: "xmark.circle") {
-                                                    showDeferred.toggle()
-                                                }
-                                                .padding()
-                                                Spacer()
-                                                Button("OK", systemImage: "checkmark.circle") {
-                                                    showDeferred = false
-                                                    if actionDeferred != nil {
-                                                        actionDeferred!(atDate, 5)
-                                                    }
-                                                }
-                                            }
-                                            .padding()
-                                        }
-                                    }
-                                }
+                        Spacer()
+                        Button("OK", systemImage: "checkmark.circle") {
+                            showDeferred = false
+                            if let actionDeferred = actionDeferred {
+                                actionDeferred(date.wrappedValue, tag)
                             }
                         }
                     }
+                    .padding()
+                }
+
+                switch deferredType {
+                case 0:
+                    deferredPicker($deferredDate, label: "Delay", components: [.hourAndMinute], tag: 0)
+                case 1:
+                    deferredPicker($deferredDate, label: "Delay", components: [.hourAndMinute], tag: 1)
+                case 2:
+                    deferredPicker($atDate, label: "At", components: [.date, .hourAndMinute], tag: 2)
+                case 3:
+                    deferredPicker($atDate, label: "At", components: [.date, .hourAndMinute], tag: 3)
+                case 4:
+                    deferredPicker($atDate, label: "At", components: [.date, .hourAndMinute], tag: 4)
+                case 5:
+                    deferredPicker($atDate, label: "At", components: [.date, .hourAndMinute], tag: 5)
+                default:
+                    EmptyView()
                 }
             }
             .padding()

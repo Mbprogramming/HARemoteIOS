@@ -252,8 +252,8 @@ struct ContentView: View {
             let updated: [HAState] = mainModel.remoteStates.map { s in
                 if s.device == device && s.id == state {
                     var colorIn: Int64? = nil
-                    if color != nil {
-                        colorIn = Int64(color!)
+                    if let colorStr = color, let colorVal = Int64(colorStr) {
+                        colorIn = colorVal
                     }
                     return HAState(
                         id: s.id,
@@ -993,8 +993,9 @@ struct ContentView: View {
                             modelContext.insert(RemoteHistoryEntry(remoteId: mainModel.currentRemote?.id ?? ""))
                         }
                         try? modelContext.save()
-                        if remoteHistory.count > 6 {
-                            let indexSet = IndexSet(integersIn: 6...remoteHistory.count - 1)
+                        let tempHistory = remoteHistory.sorted { $0.lastUsed > $1.lastUsed }
+                        if tempHistory.count > 6 {
+                            let indexSet = IndexSet(integersIn: 6..<tempHistory.count)
                             deleteHistory(indexSet: indexSet)
                         }
                         try? modelContext.save()

@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor @Observable
-public class IntentHandleService: @unchecked Sendable {
+public class IntentHandleService {
     
     public var intentType: String? = nil
     public var command: String? = nil
@@ -16,7 +16,7 @@ public class IntentHandleService: @unchecked Sendable {
     public var remote: String? = nil
     public var mainCommandId: String? = nil
 
-    static let shared = IntentHandleService()
+    public static let shared = IntentHandleService()
     
     private init() {
     }

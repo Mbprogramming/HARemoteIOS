@@ -13,17 +13,8 @@ struct RemoteToggle: View {
     var targetHeight: CGFloat = 220
     
     var remoteItem: RemoteItem? {
-        get {
-            return _remoteItem
-        }
-        set {
-            _remoteItem = newValue
-            if let newValue {
-                if newValue.steps != nil && newValue.steps!.count > 0 {
-                    _compareValues = newValue.steps!
-                }
-            }
-        }
+        get { _remoteItem }
+        set { _remoteItem = newValue }
     }
     
     @Binding var currentRemoteItem: RemoteItem?
@@ -41,6 +32,9 @@ struct RemoteToggle: View {
         self._mainModel = mainModel
         self._remoteStates = remoteStates
         self.remoteItem = remoteItem
+        if let rv = remoteItem, let steps = rv.steps, !steps.isEmpty {
+            self._compareValues = steps
+        }
     }
     
     // Compute the current IState for this toggle, if available

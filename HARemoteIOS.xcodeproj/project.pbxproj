@@ -108,17 +108,14 @@
 		2C813FD92ED0A93A00BE0709 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-        };
-				2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */,
-				2C813FEF2ED0A93F00BE0709 /* HARemoteIOSUITests.xctest */,
+			2C813FE52ED0A93E00BE0709 /* HARemoteIOSTests.xctest */,
+			2C813FEF2ED0A93F00BE0709 /* HARemoteIOSUITests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-			);
-			sourceTree = "<group>";
 		2C813FD72ED0A93A00BE0709 /* HARemoteIOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2C813FF92ED0A93F00BE0709 /* Build configuration list for PBXNativeTarget "HARemoteIOS" */;

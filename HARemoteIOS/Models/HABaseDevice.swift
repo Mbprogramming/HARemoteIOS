@@ -16,7 +16,11 @@ import Observation
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        if let id = id {
+            hasher.combine(id)
+        } else {
+            hasher.combine(ObjectIdentifier(self))
+        }
     }
 
     let id: String?

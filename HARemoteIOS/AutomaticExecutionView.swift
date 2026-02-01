@@ -840,7 +840,7 @@ struct AutomaticExecutionView: View {
             Task {
                 do {
                     if currentSelectedState != nil {
-                        currentStateValue = try? await HomeRemoteAPI.shared.getSpecificState(device: currentSelectedState!.device, id: currentSelectedState!.id)
+                        currentStateValue = try await HomeRemoteAPI.shared.getSpecificState(device: currentSelectedState!.device, id: currentSelectedState!.id)
                     }
                 } catch {
                     // handle error if needed

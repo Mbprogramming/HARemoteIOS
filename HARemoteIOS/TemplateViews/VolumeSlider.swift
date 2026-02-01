@@ -69,48 +69,34 @@ struct VolumeSlider: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        if delay != nil && delayType != nil {
-                            if delayType! == 0 {
-                                let hour = Calendar.current.component(.hour, from: delay!)
-                                let minute = Calendar.current.component(.minute, from: delay!)
-                                let delay = (hour * 60 * 60) + (minute * 60)
-                                let id = HomeRemoteAPI.shared.sendCommandDeferredParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", delay: delay, cyclic: false)
+                        if let delayDate = delay, let dt = delayType {
+                            switch dt {
+                            case 0, 1:
+                                let hour = Calendar.current.component(.hour, from: delayDate)
+                                let minute = Calendar.current.component(.minute, from: delayDate)
+                                let delaySeconds = (hour * 60 * 60) + (minute * 60)
+                                let id = HomeRemoteAPI.shared.sendCommandDeferredParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", delay: delaySeconds, cyclic: dt == 1)
                                 mainModel.executeCommand(id: id)
-                            } else {
-                                if delayType! == 1 {
-                                    let hour = Calendar.current.component(.hour, from: delay!)
-                                    let minute = Calendar.current.component(.minute, from: delay!)
-                                    let delay = (hour * 60 * 60) + (minute * 60)
-                                    let id = HomeRemoteAPI.shared.sendCommandDeferredParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", delay: delay, cyclic: true)
-                                    mainModel.executeCommand(id: id)
-                                } else {
-                                    if delayType! == 2 {
-                                        let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delay!, repeatValue: .none)
-                                        mainModel.executeCommand(id: id)
-                                    } else {
-                                        if delayType! == 3 {
-                                            let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delay!, repeatValue: .daily)
-                                            mainModel.executeCommand(id: id)
-                                        } else {
-                                            if delayType! == 4 {
-                                                let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delay!, repeatValue: .weekly)
-                                                mainModel.executeCommand(id: id)
-                                            } else {
-                                                if delayType! == 5 {
-                                                    let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delay!, repeatValue: .monthly)
-                                                    mainModel.executeCommand(id: id)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                            case 2:
+                                let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delayDate, repeatValue: .none)
+                                mainModel.executeCommand(id: id)
+                            case 3:
+                                let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delayDate, repeatValue: .daily)
+                                mainModel.executeCommand(id: id)
+                            case 4:
+                                let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delayDate, repeatValue: .weekly)
+                                mainModel.executeCommand(id: id)
+                            case 5:
+                                let id = HomeRemoteAPI.shared.sendCommandAtParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)", at: delayDate, repeatValue: .monthly)
+                                mainModel.executeCommand(id: id)
+                            default:
+                                break
                             }
-
                         } else {
                             let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: "\(value)")
                             mainModel.executeCommand(id: id)
                         }
-                        
+
                         sliderVisible.toggle()
                     }
                     .padding()

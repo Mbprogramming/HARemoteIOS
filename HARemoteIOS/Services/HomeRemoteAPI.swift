@@ -197,8 +197,15 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     
     func sendCommandDeferred(device: String, command: String, delay: Int, cyclic: Bool = false) -> String {
         let uuid = UUID().uuidString
-        let urlString = "\(server)/api/HomeAutomation/CommandDeferred?id=\(uuid)&device=\(device)&command=\(command)&delay=\(delay)&cyclic=\((cyclic ? "true" : "false"))"
-        guard let url = URL(string: urlString) else { return "" }
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/CommandDeferred") else { return "" }
+        components.queryItems = [
+            URLQueryItem(name: "id", value: uuid),
+            URLQueryItem(name: "device", value: device),
+            URLQueryItem(name: "command", value: command),
+            URLQueryItem(name: "delay", value: String(delay)),
+            URLQueryItem(name: "cyclic", value: cyclic ? "true" : "false")
+        ]
+        guard let url = components.url else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
@@ -222,8 +229,16 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
     func sendCommandDeferredParameter(device: String, command: String, parameter: String, delay: Int, cyclic: Bool = false) -> String {
         let uuid = UUID().uuidString
         let myParameter = escapingUrl(url: parameter) ?? ""
-        let urlString = "\(server)/api/HomeAutomation/CommandParameterDeferred?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter)&delay=\(delay)&cyclic=\((cyclic ? "true" : "false"))"
-        guard let url = URL(string: urlString) else { return "" }
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/CommandParameterDeferred") else { return "" }
+        components.queryItems = [
+            URLQueryItem(name: "id", value: uuid),
+            URLQueryItem(name: "device", value: device),
+            URLQueryItem(name: "command", value: command),
+            URLQueryItem(name: "parameter", value: myParameter),
+            URLQueryItem(name: "delay", value: String(delay)),
+            URLQueryItem(name: "cyclic", value: cyclic ? "true" : "false")
+        ]
+        guard let url = components.url else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")
@@ -276,8 +291,16 @@ final class HomeRemoteAPI: HomeRemoteAPIProtocol {
         let atStr = iso8601.string(from: at)
         let repeatStr = repeatValue.description
         let myParameter = escapingUrl(url: parameter) ?? ""
-        let urlString = "\(server)/api/HomeAutomation/CommandParameterAt?id=\(uuid)&device=\(device)&command=\(command)&parameter=\(myParameter)&at=\(atStr)&cycle=\(repeatStr)"
-        guard let url = URL(string: urlString) else { return "" }
+        guard var components = URLComponents(string: "\(server)/api/HomeAutomation/CommandParameterAt") else { return "" }
+        components.queryItems = [
+            URLQueryItem(name: "id", value: uuid),
+            URLQueryItem(name: "device", value: device),
+            URLQueryItem(name: "command", value: command),
+            URLQueryItem(name: "parameter", value: myParameter),
+            URLQueryItem(name: "at", value: atStr),
+            URLQueryItem(name: "cycle", value: repeatStr)
+        ]
+        guard let url = components.url else { return "" }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("\(username)", forHTTPHeaderField: "X-User")

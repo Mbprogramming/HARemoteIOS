@@ -100,7 +100,13 @@ struct TempSlider: View {
                     .padding()
                     Spacer()
                     Button("OK", systemImage: "checkmark.circle") {
-                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "", parameter: hueSatBriModel.tempComplete)
+                        guard let device = remoteItem?.device, !device.isEmpty,
+                              let command = remoteItem?.command, !command.isEmpty else {
+                            // Missing device/command; skip action
+                            sliderVisible.toggle()
+                            return
+                        }
+                        let id = HomeRemoteAPI.shared.sendCommandParameter(device: device, command: command, parameter: hueSatBriModel.tempComplete)
                         mainModel.executeCommand(id: id)
                         sliderVisible.toggle()
                     }

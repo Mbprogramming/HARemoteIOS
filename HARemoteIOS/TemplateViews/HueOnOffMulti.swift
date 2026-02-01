@@ -72,25 +72,17 @@ struct HueOnOffMulti: View {
                                 }
                                 .padding()
                                 Spacer()
-                                Button("OK", systemImage: "checkmark.circle") {
-                                    var sel: String = ""
-                                    for s in selection {
-                                        if let i1 = s.item1 {
-                                            sel.append(i1)
-                                            sel.append(",")
+                                    Button("OK", systemImage: "checkmark.circle") {
+                                        let sel = selection.compactMap { $0.item1 }.joined(separator: ",")
+                                        let entry = HueMultiEntry(name: name, ids: sel)
+                                        modelContext.insert(entry)
+                                        do {
+                                            try modelContext.save()
+                                        } catch {
+                                            print("Failed to save HueMultiEntry: \(error)")
                                         }
+                                        showSaveBox.toggle()
                                     }
-                                    let entry = HueMultiEntry(name: name, ids: sel)
-                                    modelContext.insert(entry)
-                                    
-                                    do {
-                                        try modelContext.save()
-                                    } catch {
-                                        // Consider presenting an alert or logging the error in production
-                                        print("Failed to save HueMultiEntry: \(error)")
-                                    }
-                                    showSaveBox.toggle()
-                                }
                             }
                         }
                         .padding()

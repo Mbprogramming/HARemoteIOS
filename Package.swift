@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
     name: "signalr-client-app",
     dependencies: [
-        .package(url: "https://github.com/dotnet/signalr-client-swift", branch: "main")
+        .package(url: "https://github.com/dotnet/signalr-client-swift", .upToNextMinor(from: "1.0.0"))
     ],
     targets: [
         .executableTarget(name: "HARemoteIOS", dependencies: [.product(name: "SignalRClient", package: "signalr-client-swift")])

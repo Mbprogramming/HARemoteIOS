@@ -13,8 +13,6 @@ import Observation
     let item1: String?
     let item2: String?
 
-    private let uuid = UUID()
-
     // Provide a deterministic id derived from the pair (item1,item2)
     var id: String { "\(item1 ?? "<nil>")|\(item2 ?? "<nil>")" }
 

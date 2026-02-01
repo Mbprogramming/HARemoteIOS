@@ -10,17 +10,17 @@ import SwiftData
 import Kingfisher
 
 struct UserSettings: View {
-    @AppStorage("server") var server: String = "http://192.168.5.106:5000"
-    @AppStorage("webserver") var webserver: String = "https://haalexa.azurewebsites.net"
-    @AppStorage("username") var username: String = "mbprogramming@googlemail.com"
-    @AppStorage("application") var application: String = "HARemoteIOS"
+    @AppStorage("server") var server: String = ""
+    @AppStorage("webserver") var webserver: String = ""
+    @AppStorage("username") var username: String = ""
+    @AppStorage("application") var application: String = "APP_NAME_PLACEHOLDER"
     
     @Environment(\.modelContext) var modelContext
     
     @Query(sort: \HueMultiEntry.name, order: .forward) var multiEntries: [HueMultiEntry]
     
-    @State var showAlert = false
-    @State var cacheSizeResult: Result<UInt, KingfisherError>? = nil
+    private @State var showAlert = false
+    private @State var cacheSizeResult: Result<UInt, KingfisherError>? = nil
 
     var body: some View {
             Form {

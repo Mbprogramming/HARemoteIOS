@@ -45,10 +45,10 @@ struct OverallGaugeStyle<Content: View>: GaugeStyle {
           .frame(width: 250, height: 250)
       }
       
-      configuration.currentValueLabel
-        .fontWeight(.bold)
-        .font(.title2)
-        .foregroundColor(Color.black)
+            configuration.currentValueLabel
+                .fontWeight(.bold)
+                .font(.title2)
+                .foregroundColor(Color.primary)
     }
   }
 }

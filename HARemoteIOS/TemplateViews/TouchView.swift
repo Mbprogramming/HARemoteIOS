@@ -151,7 +151,7 @@ struct TouchView: View {
                         .glassEffect(.regular, in: .rect(cornerRadius: 10))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
-                        .gesture(TapGesture(count: 1)
+                        .simultaneousGesture(TapGesture(count: 1)
                             .onEnded {
                                 triggerTap += 1
                                 if remoteItems.count > 4 {

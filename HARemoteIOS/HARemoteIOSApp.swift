@@ -29,7 +29,7 @@ struct HARemoteIOSApp: App {
                     title: Text("Please Give Us a Second Chance"),
                     message: Text("We’d love your feedback before you uninstall."),
                     primaryButton: .default(Text("Send Feedback")) {
-                        if let mailUrl = URL(string: "mailto:feedback@seeb.example?subject=HARemoteIOS%20Feedback") {
+                        if let mailUrl = URL(string: "mailto:support@seeb.de?subject=HARemoteIOS%20Feedback") {
                             UIApplication.shared.open(mailUrl, options: [:], completionHandler: nil)
                         } else {
                             NSLog("Feedback action: mailto URL invalid")

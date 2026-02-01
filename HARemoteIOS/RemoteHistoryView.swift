@@ -25,116 +25,70 @@ struct RemoteHistoryViewLine: View {
         
     var body: some View {
         HStack {
-            Button(action: {
-                remoteStates = []
-                currentRemote = remote1
-                currentRemoteItem = remote1.remote
-                remoteItemStack.removeAll()
-                Task {
-                    do {
-                        let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                        remoteStates = entries
-                    } catch {
-                        NSLog("Failed to load remote states: \(error)")
-                    }
-                }
-                isVisible = false
-            }){
-                VStack {
-                    if remote1.icon != nil {
-                        AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote1.icon!)
-                            .frame(width: 40, height: 40)
-                    }
-                    Text(remote1.description)
-                        .truncationMode(.middle)
-                        .allowsTightening(true)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.3)
-                        .font(.title)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .frame(width: 100, height: 100)
-            //.glassEffect(.regular, in: .capsule)
-            .buttonStyle(.borderless)
-            .foregroundStyle(colorScheme == .dark ? .white : .black)
-            .padding()
-            if let remote2 {
-                Button(action: {
-                    remoteStates = []
-                    currentRemote = remote2
-                    currentRemoteItem = remote2.remote
-                                        remoteItemStack.removeAll()
-                    Task {
-                        do {
-                            let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                            remoteStates = entries
-                        } catch {
-                            NSLog("Failed to load remote states: \(error)")
-                        }
-                    }
-                    isVisible = false
-                }){
-                    VStack {
-                        if remote2.icon != nil {
-                            AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote2.icon!)
-                                .frame(width: 40, height: 40)
-                        }
-                        Text(remote2.description)
-                            .truncationMode(.middle)
-                            .allowsTightening(true)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.3)
-                            .font(.title)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
+            RemoteHistoryButton(remote: remote1, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible)
                 .frame(width: 100, height: 100)
-                //.glassEffect(.regular, in: .)
-                .buttonStyle(.borderless)
-                .foregroundStyle(colorScheme == .dark ? .white : .black)
                 .padding()
+            if let remote2 {
+                RemoteHistoryButton(remote: remote2!, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible)
+                    .frame(width: 100, height: 100)
+                    .padding()
             }
             if orientation == .landscapeLeft || orientation == .landscapeRight {
                 if let remote3 {
-                    Button(action: {
-                        remoteStates = []
-                        currentRemote = remote3
-                        currentRemoteItem = remote3.remote
-                        remoteItemStack.removeAll()
-                        Task {
-                            do {
-                                let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
-                                remoteStates = entries
-                            } catch {
-                                NSLog("Failed to load remote states: \(error)")
-                            }
-                        }
-                        isVisible = false
-                    }){
-                        VStack {
-                            if remote3.icon != nil {
-                                AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote3.icon!)
-                                    .frame(width: 40, height: 40)
-                            }
-                            Text(remote3.description)
-                                .truncationMode(.middle)
-                                .allowsTightening(true)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.3)
-                                .font(.title)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    .frame(width: 100, height: 100)
-                    //.glassEffect(.regular, in: .)
-                    .buttonStyle(.borderless)
-                    .foregroundStyle(colorScheme == .dark ? .white : .black)
-                    .padding()
+                    RemoteHistoryButton(remote: remote3!, currentRemote: $currentRemote, currentRemoteItem: $currentRemoteItem, remoteStates: $remoteStates, remoteItemStack: $remoteItemStack, isVisible: $isVisible)
+                        .frame(width: 100, height: 100)
+                        .padding()
                 }
             }
         }
     }
+
+struct RemoteHistoryButton: View {
+    var remote: Remote
+    @Binding var currentRemote: Remote?
+    @Binding var currentRemoteItem: RemoteItem?
+    @Binding var remoteStates: [HAState]
+    @Binding var remoteItemStack: [RemoteItem]
+    @Binding var isVisible: Bool
+
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+
+    var body: some View {
+        Button(action: performAction) {
+            VStack {
+                if remote.icon != nil {
+                    AsyncServerImage(imageWidth: 40, imageHeight: 40, imageId: remote.icon!)
+                        .frame(width: 40, height: 40)
+                }
+                Text(remote.description)
+                    .truncationMode(.middle)
+                    .allowsTightening(true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.3)
+                    .font(.title)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .buttonStyle(.borderless)
+        .foregroundStyle(colorScheme == .dark ? .white : .black)
+    }
+
+    private func performAction() {
+        remoteStates = []
+        currentRemote = remote
+        currentRemoteItem = remote.remote
+        remoteItemStack.removeAll()
+        Task {
+            do {
+                let entries = try await HomeRemoteAPI.shared.getRemoteStates(remoteId: currentRemote?.id ?? "")
+                remoteStates = entries
+            } catch {
+                NSLog("Failed to load remote states: \(error)")
+            }
+        }
+        isVisible = false
+    }
+}
 }
 
 struct RemoteHistoryView: View {
