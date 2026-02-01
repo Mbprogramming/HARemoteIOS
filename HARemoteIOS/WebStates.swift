@@ -21,14 +21,12 @@ struct WebStates: View {
             states = (try? await HomeRemoteAPI.shared.getWebStateGroups()) ?? []
         }
         .refreshable {
-            Task {
-                do {
-                    states = (try await HomeRemoteAPI.shared.getWebStateGroups())
-                } catch {
-                    // handle error if needed
-                }
+            do {
+                states = try await HomeRemoteAPI.shared.getWebStateGroups()
+            } catch {
+                // handle error if needed
             }
-        }
+        }    
     }
 }
 

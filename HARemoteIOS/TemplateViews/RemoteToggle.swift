@@ -70,18 +70,19 @@ struct RemoteToggle: View {
             Toggle("", isOn: $isOn)
                 .labelsHidden()
                 .onAppear {
+                    hasInitializedFromState = false
                     isOn = isStateOn
+                    hasInitializedFromState = true
                 }
                 .onChange(of: isOn) { _, _ in
-                    if isOn != isStateOn {
+                    if hasInitializedFromState && isOn != isStateOn {
                         let id = HomeRemoteAPI.shared.sendCommand(device: remoteItem?.device ?? "", command: remoteItem?.command ?? "")
                         mainModel.executeCommand(id: id)
                     }
                 }
                 .onChange(of: remoteStates) {
                     isOn = isStateOn
-                }
-            
+                }            
             Text(remoteItem?.description ?? "")
                 .truncationMode(.middle)
                 .allowsTightening(true)

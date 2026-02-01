@@ -27,11 +27,13 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
     func handleShortcutItem(_ shortcutItem: UIApplicationShortcutItem) {
         switch shortcutItem.type {
         case "seeb.HARemoteIOS.mainCommand":
-            let str = shortcutItem.userInfo!["id"] as! String
+            guard let userInfo = shortcutItem.userInfo,
+                  let str = userInfo["id"] as? String else {
+                return
+            }
             IntentHandleService.shared.mainCommandId = str
         default:
             return
         }
-    }
-}
+    }}
 

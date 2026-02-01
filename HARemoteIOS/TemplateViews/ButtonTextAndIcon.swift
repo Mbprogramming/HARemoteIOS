@@ -24,8 +24,11 @@ struct ButtonTextAndIcon: View {
         if currentState != nil {
             VStack {
                 if currentState?.showImage == true {
-                    AsyncServerImage(imageWidth: targetHeight >= 50.0 ? 40 : 20, imageHeight: targetHeight >= 50.0 ? 40 : 20, imageId: currentState!.icon!)
-                        .frame(width: targetHeight >= 50.0 ? 40 : 20, height: targetHeight >= 50.0 ? 40 : 20 )
+                    if let icon = currentState?.icon {
+                        AsyncServerImage(imageWidth: targetHeight >= 50.0 ? 40 : 20, imageHeight: targetHeight >= 50.0 ? 40 : 20, imageId: icon)
+                            .frame(width: targetHeight >= 50.0 ? 40 : 20, height: targetHeight >= 50.0 ? 40 : 20)
+                    }
+                }                
                 }
                 if currentState?.showText == true {
                     Text(currentState?.completeValue ?? "")

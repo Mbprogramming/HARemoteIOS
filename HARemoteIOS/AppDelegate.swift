@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import UserNotifications
 
 extension Notification.Name {
     static let mainCommandShortcut = Notification.Name("mainCommandShortcut")

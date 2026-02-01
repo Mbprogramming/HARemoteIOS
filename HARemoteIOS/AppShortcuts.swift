@@ -1,10 +1,9 @@
 //
-//  Untitled.swift
+//  AppShortcuts.swift
 //  HARemoteIOS
 //
 //  Created by Markus Bach on 23.01.26.
 //
-
 import AppIntents
 
 struct AppShortcuts: AppShortcutsProvider {

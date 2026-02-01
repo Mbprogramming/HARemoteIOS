@@ -31,12 +31,12 @@ struct VolumeSlider: View {
     var body: some View {
         RemoteBaseButton(remoteItem: remoteItem, targetHeight: targetHeight, action: {
             if let rmMin = remoteItem?.min, let rmMax = remoteItem?.max, let rmStep = remoteItem?.step {
-                min = Int(rmMin) ?? -1
-                max = Int(rmMax) ?? -1
-                step = Int(rmStep) ?? -1
+                min = Int(rmMin) ?? 0
+                max = Int(rmMax) ?? 100
+                step = Int(rmStep) ?? 1
             }
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }), let v = state.value {
-                value = Int(v) ?? -1
+                value = Int(v) ?? 50
             } else {
                 value = 50
             }
@@ -45,12 +45,12 @@ struct VolumeSlider: View {
             delay = date
             delayType = type
             if let rmMin = remoteItem?.min, let rmMax = remoteItem?.max, let rmStep = remoteItem?.step {
-                min = Int(rmMin) ?? -1
-                max = Int(rmMax) ?? -1
-                step = Int(rmStep) ?? -1
+                min = Int(rmMin) ?? 0
+                max = Int(rmMax) ?? 100
+                step = Int(rmStep) ?? 1
             }
             if let state = remoteStates.first(where: { $0.id == remoteItem?.state && $0.device == remoteItem?.stateDevice }), let v = state.value {
-                value = Int(v) ?? -1
+                value = Int(v) ?? 50
             } else {
                 value = 50
             }

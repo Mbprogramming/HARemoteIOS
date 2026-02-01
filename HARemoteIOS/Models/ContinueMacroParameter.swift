@@ -11,6 +11,8 @@ class ContinueMacroParameter: Decodable, Encodable, Identifiable {
     let CurrentTaskId: String
     let CurrentAnswer: Int
     
+    var id: String { CurrentTaskId }
+}    
     init(currentTaskId: String = "", currentAnswer: Int = -1) {
         CurrentTaskId = currentTaskId
         CurrentAnswer = currentAnswer

@@ -221,14 +221,15 @@ struct ContentView: View {
     
     private func continueMacro(index: Int) {
         let param = ContinueMacroParameter(currentTaskId: macroQuestionId, currentAnswer: index)
-        let parameter = try? JSONEncoder().encode(param)
-        let jsonString = String(data: parameter!, encoding: .utf8)
-        let id = HomeRemoteAPI.shared.sendCommandParameter(device: "macro", command: "ContinueMacro", parameter: jsonString!)
+        guard let parameter = try? JSONEncoder().encode(param),
+              let jsonString = String(data: parameter, encoding: .utf8) else {
+            return
+        }
+        let id = HomeRemoteAPI.shared.sendCommandParameter(device: "macro", command: "ContinueMacro", parameter: jsonString)
         DispatchQueue.main.async {
             closeMacroSheets()
         }
-    }
-    
+    }    
     // FIX: make this synchronous and spawn an async Task
     private func automaticExecutionChanged() {
         Task {

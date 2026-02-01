@@ -2,7 +2,6 @@
 build/
 DerivedData/
 *.moved-aside
-*.xcuserstate
 *.hmap
 *.ipa
 *.dSYM.zip
